@@ -1,0 +1,25 @@
+server:
+  port: 8080
+
+spring:
+  h2: # http://localhost:8080/h2-console/
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/life_together
+    driverClassName: org.postgresql.Driver
+    username: life_together_server
+    password: pswd
+  jpa:
+    show-sql: false
+    database-platform: postgres
+    generate-ddl: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+logging:
+  level:
+    root: ERROR
+    org.springframework.web: ERROR
+    ru.drsanches.life_together: INFO
