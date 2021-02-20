@@ -8,16 +8,14 @@ public class ApplicationException extends RuntimeException {
 
     private final String message;
 
-    private final String uuid;
+    private final String uuid = UUID.randomUUID().toString();
 
     public ApplicationException(String message) {
         this.message = message;
-        this.uuid = UUID.randomUUID().toString();
     }
 
     public ApplicationException(String message, Exception cause) {
         this.message = message;
-        this.uuid = UUID.randomUUID().toString();
         this.cause = cause;
     }
 

@@ -20,6 +20,7 @@ import ru.drsanches.life_together.auth.data.dto.LoginDTO;
 import ru.drsanches.life_together.auth.data.dto.RegistrationDTO;
 import ru.drsanches.life_together.auth.data.dto.UserAuthInfoDTO;
 import ru.drsanches.life_together.auth.exception.ApplicationException;
+import ru.drsanches.life_together.auth.exception.ServerError;
 import ru.drsanches.life_together.auth.service.AuthService;
 import java.security.Principal;
 
@@ -44,7 +45,7 @@ public class AuthController {
     }
 
     @RequestMapping(value = "/info", method = RequestMethod.GET)
-    public UserAuthInfoDTO login(Principal principal) {
+    public UserAuthInfoDTO info(Principal principal) {
         return authService.info(principal.getName());
     }
 
@@ -68,15 +69,22 @@ public class AuthController {
         authService.logout(principal.getName());
     }
 
-    @RequestMapping(value = "/deleteUser", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/deleteUser", method = RequestMethod.POST)
     public void deleteUser(Principal principal, @RequestBody DeleteUserDTO deleteUserDTO) {
         authService.deleteUser(principal.getName(), deleteUserDTO);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({ApplicationException.class, IllegalArgumentException.class })
-    public String handleException(Exception e) {
+    @ExceptionHandler({ApplicationException.class})
+    public String handleUserException(Exception e) {
         LOG.warn(e.getMessage(), e);
+        return e.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler({ServerError.class})
+    public String handleServerException(ServerError e) {
+        LOG.error(e.getInfo(), e);
         return e.getMessage();
     }
 }

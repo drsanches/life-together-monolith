@@ -2,15 +2,22 @@ package ru.drsanches.life_together.auth.data.dto;
 
 public class UserAuthInfoDTO {
 
+    private String id;
+
     private String username;
 
     private String email;
 
     public UserAuthInfoDTO() {}
 
-    public UserAuthInfoDTO(String username, String email) {
+    public UserAuthInfoDTO(String id, String username, String email) {
+        this.id = id;
         this.username = username;
         this.email = email;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getUsername() {
@@ -19,6 +26,10 @@ public class UserAuthInfoDTO {
 
     public String getEmail() {
         return email;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setUsername(String username) {
@@ -32,7 +43,8 @@ public class UserAuthInfoDTO {
     @Override
     public String toString() {
         return "UserAuthInfoDTO{" +
-                "username='" + username + '\'' +
+                "id='" + id + '\'' +
+                ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 '}';
     }

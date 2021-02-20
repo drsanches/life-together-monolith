@@ -3,53 +3,51 @@ package ru.drsanches.life_together.auth
 import groovyx.net.http.ContentType
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.HttpResponseException
-import net.sf.json.JSONObject
 import ru.drsanches.life_together.utils.DataGenerator
 import ru.drsanches.life_together.utils.RequestUtils
 import spock.lang.Specification
 
-class TestRegistration extends Specification {
+class TestLogin extends Specification {
 
-    String PATH = "/auth/registration"
+    String PATH = "/auth/login"
 
-    def "success user registration"() {
-        given: "username and password"
-        def username = DataGenerator.createValidUsername()
-        def password = DataGenerator.createValidPassword()
-        def email = DataGenerator.createValidEmail()
-
-        when: "request is sent"
-        HttpResponseDecorator response = RequestUtils.getRestClient().post(
-                path: PATH,
-                body:  [username: username,
-                        password: password,
-                        email: email],
-                requestContentType : ContentType.JSON)
-
-        then: "response is correct"
-        assert response.status == 201
-
-        and: "correct user was created"
-        JSONObject authInfo = RequestUtils.getAuthInfo(username, password)
-        assert authInfo['username'] == username
-        assert authInfo['email'] == email
-    }
-
-    def "already existing user registration"() {
-        given: "registered user"
+    def "successful login"() {
+        given: "user"
         def username = DataGenerator.createValidUsername()
         def password = DataGenerator.createValidPassword()
         RequestUtils.registerUser(username, password, null)
 
         when: "request is sent"
+        HttpResponseDecorator response = RequestUtils.getRestClient().post(
+                path: PATH,
+                body: ["username": username,
+                       "password": password],
+                requestContentType : ContentType.JSON)
+
+        then: "response is correct"
+        assert response.status == 200
+
+        and: "token is correct"
+        def token = response.getData()["access_token"]
+        assert RequestUtils.getAuthInfo(token as String) != null
+    }
+
+    def "login with invalid password"() {
+        given: "user"
+        def username = DataGenerator.createValidUsername()
+        def password = DataGenerator.createValidPassword()
+        RequestUtils.registerUser(username, password, null)
+        def invalidPassword = DataGenerator.createValidPassword()
+
+        when: "request is sent"
         RequestUtils.getRestClient().post(
                 path: PATH,
-                body:  [username: username,
-                        password: password],
+                body: ["username": username,
+                       "password": invalidPassword],
                 requestContentType : ContentType.JSON)
 
         then: "response is correct"
         HttpResponseException e = thrown(HttpResponseException)
-        assert e.response.status == 400
+        assert e.response.status == 401
     }
 }

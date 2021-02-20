@@ -12,7 +12,6 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import ru.drsanches.life_together.auth.data.dto.ChangeEmailDTO;
 import ru.drsanches.life_together.auth.data.dto.ChangePasswordDTO;
@@ -24,6 +23,8 @@ import ru.drsanches.life_together.auth.data.dto.UserAuthInfoDTO;
 import ru.drsanches.life_together.auth.data.user.Role;
 import ru.drsanches.life_together.auth.data.user.UserAuth;
 import ru.drsanches.life_together.auth.data.user.UserAuthRepository;
+import ru.drsanches.life_together.auth.exception.ApplicationException;
+import ru.drsanches.life_together.auth.exception.ServerError;
 import ru.drsanches.life_together.auth.exception.UserAlreadyExistsException;
 import javax.security.auth.Subject;
 import java.util.Collection;
@@ -82,6 +83,7 @@ public class AuthService {
     public UserAuthInfoDTO info(String username) {
         UserAuth current = getUserByUsernameIfExists(username);
         UserAuthInfoDTO userAuthInfoDTO = new UserAuthInfoDTO();
+        userAuthInfoDTO.setId(current.getId());
         userAuthInfoDTO.setUsername(username);
         userAuthInfoDTO.setEmail(current.getEmail());
         return userAuthInfoDTO;
@@ -89,8 +91,10 @@ public class AuthService {
 
     public void changeUsername(String username, ChangeUsernameDTO changeUsernameDTO) {
         UserAuth current = getUserByUsernameIfExists(username);
-        Assert.isTrue(ENCODER.matches(current.getPassword(), changeUsernameDTO.getPassword()), "Wrong password");
-        Assert.isTrue(!changeUsernameDTO.getNewUsername().equals(username), "New username is equal to old");
+        checkPassword(changeUsernameDTO.getPassword(), current.getPassword());
+        if (changeUsernameDTO.getNewUsername().equals(username)) {
+            throw new ApplicationException("New username is equal to old");
+        }
         current.setUsername(changeUsernameDTO.getNewUsername());
         userAuthRepository.save(current);
         logout(username);
@@ -99,9 +103,10 @@ public class AuthService {
 
     public void changePassword(String username, ChangePasswordDTO changePasswordDTO) {
         UserAuth current = getUserByUsernameIfExists(username);
-        Assert.isTrue(ENCODER.matches(changePasswordDTO.getOldPassword(), current.getPassword()), "Wrong password");
-        Assert.isTrue(!changePasswordDTO.getOldPassword().equals(changePasswordDTO.getNewPassword()),
-                "Old and new passwords are equal");
+        checkPassword(changePasswordDTO.getOldPassword(), current.getPassword());
+        if (changePasswordDTO.getOldPassword().equals(changePasswordDTO.getNewPassword())) {
+            throw new ApplicationException("New password is equal to old");
+        }
         current.setPassword(ENCODER.encode(changePasswordDTO.getNewPassword()));
         userAuthRepository.save(current);
         logout(username);
@@ -110,8 +115,10 @@ public class AuthService {
 
     public void changeEmail(String username, ChangeEmailDTO changeEmailDTO) {
         UserAuth current = getUserByUsernameIfExists(username);
-        Assert.isTrue(ENCODER.matches(current.getPassword(), changeEmailDTO.getPassword()), "Wrong password");
-        Assert.isTrue(!changeEmailDTO.getNewEmail().equals(current.getEmail()), "New email is equal to old");
+        checkPassword(changeEmailDTO.getPassword(), current.getPassword());
+        if (changeEmailDTO.getNewEmail().equals(current.getEmail())) {
+            throw new ApplicationException("New email is equal to old");
+        }
         current.setEmail(changeEmailDTO.getNewEmail());
         userAuthRepository.save(current);
         LOG.info("Email has been changed: {}", current.toString());
@@ -126,7 +133,8 @@ public class AuthService {
 
     public void deleteUser(String username, DeleteUserDTO deleteUserDTO) {
         UserAuth current = getUserByUsernameIfExists(username);
-        Assert.isTrue(ENCODER.matches(current.getPassword(), deleteUserDTO.getPassword()), "Wrong password");
+        checkPassword(deleteUserDTO.getPassword(), current.getPassword());
+        logout(username);
         current.setEnabled(false);
         current.setUsername(UUID.randomUUID().toString() + "_" + current.getUsername());
         userAuthRepository.save(current);
@@ -135,9 +143,16 @@ public class AuthService {
 
     private UserAuth getUserByUsernameIfExists(String username) {
         Optional<UserAuth> user = userAuthRepository.findByUsername(username);
-        Assert.isTrue(user.isPresent(), "Can't find user with username = " + username);
-        Assert.isTrue(user.get().isEnabled(), "Can't find user with username = " + username);
+        if (user.isEmpty() || !user.get().isEnabled()) {
+            throw new ServerError("An error occurred while getting the user with username'" + username + "'");
+        }
         return user.get();
+    }
+
+    private void checkPassword(String rawPassword, String encodedPassword) {
+        if (!ENCODER.matches(rawPassword, encodedPassword)) {
+            throw new ApplicationException("Wrong password");
+        }
     }
 
     private class CustomPrincipal implements Authentication {

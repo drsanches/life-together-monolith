@@ -7,21 +7,21 @@ import net.sf.json.JSONObject
 
 class RequestUtils {
 
-    static String SERVER_URL = "http://localhost"
-    static String PORT = "8080"
+    static final String SERVER_URL = "http://localhost"
+
+    static final String PORT = "8080"
 
     static RESTClient getRestClient() {
         return new RESTClient( "$SERVER_URL:$PORT")
     }
 
-    static JSONObject registerUser(String username, String password, String email) {
+    static void registerUser(String username, String password, String email) {
         HttpResponseDecorator response = getRestClient().post(
                 path: '/auth/registration',
                 body: [username: username,
                        password: password,
                        email: email],
                  requestContentType: ContentType.JSON)
-        return response.getData()
     }
 
     static JSONObject getAuthInfo(String username, String password) {
