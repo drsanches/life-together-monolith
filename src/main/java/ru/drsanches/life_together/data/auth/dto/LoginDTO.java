@@ -1,12 +1,10 @@
-package ru.drsanches.life_together.auth.data.dto;
+package ru.drsanches.life_together.data.auth.dto;
 
-public class RegistrationDTO {
+public class LoginDTO {
 
     private String username;
 
     private String password;
-
-    private String email;
 
     public String getUsername() {
         return username;
@@ -16,15 +14,10 @@ public class RegistrationDTO {
         return password;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
     @Override
     public String toString() {
-        return "UserAuthDTO{" +
+        return "LoginDTO{" +
                 "username='" + username + '\'' +
-                ", email='" + email + '\'' +
                 '}';
     }
 }

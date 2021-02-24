@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.auth.controller;
+package ru.drsanches.life_together.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,16 +12,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ru.drsanches.life_together.auth.data.dto.ChangeEmailDTO;
-import ru.drsanches.life_together.auth.data.dto.ChangePasswordDTO;
-import ru.drsanches.life_together.auth.data.dto.ChangeUsernameDTO;
-import ru.drsanches.life_together.auth.data.dto.DeleteUserDTO;
-import ru.drsanches.life_together.auth.data.dto.LoginDTO;
-import ru.drsanches.life_together.auth.data.dto.RegistrationDTO;
-import ru.drsanches.life_together.auth.data.dto.UserAuthInfoDTO;
-import ru.drsanches.life_together.auth.exception.ApplicationException;
-import ru.drsanches.life_together.auth.exception.ServerError;
-import ru.drsanches.life_together.auth.service.AuthService;
+import ru.drsanches.life_together.data.auth.dto.ChangeEmailDTO;
+import ru.drsanches.life_together.data.auth.dto.ChangePasswordDTO;
+import ru.drsanches.life_together.data.auth.dto.ChangeUsernameDTO;
+import ru.drsanches.life_together.data.auth.dto.DeleteUserDTO;
+import ru.drsanches.life_together.data.auth.dto.LoginDTO;
+import ru.drsanches.life_together.data.auth.dto.RegistrationDTO;
+import ru.drsanches.life_together.data.auth.dto.UserAuthInfoDTO;
+import ru.drsanches.life_together.exception.ApplicationException;
+import ru.drsanches.life_together.exception.ServerError;
+import ru.drsanches.life_together.service.auth.AuthService;
 import java.security.Principal;
 
 @RestController

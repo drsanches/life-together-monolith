@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.auth.data.dto;
+package ru.drsanches.life_together.data.auth.dto;
 
 public class DeleteUserDTO {
 
