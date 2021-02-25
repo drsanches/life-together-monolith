@@ -21,7 +21,7 @@ import ru.drsanches.life_together.data.auth.dto.RegistrationDTO;
 import ru.drsanches.life_together.data.auth.dto.UserAuthInfoDTO;
 import ru.drsanches.life_together.exception.ApplicationException;
 import ru.drsanches.life_together.exception.ServerError;
-import ru.drsanches.life_together.service.auth.AuthService;
+import ru.drsanches.life_together.service.AuthService;
 import java.security.Principal;
 
 @RestController

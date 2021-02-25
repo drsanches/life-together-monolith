@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.service.auth;
+package ru.drsanches.life_together.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ import ru.drsanches.life_together.data.auth.dto.RegistrationDTO;
 import ru.drsanches.life_together.data.auth.dto.UserAuthInfoDTO;
 import ru.drsanches.life_together.data.auth.user.Role;
 import ru.drsanches.life_together.data.auth.user.UserAuth;
-import ru.drsanches.life_together.data.auth.user.UserAuthRepository;
+import ru.drsanches.life_together.repository.UserAuthRepository;
 import ru.drsanches.life_together.exception.ApplicationException;
 import ru.drsanches.life_together.exception.ServerError;
 import ru.drsanches.life_together.exception.UserAlreadyExistsException;
@@ -43,6 +43,10 @@ public class AuthService {
     @Autowired
     private UserAuthRepository userAuthRepository;
 
+    //TODO: Refactor
+    @Autowired
+    private UserService userService;
+
     @Autowired
     private TokenEndpoint tokenEndpoint;
 
@@ -62,6 +66,7 @@ public class AuthService {
         } catch(DataIntegrityViolationException e) {
             throw new UserAlreadyExistsException(registrationDTO.getUsername(), e);
         }
+        userService.createProfile(userAuth.getId());
         LOG.info("New userAuth has been created: {}", userAuth.toString());
     }
 
@@ -138,6 +143,7 @@ public class AuthService {
         current.setEnabled(false);
         current.setUsername(UUID.randomUUID().toString() + "_" + current.getUsername());
         userAuthRepository.save(current);
+        userService.deleteProfile(current.getId());
         LOG.info("User has been disabled: {}", current.toString());
     }
 

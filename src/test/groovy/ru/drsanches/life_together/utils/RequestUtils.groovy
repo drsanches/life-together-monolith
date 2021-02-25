@@ -16,7 +16,7 @@ class RequestUtils {
     }
 
     static void registerUser(String username, String password, String email) {
-        HttpResponseDecorator response = getRestClient().post(
+        getRestClient().post(
                 path: '/auth/registration',
                 body: [username: username,
                        password: password,
@@ -31,7 +31,7 @@ class RequestUtils {
         }
         try {
             HttpResponseDecorator response = getRestClient().get(
-                    path: "auth/info",
+                    path: "/auth/info",
                     headers: ["Authorization": "Bearer $token"])
             return response.status == 200 ? response.getData() : null
         } catch(Exception e) {
@@ -43,7 +43,7 @@ class RequestUtils {
     static JSONObject getAuthInfo(String token) {
         try {
             HttpResponseDecorator response = getRestClient().get(
-                    path: "auth/info",
+                    path: "/auth/info",
                     headers: ["Authorization": "Bearer $token"])
             return response.status == 200 ? response.getData() : null
         } catch(Exception e) {
@@ -52,10 +52,35 @@ class RequestUtils {
         }
     }
 
+    static JSONObject getUserProfile(String username, String password) {
+        String token = getToken(username, password)
+        if (token == null) {
+            return null
+        }
+        try {
+            HttpResponseDecorator response = getRestClient().get(
+                    path: "/user",
+                    headers: ["Authorization": "Bearer $token"])
+            return response.status == 200 ? response.getData() : null
+        } catch(Exception e) {
+            e.printStackTrace()
+            return null
+        }
+    }
+
+    static void changeUserProfile(String token, String firstName, String lastName) {
+        getRestClient().put(
+                path: '/user',
+                headers: ["Authorization": "Bearer $token"],
+                body: [firstName: firstName,
+                       lastName: lastName],
+                requestContentType: ContentType.JSON)
+    }
+
     static String getToken(String username, String password) {
         try {
             HttpResponseDecorator response = getRestClient().post(
-                    path: "auth/login",
+                    path: "/auth/login",
                     body: ["username": username,
                             "password": password],
                     requestContentType : ContentType.JSON)

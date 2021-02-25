@@ -3,6 +3,7 @@ package ru.drsanches.life_together.auth
 import groovyx.net.http.ContentType
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.HttpResponseException
+import net.sf.json.JSONNull
 import net.sf.json.JSONObject
 import ru.drsanches.life_together.utils.DataGenerator
 import ru.drsanches.life_together.utils.RequestUtils
@@ -31,8 +32,17 @@ class TestRegistration extends Specification {
 
         and: "correct user was created"
         JSONObject authInfo = RequestUtils.getAuthInfo(username, password)
+        assert authInfo['id'] != null
+        assert authInfo['id'] != JSONNull.getInstance()
         assert authInfo['username'] == username
         assert authInfo['email'] == email
+
+        and: "user profile was created"
+        JSONObject userProfile = RequestUtils.getUserProfile(username, password)
+        assert userProfile['id'] == authInfo['id']
+        assert userProfile['username'] == username
+        assert userProfile['firstName'] == JSONNull.getInstance()
+        assert userProfile['lastName'] == JSONNull.getInstance()
     }
 
     def "already existing user registration"() {

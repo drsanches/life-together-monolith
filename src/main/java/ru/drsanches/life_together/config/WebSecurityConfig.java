@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import ru.drsanches.life_together.service.auth.UserDetailsServiceImpl;
+import ru.drsanches.life_together.service.UserDetailsServiceImpl;
 
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {

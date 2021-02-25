@@ -31,6 +31,9 @@ class TestDeleteUser extends Specification {
         and: "user was deleted"
         assert RequestUtils.getAuthInfo(token) == null
         assert RequestUtils.getToken(username, password) == null
+        
+        and: "user profile was deleted"
+        assert RequestUtils.getUserProfile(username, password) == null
 
         and: "new user with old user credentials has different token"
         RequestUtils.registerUser(username, password, null)
