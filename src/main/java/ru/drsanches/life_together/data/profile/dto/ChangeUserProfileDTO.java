@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.data.user.dto;
+package ru.drsanches.life_together.data.profile.dto;
 
 public class ChangeUserProfileDTO {
 

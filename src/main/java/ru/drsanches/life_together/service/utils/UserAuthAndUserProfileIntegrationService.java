@@ -7,15 +7,15 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.drsanches.life_together.data.auth.user.UserAuth;
-import ru.drsanches.life_together.data.user.profile.UserProfile;
+import ru.drsanches.life_together.data.profile.user.UserProfile;
 import ru.drsanches.life_together.exception.UserAlreadyExistsException;
 import ru.drsanches.life_together.repository.UserAuthRepository;
 import ru.drsanches.life_together.repository.UserProfileRepository;
 
 @Service
-public class UserAuthAndProfileIntegrationService {
+public class UserAuthAndUserProfileIntegrationService {
 
-    private final Logger LOG = LoggerFactory.getLogger(UserAuthAndProfileIntegrationService.class);
+    private final Logger LOG = LoggerFactory.getLogger(UserAuthAndUserProfileIntegrationService.class);
 
     @Autowired
     UserAuthRepository userAuthRepository;

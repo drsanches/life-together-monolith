@@ -59,7 +59,7 @@ class RequestUtils {
         }
         try {
             HttpResponseDecorator response = getRestClient().get(
-                    path: "/user",
+                    path: "/profile",
                     headers: ["Authorization": "Bearer $token"])
             return response.status == 200 ? response.getData() : null
         } catch(Exception e) {
@@ -70,7 +70,7 @@ class RequestUtils {
 
     static void changeUserProfile(String token, String firstName, String lastName) {
         getRestClient().put(
-                path: '/user',
+                path: '/profile',
                 headers: ["Authorization": "Bearer $token"],
                 body: [firstName: firstName,
                        lastName: lastName],

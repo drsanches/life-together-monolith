@@ -1,38 +1,30 @@
-package ru.drsanches.life_together.data.user.profile;
+package ru.drsanches.life_together.data.profile.dto;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+public class UserInfoDTO {
 
-@Entity
-@Table(name="user_profile")
-public class UserProfile {
-
-    @Id
-    @Column
     private String id;
 
-    @Column
+    private String username;
+
     private String firstName;
 
-    @Column
     private String lastName;
 
-    public UserProfile() {}
+    public UserInfoDTO() {}
 
-    public UserProfile(String id) {
+    public UserInfoDTO(String id, String username, String firstName, String lastName) {
         this.id = id;
-    }
-
-    public UserProfile(String id, String firstName, String lastName) {
-        this.id = id;
+        this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
     }
 
     public String getId() {
         return id;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     public String getFirstName() {
@@ -47,6 +39,10 @@ public class UserProfile {
         this.id = id;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
@@ -57,8 +53,9 @@ public class UserProfile {
 
     @Override
     public String toString() {
-        return "UserProfile{" +
+        return "UserInfoDTO{" +
                 "id='" + id + '\'' +
+                ", username='" + username + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 '}';

@@ -5,9 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Service;
-import ru.drsanches.life_together.data.user.dto.ChangeUserProfileDTO;
-import ru.drsanches.life_together.data.user.dto.UserInfoDTO;
-import ru.drsanches.life_together.data.user.profile.UserProfile;
+import ru.drsanches.life_together.data.profile.dto.ChangeUserProfileDTO;
+import ru.drsanches.life_together.data.profile.dto.UserInfoDTO;
+import ru.drsanches.life_together.data.profile.user.UserProfile;
 import ru.drsanches.life_together.exception.NoUserException;
 import ru.drsanches.life_together.repository.UserProfileRepository;
 import ru.drsanches.life_together.exception.ServerError;
@@ -15,9 +15,9 @@ import ru.drsanches.life_together.service.utils.UserIdService;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserProfileService {
 
-    private final Logger LOG = LoggerFactory.getLogger(UserService.class);
+    private final Logger LOG = LoggerFactory.getLogger(UserProfileService.class);
 
     @Autowired
     UserProfileRepository userProfileRepository;
@@ -25,12 +25,12 @@ public class UserService {
     @Autowired
     UserIdService userIdService;
 
-    public UserInfoDTO getUser(OAuth2Authentication authentication) {
+    public UserInfoDTO getProfile(OAuth2Authentication authentication) {
         String userId = userIdService.getUserIdFromAuth(authentication);
         return getUserInfo(userId, authentication.getName());
     }
 
-    public UserInfoDTO getUser(String username) {
+    public UserInfoDTO getProfile(String username) {
         String userId = userIdService.getUserIdFromDB(username);
         if (userId == null) {
             throw new NoUserException(username);
@@ -38,7 +38,7 @@ public class UserService {
         return getUserInfo(userId, username);
     }
 
-    public void changeCurrentUser(OAuth2Authentication authentication, ChangeUserProfileDTO changeUserProfileDTO) {
+    public void changeCurrentProfile(OAuth2Authentication authentication, ChangeUserProfileDTO changeUserProfileDTO) {
         String userId = userIdService.getUserIdFromAuth(authentication);
         UserProfile userProfile = getUserByIdIfExists(userId);
         userProfile.setFirstName(changeUserProfileDTO.getFirstName());

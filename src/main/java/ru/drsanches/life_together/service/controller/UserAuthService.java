@@ -21,12 +21,11 @@ import ru.drsanches.life_together.data.auth.dto.RegistrationDTO;
 import ru.drsanches.life_together.data.auth.dto.UserAuthInfoDTO;
 import ru.drsanches.life_together.data.auth.user.Role;
 import ru.drsanches.life_together.data.auth.user.UserAuth;
-import ru.drsanches.life_together.data.user.profile.UserProfile;
+import ru.drsanches.life_together.data.profile.user.UserProfile;
 import ru.drsanches.life_together.repository.UserAuthRepository;
 import ru.drsanches.life_together.exception.ApplicationException;
 import ru.drsanches.life_together.exception.ServerError;
-import ru.drsanches.life_together.service.utils.UserAuthAndProfileIntegrationService;
-import javax.security.auth.Subject;
+import ru.drsanches.life_together.service.utils.UserAuthAndUserProfileIntegrationService;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,9 +33,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class AuthService {
+public class UserAuthService {
 
-    private final Logger LOG = LoggerFactory.getLogger(AuthService.class);
+    private final Logger LOG = LoggerFactory.getLogger(UserAuthService.class);
 
     private static final BCryptPasswordEncoder ENCODER = new BCryptPasswordEncoder();
 
@@ -44,7 +43,7 @@ public class AuthService {
     private UserAuthRepository userAuthRepository;
 
     @Autowired
-    private UserAuthAndProfileIntegrationService userAuthAndProfileIntegrationService;
+    private UserAuthAndUserProfileIntegrationService userAuthAndUserProfileIntegrationService;
 
     @Autowired
     private TokenEndpoint tokenEndpoint;
@@ -60,7 +59,7 @@ public class AuthService {
         userAuth.setEmail(registrationDTO.getEmail());
         userAuth.setEnabled(true);
         userAuth.setRole(Role.USER);
-        userAuthAndProfileIntegrationService.saveUserAuthAndUserProfile(userAuth, new UserProfile(userAuth.getId()));
+        userAuthAndUserProfileIntegrationService.saveUserAuthAndUserProfile(userAuth, new UserProfile(userAuth.getId()));
         LOG.info("New user has been created: {}", userAuth.toString());
     }
 
@@ -136,7 +135,7 @@ public class AuthService {
         logout(username);
         current.setEnabled(false);
         current.setUsername(UUID.randomUUID().toString() + "_" + current.getUsername());
-        userAuthAndProfileIntegrationService.updateUserAuthAndRemoveUserProfile(current, current.getId());
+        userAuthAndUserProfileIntegrationService.updateUserAuthAndRemoveUserProfile(current, current.getId());
         LOG.info("User has been disabled: {}", current.toString());
     }
 
@@ -166,40 +165,6 @@ public class AuthService {
         }
 
         @Override
-        public boolean implies(Subject subject) {
-            return false;
-        }
-
-        public CustomPrincipal() {
-            super();
-        }
-
-        @Override
-        public int hashCode() {
-            return super.hashCode();
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            return super.equals(obj);
-        }
-
-        @Override
-        protected Object clone() throws CloneNotSupportedException {
-            return super.clone();
-        }
-
-        @Override
-        public String toString() {
-            return super.toString();
-        }
-
-        @Override
-        protected void finalize() throws Throwable {
-            super.finalize();
-        }
-
-        @Override
         public Collection<? extends GrantedAuthority> getAuthorities() {
             return null;
         }
@@ -225,9 +190,7 @@ public class AuthService {
         }
 
         @Override
-        public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-
-        }
+        public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {}
 
         @Override
         public String getName() {

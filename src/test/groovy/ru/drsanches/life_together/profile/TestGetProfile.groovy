@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.user
+package ru.drsanches.life_together.profile
 
 import groovyx.net.http.ContentType
 import groovyx.net.http.HttpResponseDecorator
@@ -8,9 +8,9 @@ import ru.drsanches.life_together.utils.DataGenerator
 import ru.drsanches.life_together.utils.RequestUtils
 import spock.lang.Specification
 
-class TestGetUser extends Specification {
+class TestGetProfile extends Specification {
 
-    String PATH = "/user"
+    String PATH = "/profile"
 
     def "successful user profile getting"() {
         given: "user with token and another user"

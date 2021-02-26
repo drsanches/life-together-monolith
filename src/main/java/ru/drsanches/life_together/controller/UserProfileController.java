@@ -12,34 +12,34 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ru.drsanches.life_together.data.user.dto.ChangeUserProfileDTO;
-import ru.drsanches.life_together.data.user.dto.UserInfoDTO;
+import ru.drsanches.life_together.data.profile.dto.ChangeUserProfileDTO;
+import ru.drsanches.life_together.data.profile.dto.UserInfoDTO;
 import ru.drsanches.life_together.exception.ApplicationException;
 import ru.drsanches.life_together.exception.ServerError;
-import ru.drsanches.life_together.service.controller.UserService;
+import ru.drsanches.life_together.service.controller.UserProfileService;
 
 @RestController
-@RequestMapping(value = "/user")
-public class UserController {
+@RequestMapping(value = "/profile")
+public class UserProfileController {
 
-    private final Logger LOG = LoggerFactory.getLogger(UserController.class);
+    private final Logger LOG = LoggerFactory.getLogger(UserProfileController.class);
 
     @Autowired
-    private UserService userService;
+    private UserProfileService userProfileService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public UserInfoDTO getCurrentUser(OAuth2Authentication authentication) {
-        return userService.getUser(authentication);
+    public UserInfoDTO getCurrentProfile(OAuth2Authentication authentication) {
+        return userProfileService.getProfile(authentication);
     }
 
     @RequestMapping(value = "", method = RequestMethod.PUT)
-    public void changeCurrentUser(OAuth2Authentication authentication, @RequestBody ChangeUserProfileDTO changeUserProfileDTO) {
-        userService.changeCurrentUser(authentication, changeUserProfileDTO);
+    public void changeCurrentProfile(OAuth2Authentication authentication, @RequestBody ChangeUserProfileDTO changeUserProfileDTO) {
+        userProfileService.changeCurrentProfile(authentication, changeUserProfileDTO);
     }
 
     @RequestMapping(value = "/{username}", method = RequestMethod.GET)
-    public UserInfoDTO getUser(@PathVariable String username) {
-        return userService.getUser(username);
+    public UserInfoDTO getProfile(@PathVariable String username) {
+        return userProfileService.getProfile(username);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

@@ -21,57 +21,57 @@ import ru.drsanches.life_together.data.auth.dto.RegistrationDTO;
 import ru.drsanches.life_together.data.auth.dto.UserAuthInfoDTO;
 import ru.drsanches.life_together.exception.ApplicationException;
 import ru.drsanches.life_together.exception.ServerError;
-import ru.drsanches.life_together.service.controller.AuthService;
+import ru.drsanches.life_together.service.controller.UserAuthService;
 import java.security.Principal;
 
 @RestController
 @RequestMapping(value = "/auth")
-public class AuthController {
+public class UserAuthController {
 
-    private final Logger LOG = LoggerFactory.getLogger(AuthController.class);
+    private final Logger LOG = LoggerFactory.getLogger(UserAuthController.class);
 
     @Autowired
-    private AuthService authService;
+    private UserAuthService userAuthService;
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public void registration(@RequestBody RegistrationDTO registrationDTO) {
-        authService.registration(registrationDTO);
+        userAuthService.registration(registrationDTO);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<OAuth2AccessToken> login(@RequestBody LoginDTO loginDTO) {
-        return authService.login(loginDTO);
+        return userAuthService.login(loginDTO);
     }
 
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     public UserAuthInfoDTO info(Principal principal) {
-        return authService.info(principal.getName());
+        return userAuthService.info(principal.getName());
     }
 
     @RequestMapping(value = "/changeUsername", method = RequestMethod.PUT)
     public void changeUsername(Principal principal, @RequestBody ChangeUsernameDTO changeUsernameDTO) {
-        authService.changeUsername(principal.getName(), changeUsernameDTO);
+        userAuthService.changeUsername(principal.getName(), changeUsernameDTO);
     }
 
     @RequestMapping(value = "/changePassword", method = RequestMethod.PUT)
     public void changePassword(Principal principal, @RequestBody ChangePasswordDTO changePasswordDTO) {
-        authService.changePassword(principal.getName(), changePasswordDTO);
+        userAuthService.changePassword(principal.getName(), changePasswordDTO);
     }
 
     @RequestMapping(value = "/changeEmail", method = RequestMethod.PUT)
     public void changeEmail(Principal principal, @RequestBody ChangeEmailDTO changeEmailDTO) {
-        authService.changeEmail(principal.getName(), changeEmailDTO);
+        userAuthService.changeEmail(principal.getName(), changeEmailDTO);
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public void logout(Principal principal) {
-        authService.logout(principal.getName());
+        userAuthService.logout(principal.getName());
     }
 
     @RequestMapping(value = "/deleteUser", method = RequestMethod.POST)
     public void deleteUser(Principal principal, @RequestBody DeleteUserDTO deleteUserDTO) {
-        authService.deleteUser(principal.getName(), deleteUserDTO);
+        userAuthService.deleteUser(principal.getName(), deleteUserDTO);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
