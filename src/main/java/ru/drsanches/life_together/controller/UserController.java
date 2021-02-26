@@ -16,7 +16,7 @@ import ru.drsanches.life_together.data.user.dto.ChangeUserProfileDTO;
 import ru.drsanches.life_together.data.user.dto.UserInfoDTO;
 import ru.drsanches.life_together.exception.ApplicationException;
 import ru.drsanches.life_together.exception.ServerError;
-import ru.drsanches.life_together.service.UserService;
+import ru.drsanches.life_together.service.controller.UserService;
 
 @RestController
 @RequestMapping(value = "/user")

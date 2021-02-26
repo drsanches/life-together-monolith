@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.service;
+package ru.drsanches.life_together.service.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,9 +1,8 @@
-package ru.drsanches.life_together.service;
+package ru.drsanches.life_together.service.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,10 +21,11 @@ import ru.drsanches.life_together.data.auth.dto.RegistrationDTO;
 import ru.drsanches.life_together.data.auth.dto.UserAuthInfoDTO;
 import ru.drsanches.life_together.data.auth.user.Role;
 import ru.drsanches.life_together.data.auth.user.UserAuth;
+import ru.drsanches.life_together.data.user.profile.UserProfile;
 import ru.drsanches.life_together.repository.UserAuthRepository;
 import ru.drsanches.life_together.exception.ApplicationException;
 import ru.drsanches.life_together.exception.ServerError;
-import ru.drsanches.life_together.exception.UserAlreadyExistsException;
+import ru.drsanches.life_together.service.utils.UserAuthAndProfileIntegrationService;
 import javax.security.auth.Subject;
 import java.util.Collection;
 import java.util.HashMap;
@@ -43,9 +43,8 @@ public class AuthService {
     @Autowired
     private UserAuthRepository userAuthRepository;
 
-    //TODO: Refactor
     @Autowired
-    private UserService userService;
+    private UserAuthAndProfileIntegrationService userAuthAndProfileIntegrationService;
 
     @Autowired
     private TokenEndpoint tokenEndpoint;
@@ -61,13 +60,8 @@ public class AuthService {
         userAuth.setEmail(registrationDTO.getEmail());
         userAuth.setEnabled(true);
         userAuth.setRole(Role.USER);
-        try {
-            userAuthRepository.save(userAuth);
-        } catch(DataIntegrityViolationException e) {
-            throw new UserAlreadyExistsException(registrationDTO.getUsername(), e);
-        }
-        userService.createProfile(userAuth.getId());
-        LOG.info("New userAuth has been created: {}", userAuth.toString());
+        userAuthAndProfileIntegrationService.saveUserAuthAndUserProfile(userAuth, new UserProfile(userAuth.getId()));
+        LOG.info("New user has been created: {}", userAuth.toString());
     }
 
     public ResponseEntity<OAuth2AccessToken> login(LoginDTO loginDTO) {
@@ -142,8 +136,7 @@ public class AuthService {
         logout(username);
         current.setEnabled(false);
         current.setUsername(UUID.randomUUID().toString() + "_" + current.getUsername());
-        userAuthRepository.save(current);
-        userService.deleteProfile(current.getId());
+        userAuthAndProfileIntegrationService.updateUserAuthAndRemoveUserProfile(current, current.getId());
         LOG.info("User has been disabled: {}", current.toString());
     }
 
