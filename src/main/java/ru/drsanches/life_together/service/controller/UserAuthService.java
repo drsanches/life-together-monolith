@@ -6,11 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
-import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.stereotype.Service;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
 import ru.drsanches.life_together.data.auth.dto.ChangeEmailDTO;
 import ru.drsanches.life_together.data.auth.dto.ChangePasswordDTO;
 import ru.drsanches.life_together.data.auth.dto.ChangeUsernameDTO;
@@ -25,10 +21,9 @@ import ru.drsanches.life_together.data.profile.user.UserProfile;
 import ru.drsanches.life_together.repository.UserAuthRepository;
 import ru.drsanches.life_together.exception.ApplicationException;
 import ru.drsanches.life_together.exception.ServerError;
+import ru.drsanches.life_together.service.utils.TokenService;
 import ru.drsanches.life_together.service.utils.UserAuthAndUserProfileIntegrationService;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -46,10 +41,7 @@ public class UserAuthService {
     private UserAuthAndUserProfileIntegrationService userAuthAndUserProfileIntegrationService;
 
     @Autowired
-    private TokenEndpoint tokenEndpoint;
-
-    @Autowired
-    private JdbcTokenStore tokenStore;
+    private TokenService tokenService;
 
     public void registration(RegistrationDTO registrationDTO) {
         UserAuth userAuth = new UserAuth();
@@ -64,28 +56,7 @@ public class UserAuthService {
     }
 
     public TokenDTO login(LoginDTO loginDTO) {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("username", loginDTO.getUsername());
-        parameters.put("password", loginDTO.getPassword());
-        parameters.put("grant_type", "password");
-        parameters.put("scope", "ui");
-
-        try {
-            OAuth2AccessToken oAuth2AccessToken = tokenEndpoint
-                    .postAccessToken(new CustomPrincipal("browser", true), parameters)
-                    .getBody();
-            if (oAuth2AccessToken == null) {
-                throw new ServerError("Empty OAuth2AccessToken");
-            }
-            TokenDTO tokenDTO = new TokenDTO();
-            tokenDTO.setAccessToken(oAuth2AccessToken.getValue());
-            tokenDTO.setRefreshToken(oAuth2AccessToken.getRefreshToken().getValue());
-            tokenDTO.setTokenType(OAuth2AccessToken.BEARER_TYPE);
-            tokenDTO.setExpiresIn(oAuth2AccessToken.getExpiresIn());
-            return tokenDTO;
-        } catch (HttpRequestMethodNotSupportedException e) {
-            throw new ServerError(e);
-        }
+        return tokenService.createToken(loginDTO.getUsername(), loginDTO.getPassword());
     }
 
     public UserAuthInfoDTO info(String username) {
@@ -133,10 +104,7 @@ public class UserAuthService {
     }
 
     public void logout(String username) {
-        tokenStore.findTokensByUserName(username).forEach(token -> {
-            tokenStore.removeRefreshToken(token.getRefreshToken());
-            tokenStore.removeAccessToken(token);
-        });
+        tokenService.removeToken(username);
     }
 
     public void deleteUser(String username, DeleteUserDTO deleteUserDTO) {
@@ -160,51 +128,6 @@ public class UserAuthService {
     private void checkPassword(String rawPassword, String encodedPassword) {
         if (!ENCODER.matches(rawPassword, encodedPassword)) {
             throw new ApplicationException("Wrong password");
-        }
-    }
-
-    private class CustomPrincipal implements Authentication {
-
-        private String name;
-
-        private boolean isAuthenticated;
-
-        public CustomPrincipal(String name, boolean isAuthenticated) {
-            this.name = name;
-            this.isAuthenticated = isAuthenticated;
-        }
-
-        @Override
-        public Collection<? extends GrantedAuthority> getAuthorities() {
-            return null;
-        }
-
-        @Override
-        public Object getCredentials() {
-            return null;
-        }
-
-        @Override
-        public Object getDetails() {
-            return null;
-        }
-
-        @Override
-        public Object getPrincipal() {
-            return null;
-        }
-
-        @Override
-        public boolean isAuthenticated() {
-            return isAuthenticated;
-        }
-
-        @Override
-        public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {}
-
-        @Override
-        public String getName() {
-            return name;
         }
     }
 }
