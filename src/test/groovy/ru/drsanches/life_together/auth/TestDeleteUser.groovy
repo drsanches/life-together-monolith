@@ -3,6 +3,7 @@ package ru.drsanches.life_together.auth
 import groovyx.net.http.ContentType
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.HttpResponseException
+import net.sf.json.JSONArray
 import ru.drsanches.life_together.utils.DataGenerator
 import ru.drsanches.life_together.utils.RequestUtils
 import spock.lang.Specification
@@ -12,11 +13,24 @@ class TestDeleteUser extends Specification {
     String PATH = "/auth/deleteUser"
 
     def "success user deleting"() {
-        given: "registered user, password and token"
+        given: "registered user with friend and friend requests, password and token"
         def username = DataGenerator.createValidUsername()
         def password = DataGenerator.createValidPassword()
+        def friendUsername = DataGenerator.createValidUsername()
+        def friendPassword = DataGenerator.createValidPassword()
+        def outgoingUsername = DataGenerator.createValidUsername()
+        def outgoingPassword = DataGenerator.createValidPassword()
+        def incomingUsername = DataGenerator.createValidUsername()
+        def incomingPassword = DataGenerator.createValidPassword()
         RequestUtils.registerUser(username, password, null)
+        RequestUtils.registerUser(friendUsername, friendPassword, null)
+        RequestUtils.registerUser(outgoingUsername, outgoingPassword, null)
+        RequestUtils.registerUser(incomingUsername, incomingPassword, null)
         def token = RequestUtils.getToken(username, password)
+        RequestUtils.sendFriendRequest(username, password, friendUsername)
+        RequestUtils.sendFriendRequest(friendUsername, friendPassword, username)
+        RequestUtils.sendFriendRequest(username, password, outgoingUsername)
+        RequestUtils.sendFriendRequest(incomingUsername, incomingPassword, username)
 
         when: "request is sent"
         HttpResponseDecorator response = RequestUtils.getRestClient().post(
@@ -39,6 +53,21 @@ class TestDeleteUser extends Specification {
         RequestUtils.registerUser(username, password, null)
         assert RequestUtils.getAuthInfo(username, password) != null
         assert RequestUtils.getToken(username, password) != token
+
+        and: "friend's relationships is correct"
+        assert RequestUtils.getIncomingRequests(friendUsername, friendPassword) == new JSONArray()
+        assert RequestUtils.getOutgoingRequests(friendUsername, friendPassword) == new JSONArray()
+        assert RequestUtils.getFriends(friendUsername, friendPassword) == new JSONArray()
+
+        and: "incoming user relationships is correct"
+        assert RequestUtils.getIncomingRequests(incomingUsername, incomingPassword) == new JSONArray()
+        assert RequestUtils.getOutgoingRequests(incomingUsername, incomingPassword) == new JSONArray()
+        assert RequestUtils.getFriends(incomingUsername, incomingPassword) == new JSONArray()
+
+        and: "outgoing user relationships is correct"
+        assert RequestUtils.getIncomingRequests(outgoingUsername, outgoingPassword) == new JSONArray()
+        assert RequestUtils.getOutgoingRequests(outgoingUsername, outgoingPassword) == new JSONArray()
+        assert RequestUtils.getFriends(outgoingUsername, outgoingPassword) == new JSONArray()
     }
 
     def "user deleting with invalid password"() {

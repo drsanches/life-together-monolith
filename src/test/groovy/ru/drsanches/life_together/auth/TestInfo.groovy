@@ -3,6 +3,7 @@ package ru.drsanches.life_together.auth
 import groovyx.net.http.ContentType
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.HttpResponseException
+import net.sf.json.JSONNull
 import ru.drsanches.life_together.utils.DataGenerator
 import ru.drsanches.life_together.utils.RequestUtils
 import spock.lang.Specification
@@ -28,6 +29,7 @@ class TestInfo extends Specification {
         then: "response is correct"
         assert response.status == 200
         assert response.getData()["id"] != null
+        assert response.getData()["id"] != JSONNull.getInstance()
         assert response.getData()["username"] == username
         assert response.getData()["email"] == email
         assert response.getData()["password"] == null

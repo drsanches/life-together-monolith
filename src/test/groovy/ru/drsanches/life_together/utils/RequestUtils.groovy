@@ -3,6 +3,7 @@ package ru.drsanches.life_together.utils
 import groovyx.net.http.ContentType
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.RESTClient
+import net.sf.json.JSONArray
 import net.sf.json.JSONObject
 
 class RequestUtils {
@@ -75,6 +76,62 @@ class RequestUtils {
                 body: [firstName: firstName,
                        lastName: lastName],
                 requestContentType: ContentType.JSON)
+    }
+
+    static void sendFriendRequest(String username1, String password1, String username2) {
+        String token = getToken(username1, password1)
+        getRestClient().post(
+                path: "/friends/manage/$username2",
+                headers: ["Authorization": "Bearer $token"],
+                requestContentType: ContentType.JSON)
+    }
+
+    static JSONArray getIncomingRequests(String username, String password) {
+        String token = getToken(username, password)
+        if (token == null) {
+            return null
+        }
+        try {
+            HttpResponseDecorator response = getRestClient().get(
+                    path: "/friends/requests/incoming",
+                    headers: ["Authorization": "Bearer $token"])
+            return response.status == 200 ? response.getData() : null
+        } catch(Exception e) {
+            e.printStackTrace()
+            return null
+        }
+    }
+
+    static JSONArray getOutgoingRequests(String username, String password) {
+        String token = getToken(username, password)
+        if (token == null) {
+            return null
+        }
+        try {
+            HttpResponseDecorator response = getRestClient().get(
+                    path: "/friends/requests/outgoing",
+                    headers: ["Authorization": "Bearer $token"])
+            return response.status == 200 ? response.getData() : null
+        } catch(Exception e) {
+            e.printStackTrace()
+            return null
+        }
+    }
+
+    static JSONArray getFriends(String username, String password) {
+        String token = getToken(username, password)
+        if (token == null) {
+            return null
+        }
+        try {
+            HttpResponseDecorator response = getRestClient().get(
+                    path: "/friends",
+                    headers: ["Authorization": "Bearer $token"])
+            return response.status == 200 ? response.getData() : null
+        } catch(Exception e) {
+            e.printStackTrace()
+            return null
+        }
     }
 
     static String getToken(String username, String password) {
