@@ -1,9 +1,13 @@
 package ru.drsanches.life_together.data.auth.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class ChangeEmailDTO {
 
+    @ApiModelProperty(required = true)
     private String newEmail;
 
+    @ApiModelProperty(notes = "current user password hash", required = true)
     private String password;
 
     public String getNewEmail() {

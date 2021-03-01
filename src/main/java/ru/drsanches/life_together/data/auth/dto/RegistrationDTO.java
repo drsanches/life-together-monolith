@@ -1,11 +1,16 @@
 package ru.drsanches.life_together.data.auth.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class RegistrationDTO {
 
+    @ApiModelProperty(required = true)
     private String username;
 
+    @ApiModelProperty(notes = "password hash", required = true)
     private String password;
 
+    @ApiModelProperty(required = false)
     private String email;
 
     public String getUsername() {

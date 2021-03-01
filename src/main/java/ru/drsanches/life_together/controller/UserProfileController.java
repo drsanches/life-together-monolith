@@ -1,5 +1,8 @@
 package ru.drsanches.life_together.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +20,11 @@ import ru.drsanches.life_together.data.profile.dto.UserInfoDTO;
 import ru.drsanches.life_together.exception.ApplicationException;
 import ru.drsanches.life_together.exception.ServerError;
 import ru.drsanches.life_together.service.controller.UserProfileService;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping(value = "/profile")
+@Api(description = "viewing and editing public user profiles")
 public class UserProfileController {
 
     private final Logger LOG = LoggerFactory.getLogger(UserProfileController.class);
@@ -27,16 +32,22 @@ public class UserProfileController {
     @Autowired
     private UserProfileService userProfileService;
 
+    @ApiOperation(value = "Returns current user profile information")
+    @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public UserInfoDTO getCurrentProfile(OAuth2Authentication authentication) {
+    public UserInfoDTO getCurrentProfile(@ApiIgnore OAuth2Authentication authentication) {
         return userProfileService.getProfile(authentication);
     }
 
+    @ApiOperation(value = "Changes current user profile")
+    @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
     @RequestMapping(value = "", method = RequestMethod.PUT)
-    public void changeCurrentProfile(OAuth2Authentication authentication, @RequestBody ChangeUserProfileDTO changeUserProfileDTO) {
+    public void changeCurrentProfile(@ApiIgnore OAuth2Authentication authentication, @RequestBody ChangeUserProfileDTO changeUserProfileDTO) {
         userProfileService.changeCurrentProfile(authentication, changeUserProfileDTO);
     }
 
+    @ApiOperation(value = "Returns another user profile information")
+    @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
     @RequestMapping(value = "/{username}", method = RequestMethod.GET)
     public UserInfoDTO getProfile(@PathVariable String username) {
         return userProfileService.getProfile(username);

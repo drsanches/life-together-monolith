@@ -2,11 +2,13 @@ package ru.drsanches.life_together.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import springfox.documentation.annotations.ApiIgnore;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import static com.google.common.base.Predicates.or;
 import static springfox.documentation.builders.PathSelectors.regex;
 
 @Configuration
@@ -17,8 +19,12 @@ public class SwaggerConfig {
     public Docket postsApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .groupName("public-api")
+                .ignoredParameterTypes(ApiIgnore.class)
                 .apiInfo(apiInfo())
-                .select().paths(regex("/auth.*"))
+                .select().paths(or(
+                        regex("/auth.*"),
+                        regex("/profile.*"),
+                        regex("/friends.*")))
                 .build();
     }
 

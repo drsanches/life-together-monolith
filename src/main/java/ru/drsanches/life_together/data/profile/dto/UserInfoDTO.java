@@ -1,13 +1,19 @@
 package ru.drsanches.life_together.data.profile.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class UserInfoDTO {
 
+    @ApiModelProperty(required = true)
     private String id;
 
+    @ApiModelProperty(required = true)
     private String username;
 
+    @ApiModelProperty(required = true)
     private String firstName;
 
+    @ApiModelProperty(required = true)
     private String lastName;
 
     public UserInfoDTO() {}

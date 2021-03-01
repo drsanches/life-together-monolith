@@ -1,5 +1,8 @@
 package ru.drsanches.life_together.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +25,12 @@ import ru.drsanches.life_together.data.auth.dto.UserAuthInfoDTO;
 import ru.drsanches.life_together.exception.ApplicationException;
 import ru.drsanches.life_together.exception.ServerError;
 import ru.drsanches.life_together.service.controller.UserAuthService;
+import springfox.documentation.annotations.ApiIgnore;
 import java.security.Principal;
 
 @RestController
 @RequestMapping(value = "/auth")
+@Api(description = "authentication data management")
 public class UserAuthController {
 
     private final Logger LOG = LoggerFactory.getLogger(UserAuthController.class);
@@ -33,44 +38,58 @@ public class UserAuthController {
     @Autowired
     private UserAuthService userAuthService;
 
+    @ApiOperation(value = "Registers new user account")
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public void registration(@RequestBody RegistrationDTO registrationDTO) {
         userAuthService.registration(registrationDTO);
     }
 
+    @ApiOperation(value = "Returns authorization tokens")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<OAuth2AccessToken> login(@RequestBody LoginDTO loginDTO) {
         return userAuthService.login(loginDTO);
     }
 
+    @ApiOperation(value = "Returns current user private information")
+    @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
     @RequestMapping(value = "/info", method = RequestMethod.GET)
-    public UserAuthInfoDTO info(Principal principal) {
+    public UserAuthInfoDTO info(@ApiIgnore Principal principal) {
         return userAuthService.info(principal.getName());
     }
 
+    @ApiOperation(value = "Changes username")
+    @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
     @RequestMapping(value = "/changeUsername", method = RequestMethod.PUT)
-    public void changeUsername(Principal principal, @RequestBody ChangeUsernameDTO changeUsernameDTO) {
+    public void changeUsername(@ApiIgnore Principal principal, @RequestBody ChangeUsernameDTO changeUsernameDTO) {
         userAuthService.changeUsername(principal.getName(), changeUsernameDTO);
     }
 
+    @ApiOperation(value = "Changes password")
+    @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
     @RequestMapping(value = "/changePassword", method = RequestMethod.PUT)
-    public void changePassword(Principal principal, @RequestBody ChangePasswordDTO changePasswordDTO) {
+    public void changePassword(@ApiIgnore Principal principal, @RequestBody ChangePasswordDTO changePasswordDTO) {
         userAuthService.changePassword(principal.getName(), changePasswordDTO);
     }
 
+    @ApiOperation(value = "Changes email")
+    @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
     @RequestMapping(value = "/changeEmail", method = RequestMethod.PUT)
-    public void changeEmail(Principal principal, @RequestBody ChangeEmailDTO changeEmailDTO) {
+    public void changeEmail(@ApiIgnore Principal principal, @RequestBody ChangeEmailDTO changeEmailDTO) {
         userAuthService.changeEmail(principal.getName(), changeEmailDTO);
     }
 
+    @ApiOperation(value = "Logs out of the current user, old tokens become invalid")
+    @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public void logout(Principal principal) {
+    public void logout(@ApiIgnore Principal principal) {
         userAuthService.logout(principal.getName());
     }
 
+    @ApiOperation(value = "Deletes current user account")
+    @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
     @RequestMapping(value = "/deleteUser", method = RequestMethod.POST)
-    public void deleteUser(Principal principal, @RequestBody DeleteUserDTO deleteUserDTO) {
+    public void deleteUser(@ApiIgnore Principal principal, @RequestBody DeleteUserDTO deleteUserDTO) {
         userAuthService.deleteUser(principal.getName(), deleteUserDTO);
     }
 
