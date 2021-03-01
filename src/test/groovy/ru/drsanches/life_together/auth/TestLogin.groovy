@@ -28,7 +28,7 @@ class TestLogin extends Specification {
         assert response.status == 200
 
         and: "token is correct"
-        def token = response.getData()["access_token"]
+        def token = response.getData()["accessToken"]
         assert RequestUtils.getAuthInfo(token as String) != null
     }
 

@@ -7,8 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +19,7 @@ import ru.drsanches.life_together.data.auth.dto.ChangeUsernameDTO;
 import ru.drsanches.life_together.data.auth.dto.DeleteUserDTO;
 import ru.drsanches.life_together.data.auth.dto.LoginDTO;
 import ru.drsanches.life_together.data.auth.dto.RegistrationDTO;
+import ru.drsanches.life_together.data.auth.dto.TokenDTO;
 import ru.drsanches.life_together.data.auth.dto.UserAuthInfoDTO;
 import ru.drsanches.life_together.exception.ApplicationException;
 import ru.drsanches.life_together.exception.ServerError;
@@ -47,7 +46,7 @@ public class UserAuthController {
 
     @ApiOperation(value = "Returns authorization tokens")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResponseEntity<OAuth2AccessToken> login(@RequestBody LoginDTO loginDTO) {
+    public TokenDTO login(@RequestBody LoginDTO loginDTO) {
         return userAuthService.login(loginDTO);
     }
 
@@ -78,6 +77,8 @@ public class UserAuthController {
     public void changeEmail(@ApiIgnore Principal principal, @RequestBody ChangeEmailDTO changeEmailDTO) {
         userAuthService.changeEmail(principal.getName(), changeEmailDTO);
     }
+
+    //TODO: Add refresh token endpoint
 
     @ApiOperation(value = "Logs out of the current user, old tokens become invalid")
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)

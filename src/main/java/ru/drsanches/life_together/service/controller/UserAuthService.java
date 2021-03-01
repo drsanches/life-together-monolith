@@ -3,7 +3,6 @@ package ru.drsanches.life_together.service.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,6 +17,7 @@ import ru.drsanches.life_together.data.auth.dto.ChangeUsernameDTO;
 import ru.drsanches.life_together.data.auth.dto.DeleteUserDTO;
 import ru.drsanches.life_together.data.auth.dto.LoginDTO;
 import ru.drsanches.life_together.data.auth.dto.RegistrationDTO;
+import ru.drsanches.life_together.data.auth.dto.TokenDTO;
 import ru.drsanches.life_together.data.auth.dto.UserAuthInfoDTO;
 import ru.drsanches.life_together.data.auth.user.Role;
 import ru.drsanches.life_together.data.auth.user.UserAuth;
@@ -63,7 +63,7 @@ public class UserAuthService {
         LOG.info("New user has been created: {}", userAuth.toString());
     }
 
-    public ResponseEntity<OAuth2AccessToken> login(LoginDTO loginDTO) {
+    public TokenDTO login(LoginDTO loginDTO) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("username", loginDTO.getUsername());
         parameters.put("password", loginDTO.getPassword());
@@ -71,10 +71,20 @@ public class UserAuthService {
         parameters.put("scope", "ui");
 
         try {
-            return tokenEndpoint.postAccessToken(new CustomPrincipal("browser", true), parameters);
+            OAuth2AccessToken oAuth2AccessToken = tokenEndpoint
+                    .postAccessToken(new CustomPrincipal("browser", true), parameters)
+                    .getBody();
+            if (oAuth2AccessToken == null) {
+                throw new ServerError("Empty OAuth2AccessToken");
+            }
+            TokenDTO tokenDTO = new TokenDTO();
+            tokenDTO.setAccessToken(oAuth2AccessToken.getValue());
+            tokenDTO.setRefreshToken(oAuth2AccessToken.getRefreshToken().getValue());
+            tokenDTO.setTokenType(OAuth2AccessToken.BEARER_TYPE);
+            tokenDTO.setExpiresIn(oAuth2AccessToken.getExpiresIn());
+            return tokenDTO;
         } catch (HttpRequestMethodNotSupportedException e) {
-            e.printStackTrace();
-            return null;
+            throw new ServerError(e);
         }
     }
 

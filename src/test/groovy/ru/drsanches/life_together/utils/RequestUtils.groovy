@@ -141,7 +141,7 @@ class RequestUtils {
                     body: ["username": username,
                             "password": password],
                     requestContentType : ContentType.JSON)
-            return response.status == 200 ? response.getData()["access_token"] : null
+            return response.status == 200 ? response.getData()["accessToken"] : null
         } catch (Exception e) {
             e.printStackTrace()
             return null
