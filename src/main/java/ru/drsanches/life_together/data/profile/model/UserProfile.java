@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.data.profile.user;
+package ru.drsanches.life_together.data.profile.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

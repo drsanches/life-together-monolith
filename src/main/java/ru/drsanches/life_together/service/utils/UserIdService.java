@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Service;
-import ru.drsanches.life_together.data.auth.user.UserAuth;
+import ru.drsanches.life_together.data.auth.model.UserAuth;
 import ru.drsanches.life_together.repository.UserAuthRepository;
 import java.util.Optional;
 

@@ -7,7 +7,7 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Service;
 import ru.drsanches.life_together.data.profile.dto.ChangeUserProfileDTO;
 import ru.drsanches.life_together.data.profile.dto.UserInfoDTO;
-import ru.drsanches.life_together.data.profile.user.UserProfile;
+import ru.drsanches.life_together.data.profile.model.UserProfile;
 import ru.drsanches.life_together.exception.NoUserException;
 import ru.drsanches.life_together.repository.UserProfileRepository;
 import ru.drsanches.life_together.exception.ServerError;

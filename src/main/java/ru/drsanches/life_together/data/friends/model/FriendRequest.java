@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.data.friends;
+package ru.drsanches.life_together.data.friends.model;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;

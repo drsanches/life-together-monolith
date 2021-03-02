@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.data.friends;
+package ru.drsanches.life_together.data.friends.model;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -7,10 +7,10 @@ import java.io.Serializable;
 @Embeddable
 public class FriendRequestKey implements Serializable {
 
-    @Column(name = "fromUserId")
+    @Column(name = "fromUserId", nullable = false)
     private String fromUserId;
 
-    @Column(name = "toUserId")
+    @Column(name = "toUserId", nullable = false)
     private String toUserId;
 
     public FriendRequestKey() {}

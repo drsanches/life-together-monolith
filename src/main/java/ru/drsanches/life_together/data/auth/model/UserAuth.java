@@ -1,8 +1,9 @@
-package ru.drsanches.life_together.data.auth.user;
+package ru.drsanches.life_together.data.auth.model;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import ru.drsanches.life_together.data.auth.enumeration.Role;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -18,19 +19,19 @@ public class UserAuth implements UserDetails {
     @Column
     private String id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String username;
 
-    @Column
+    @Column(nullable = false)
     private String password;
 
     @Column
     private String email;
 
-    @Column
+    @Column(nullable = false)
     private boolean enabled;
 
-    @Column
+    @Column(nullable = false)
     private Role role;
 
     public UserAuth() {}

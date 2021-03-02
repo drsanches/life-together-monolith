@@ -1,8 +1,8 @@
 package ru.drsanches.life_together.repository;
 
 import org.springframework.data.repository.CrudRepository;
-import ru.drsanches.life_together.data.friends.FriendRequest;
-import ru.drsanches.life_together.data.friends.FriendRequestKey;
+import ru.drsanches.life_together.data.friends.model.FriendRequest;
+import ru.drsanches.life_together.data.friends.model.FriendRequestKey;
 import java.util.Set;
 
 public interface FriendRequestRepository extends CrudRepository<FriendRequest, FriendRequestKey> {
