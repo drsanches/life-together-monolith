@@ -37,59 +37,59 @@ public class UserAuthController {
     @Autowired
     private UserAuthService userAuthService;
 
-    @ApiOperation(value = "Registers new user account and returns user information")
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
+    @ApiOperation(value = "Registers new user account and returns user information")
     @ResponseStatus(HttpStatus.CREATED)
     public UserAuthInfoDTO registration(@RequestBody RegistrationDTO registrationDTO) {
         return userAuthService.registration(registrationDTO);
     }
 
-    @ApiOperation(value = "Returns authorization tokens")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @ApiOperation(value = "Returns authorization tokens")
     public TokenDTO login(@RequestBody LoginDTO loginDTO) {
         return userAuthService.login(loginDTO);
     }
 
+    @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ApiOperation(value = "Returns current user private information")
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
-    @RequestMapping(value = "/info", method = RequestMethod.GET)
     public UserAuthInfoDTO info(@ApiIgnore Principal principal) {
         return userAuthService.info(principal.getName());
     }
 
+    @RequestMapping(value = "/changeUsername", method = RequestMethod.PUT)
     @ApiOperation(value = "Changes username")
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
-    @RequestMapping(value = "/changeUsername", method = RequestMethod.PUT)
     public void changeUsername(@ApiIgnore Principal principal, @RequestBody ChangeUsernameDTO changeUsernameDTO) {
         userAuthService.changeUsername(principal.getName(), changeUsernameDTO);
     }
 
+    @RequestMapping(value = "/changePassword", method = RequestMethod.PUT)
     @ApiOperation(value = "Changes password")
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
-    @RequestMapping(value = "/changePassword", method = RequestMethod.PUT)
     public void changePassword(@ApiIgnore Principal principal, @RequestBody ChangePasswordDTO changePasswordDTO) {
         userAuthService.changePassword(principal.getName(), changePasswordDTO);
     }
 
+    @RequestMapping(value = "/changeEmail", method = RequestMethod.PUT)
     @ApiOperation(value = "Changes email")
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
-    @RequestMapping(value = "/changeEmail", method = RequestMethod.PUT)
     public void changeEmail(@ApiIgnore Principal principal, @RequestBody ChangeEmailDTO changeEmailDTO) {
         userAuthService.changeEmail(principal.getName(), changeEmailDTO);
     }
 
     //TODO: Add refresh token endpoint
 
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
     @ApiOperation(value = "Logs out of the current user, old tokens become invalid")
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public void logout(@ApiIgnore Principal principal) {
         userAuthService.logout(principal.getName());
     }
 
+    @RequestMapping(value = "/deleteUser", method = RequestMethod.POST)
     @ApiOperation(value = "Deletes current user account")
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
-    @RequestMapping(value = "/deleteUser", method = RequestMethod.POST)
     public void deleteUser(@ApiIgnore Principal principal, @RequestBody DeleteUserDTO deleteUserDTO) {
         userAuthService.deleteUser(principal.getName(), deleteUserDTO);
     }

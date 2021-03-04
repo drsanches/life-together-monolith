@@ -35,11 +35,11 @@ class TestDeleteUser extends Specification {
         def token = RequestUtils.getToken(username, password)
 
         when: "request is sent"
-        HttpResponseDecorator response = RequestUtils.getRestClient().post(
+        def response = RequestUtils.getRestClient().post(
                 path: PATH,
                 headers: ["Authorization": "Bearer $token"],
                 body:  [password: password],
-                requestContentType : ContentType.JSON)
+                requestContentType : ContentType.JSON) as HttpResponseDecorator
 
         then: "response is correct"
         assert response.status == 200

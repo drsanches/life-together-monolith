@@ -19,12 +19,12 @@ class TestRegistration extends Specification {
         def email = DataGenerator.createValidEmail()
 
         when: "request is sent"
-        HttpResponseDecorator response = RequestUtils.getRestClient().post(
+        def response = RequestUtils.getRestClient().post(
                 path: PATH,
                 body:  [username: username,
                         password: password,
                         email: email],
-                requestContentType : ContentType.JSON)
+                requestContentType : ContentType.JSON) as HttpResponseDecorator
 
         then: "response is correct"
         assert response.status == 201

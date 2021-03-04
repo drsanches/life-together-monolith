@@ -18,9 +18,9 @@ class TestLogout extends Specification {
         def token = RequestUtils.getToken(username, password)
 
         when: "request is sent"
-        HttpResponseDecorator response = RequestUtils.getRestClient().get(
+        def response = RequestUtils.getRestClient().get(
                 path: PATH,
-                headers: ["Authorization": "Bearer $token"])
+                headers: ["Authorization": "Bearer $token"]) as HttpResponseDecorator
 
         then: "response is correct"
         assert response.status == 200

@@ -31,9 +31,9 @@ class TestGetIncomingRequests extends Specification {
         RequestUtils.changeUserProfile(token2, firstName2, lastName2)
 
         when: "request is sent"
-        HttpResponseDecorator response = RequestUtils.getRestClient().get(
+        def response = RequestUtils.getRestClient().get(
                 path: PATH,
-                headers: ["Authorization": "Bearer $token1"])
+                headers: ["Authorization": "Bearer $token1"]) as HttpResponseDecorator
 
         then: "response is correct"
         assert response.status == 200
@@ -65,9 +65,9 @@ class TestGetIncomingRequests extends Specification {
         def token1 = RequestUtils.getToken(username1, password1)
 
         when: "request is sent"
-        HttpResponseDecorator response = RequestUtils.getRestClient().get(
+        def response = RequestUtils.getRestClient().get(
                 path: PATH,
-                headers: ["Authorization": "Bearer $token1"])
+                headers: ["Authorization": "Bearer $token1"]) as HttpResponseDecorator
 
         then: "response is correct"
         assert response.status == 200

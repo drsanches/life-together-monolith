@@ -4,8 +4,6 @@ import java.util.UUID;
 
 public class ApplicationException extends RuntimeException {
 
-    private Exception cause;
-
     private final String message;
 
     private final String uuid = UUID.randomUUID().toString();
@@ -15,8 +13,8 @@ public class ApplicationException extends RuntimeException {
     }
 
     public ApplicationException(String message, Exception cause) {
+        super(cause);
         this.message = message;
-        this.cause = cause;
     }
 
     @Override

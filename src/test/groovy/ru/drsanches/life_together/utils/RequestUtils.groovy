@@ -27,7 +27,7 @@ class RequestUtils {
                     body: [username: username,
                            password: password,
                            email: email],
-                    requestContentType: ContentType.JSON)
+                    requestContentType: ContentType.JSON) as HttpResponseDecorator
             return response.status == 201 ? response.getData()["id"] : null
         } catch(Exception e) {
             e.printStackTrace()
@@ -43,8 +43,8 @@ class RequestUtils {
         try {
             HttpResponseDecorator response = getRestClient().get(
                     path: "/auth/info",
-                    headers: ["Authorization": "Bearer $token"])
-            return response.status == 200 ? response.getData() : null
+                    headers: ["Authorization": "Bearer $token"]) as HttpResponseDecorator
+            return response.status == 200 ? response.getData() as JSONObject : null
         } catch(Exception e) {
             e.printStackTrace()
             return null
@@ -55,8 +55,8 @@ class RequestUtils {
         try {
             HttpResponseDecorator response = getRestClient().get(
                     path: "/auth/info",
-                    headers: ["Authorization": "Bearer $token"])
-            return response.status == 200 ? response.getData() : null
+                    headers: ["Authorization": "Bearer $token"]) as HttpResponseDecorator
+            return response.status == 200 ? response.getData() as JSONObject : null
         } catch(Exception e) {
             e.printStackTrace()
             return null
@@ -71,8 +71,8 @@ class RequestUtils {
         try {
             HttpResponseDecorator response = getRestClient().get(
                     path: "/profile",
-                    headers: ["Authorization": "Bearer $token"])
-            return response.status == 200 ? response.getData() : null
+                    headers: ["Authorization": "Bearer $token"]) as HttpResponseDecorator
+            return response.status == 200 ? response.getData() as JSONObject : null
         } catch(Exception e) {
             e.printStackTrace()
             return null
@@ -104,8 +104,8 @@ class RequestUtils {
         try {
             HttpResponseDecorator response = getRestClient().get(
                     path: "/friends/requests/incoming",
-                    headers: ["Authorization": "Bearer $token"])
-            return response.status == 200 ? response.getData() : null
+                    headers: ["Authorization": "Bearer $token"]) as HttpResponseDecorator
+            return response.status == 200 ? response.getData() as JSONArray : null
         } catch(Exception e) {
             e.printStackTrace()
             return null
@@ -120,8 +120,8 @@ class RequestUtils {
         try {
             HttpResponseDecorator response = getRestClient().get(
                     path: "/friends/requests/outgoing",
-                    headers: ["Authorization": "Bearer $token"])
-            return response.status == 200 ? response.getData() : null
+                    headers: ["Authorization": "Bearer $token"]) as HttpResponseDecorator
+            return response.status == 200 ? response.getData() as JSONArray : null
         } catch(Exception e) {
             e.printStackTrace()
             return null
@@ -136,8 +136,8 @@ class RequestUtils {
         try {
             HttpResponseDecorator response = getRestClient().get(
                     path: "/friends",
-                    headers: ["Authorization": "Bearer $token"])
-            return response.status == 200 ? response.getData() : null
+                    headers: ["Authorization": "Bearer $token"]) as HttpResponseDecorator
+            return response.status == 200 ? response.getData() as JSONArray : null
         } catch(Exception e) {
             e.printStackTrace()
             return null
@@ -150,7 +150,7 @@ class RequestUtils {
                     path: "/auth/login",
                     body: ["username": username,
                             "password": password],
-                    requestContentType : ContentType.JSON)
+                    requestContentType : ContentType.JSON) as HttpResponseDecorator
             return response.status == 200 ? response.getData()["accessToken"] : null
         } catch (Exception e) {
             e.printStackTrace()

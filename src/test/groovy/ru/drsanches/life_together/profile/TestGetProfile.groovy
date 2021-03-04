@@ -29,10 +29,10 @@ class TestGetProfile extends Specification {
         RequestUtils.changeUserProfile(token2, firstName2, lastName2)
 
         when: "request is sent"
-        HttpResponseDecorator response = RequestUtils.getRestClient().get(
+        def response = RequestUtils.getRestClient().get(
                 path: PATH + userId2,
                 headers: ["Authorization": "Bearer $token1"],
-                requestContentType : ContentType.JSON)
+                requestContentType : ContentType.JSON) as HttpResponseDecorator
 
         then: "response is correct"
         assert response.status == 200

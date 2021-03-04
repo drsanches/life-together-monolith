@@ -4,9 +4,7 @@ import java.util.UUID;
 
 public class ServerError extends RuntimeException {
 
-    private Exception cause;
-
-    private final String message = "An internal error has occurred, try again later or contact support";
+    private final static String message = "An internal error has occurred, try again later or contact support";
 
     private String info;
 
@@ -19,12 +17,12 @@ public class ServerError extends RuntimeException {
     }
 
     public ServerError(Exception cause) {
-        this.cause = cause;
+        super(cause);
     }
 
     public ServerError(String info, Exception cause) {
+        super(cause);
         this.info = info;
-        this.cause = cause;
     }
 
     public String getInfo() {

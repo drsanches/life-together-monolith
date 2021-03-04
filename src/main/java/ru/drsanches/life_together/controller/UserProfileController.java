@@ -32,30 +32,30 @@ public class UserProfileController {
     @Autowired
     private UserProfileService userProfileService;
 
+    @RequestMapping(value = "", method = RequestMethod.GET)
     @ApiOperation(value = "Returns current user profile information")
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
-    @RequestMapping(value = "", method = RequestMethod.GET)
     public UserInfoDTO getCurrentProfile(@ApiIgnore OAuth2Authentication authentication) {
         return userProfileService.getProfile(authentication);
     }
 
-    @ApiOperation(value = "Changes current user profile")
-    @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
     @RequestMapping(value = "", method = RequestMethod.PUT)
+    @ApiOperation(value = "Sets new profile data for current user")
+    @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
     public void changeCurrentProfile(@ApiIgnore OAuth2Authentication authentication, @RequestBody ChangeUserProfileDTO changeUserProfileDTO) {
         userProfileService.changeCurrentProfile(authentication, changeUserProfileDTO);
     }
 
+    @RequestMapping(value = "/search/{username}", method = RequestMethod.GET)
     @ApiOperation(value = "Returns another user profile information by username")
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
-    @RequestMapping(value = "/search/{username}", method = RequestMethod.GET)
     public UserInfoDTO searchProfile(@PathVariable String username) {
         return userProfileService.searchProfile(username);
     }
 
+    @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
     @ApiOperation(value = "Returns another user profile information by id")
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
-    @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
     public UserInfoDTO getProfile(@PathVariable String userId) {
         return userProfileService.getProfile(userId);
     }

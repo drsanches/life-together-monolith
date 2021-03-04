@@ -32,9 +32,9 @@ class TestSendFriendRequest extends Specification {
         RequestUtils.changeUserProfile(token2, firstName2, lastName2)
 
         when: "request is sent"
-        HttpResponseDecorator response = RequestUtils.getRestClient().post(
+        def response = RequestUtils.getRestClient().post(
                 path: PATH + userId2,
-                headers: ["Authorization": "Bearer $token1"])
+                headers: ["Authorization": "Bearer $token1"]) as HttpResponseDecorator
 
         then: "response is correct"
         assert response.status == 201
@@ -83,9 +83,9 @@ class TestSendFriendRequest extends Specification {
         RequestUtils.changeUserProfile(token2, firstName2, lastName2)
 
         when: "request is sent"
-        HttpResponseDecorator response = RequestUtils.getRestClient().post(
+        def response = RequestUtils.getRestClient().post(
                 path: PATH + userId2,
-                headers: ["Authorization": "Bearer $token1"])
+                headers: ["Authorization": "Bearer $token1"]) as HttpResponseDecorator
 
         then: "response is correct"
         assert response.status == 201
@@ -134,9 +134,9 @@ class TestSendFriendRequest extends Specification {
         RequestUtils.changeUserProfile(token2, firstName2, lastName2)
 
         when: "request is sent"
-        HttpResponseDecorator response = RequestUtils.getRestClient().post(
+        def response = RequestUtils.getRestClient().post(
                 path: PATH + userId2,
-                headers: ["Authorization": "Bearer $token1"])
+                headers: ["Authorization": "Bearer $token1"]) as HttpResponseDecorator
 
         then: "response is correct"
         assert response.status == 201

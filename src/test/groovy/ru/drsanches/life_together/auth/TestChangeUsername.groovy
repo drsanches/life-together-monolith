@@ -20,12 +20,12 @@ class TestChangeUsername extends Specification {
         def newUsername = DataGenerator.createValidUsername()
 
         when: "request is sent"
-        HttpResponseDecorator response = RequestUtils.getRestClient().put(
+        def response = RequestUtils.getRestClient().put(
                 path: PATH,
                 headers: ["Authorization": "Bearer $token"],
                 body:  [newUsername: newUsername,
                         password: password],
-                requestContentType : ContentType.JSON)
+                requestContentType : ContentType.JSON) as HttpResponseDecorator
 
         then: "response is correct"
         assert response.status == 200

@@ -10,7 +10,7 @@ public class RegistrationDTO {
     @ApiModelProperty(notes = "password hash", required = true)
     private String password;
 
-    @ApiModelProperty(required = false)
+    @ApiModelProperty
     private String email;
 
     public String getUsername() {

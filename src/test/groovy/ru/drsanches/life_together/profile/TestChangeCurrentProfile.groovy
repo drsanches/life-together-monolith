@@ -22,12 +22,12 @@ class TestChangeCurrentProfile extends Specification {
         def lastName = DataGenerator.createValidLastName()
 
         when: "request is sent"
-        HttpResponseDecorator response = RequestUtils.getRestClient().put(
+        def response = RequestUtils.getRestClient().put(
                 path: PATH,
                 headers: ["Authorization": "Bearer $token"],
                 body:  [firstName: firstName,
                         lastName: lastName],
-                requestContentType : ContentType.JSON)
+                requestContentType : ContentType.JSON) as HttpResponseDecorator
 
         then: "response is correct"
         assert response.status == 200

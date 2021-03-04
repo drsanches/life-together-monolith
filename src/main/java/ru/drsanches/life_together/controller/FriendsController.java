@@ -31,38 +31,38 @@ public class FriendsController {
     @Autowired
     private FriendsService friendsService;
 
+    @RequestMapping(path = "", method = RequestMethod.GET)
     @ApiOperation(value = "Returns a list of friends information")
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
-    @RequestMapping(path = "", method = RequestMethod.GET)
     public Set<UserInfoDTO> getFriends(@ApiIgnore OAuth2Authentication authentication) {
         return friendsService.getFriends(authentication);
     }
 
+    @RequestMapping(path = "/requests/incoming", method = RequestMethod.GET)
     @ApiOperation(value = "Returns a list of information about users from whom a friend request was received")
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
-    @RequestMapping(path = "/requests/incoming", method = RequestMethod.GET)
     public Set<UserInfoDTO> getIncomingRequests(@ApiIgnore OAuth2Authentication authentication) {
         return friendsService.getIncomingRequests(authentication);
     }
 
+    @RequestMapping(path = "/requests/outgoing", method = RequestMethod.GET)
     @ApiOperation(value = "Returns a list of information about users to whom a friend request was sent")
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
-    @RequestMapping(path = "/requests/outgoing", method = RequestMethod.GET)
     public Set<UserInfoDTO> getOutgoingRequests(@ApiIgnore OAuth2Authentication authentication) {
         return friendsService.getOutgoingRequests(authentication);
     }
 
+    @RequestMapping(path = "/manage/{userId}", method = RequestMethod.POST)
     @ApiOperation(value = "Sends a friend request or confirms of another user's request")
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
-    @RequestMapping(path = "/manage/{userId}", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public void sendRequest(@ApiIgnore OAuth2Authentication authentication, @PathVariable String userId) {
         friendsService.sendRequest(authentication, userId);
     }
 
+    @RequestMapping(path = "/manage/{userId}", method = RequestMethod.DELETE)
     @ApiOperation(value = "Cancels the friend request of the current or another user or removes user from friends")
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
-    @RequestMapping(path = "/manage/{userId}", method = RequestMethod.DELETE)
     public void removeRequest(@ApiIgnore OAuth2Authentication authentication, @PathVariable String userId) {
         friendsService.removeRequest(authentication, userId);
     }

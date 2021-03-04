@@ -20,10 +20,10 @@ class TestInfo extends Specification {
         def token = RequestUtils.getToken(username, password)
 
         when: "request is sent"
-        HttpResponseDecorator response = RequestUtils.getRestClient().get(
+        def response = RequestUtils.getRestClient().get(
                 path: PATH,
                 headers: ["Authorization": "Bearer $token"],
-                requestContentType : ContentType.JSON)
+                requestContentType : ContentType.JSON) as HttpResponseDecorator
 
         then: "response is correct"
         assert response.status == 200

@@ -20,12 +20,12 @@ class TestChangePassword extends Specification {
         def newPassword = DataGenerator.createValidPassword()
 
         when: "request is sent"
-        HttpResponseDecorator response = RequestUtils.getRestClient().put(
+        def response = RequestUtils.getRestClient().put(
                 path: PATH,
                 headers: ["Authorization": "Bearer $token"],
                 body:  [oldPassword: password,
                         newPassword: newPassword],
-                requestContentType : ContentType.JSON)
+                requestContentType : ContentType.JSON) as HttpResponseDecorator
 
         then: "response is correct"
         assert response.status == 200

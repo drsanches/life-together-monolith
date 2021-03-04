@@ -26,9 +26,9 @@ class TestRemoveFriendRequest extends Specification {
         def token1 = RequestUtils.getToken(username1, password1)
 
         when: "request is sent"
-        HttpResponseDecorator response = RequestUtils.getRestClient().delete(
+        def response = RequestUtils.getRestClient().delete(
                 path: PATH + userId2,
-                headers: ["Authorization": "Bearer $token1"])
+                headers: ["Authorization": "Bearer $token1"]) as HttpResponseDecorator
 
         then: "response is correct"
         assert response.status == 200
@@ -59,9 +59,9 @@ class TestRemoveFriendRequest extends Specification {
         def token1 = RequestUtils.getToken(username1, password1)
 
         when: "request is sent"
-        HttpResponseDecorator response = RequestUtils.getRestClient().delete(
+        def response = RequestUtils.getRestClient().delete(
                 path: PATH + userId2,
-                headers: ["Authorization": "Bearer $token1"])
+                headers: ["Authorization": "Bearer $token1"]) as HttpResponseDecorator
 
         then: "response is correct"
         assert response.status == 200
@@ -93,9 +93,9 @@ class TestRemoveFriendRequest extends Specification {
         def token1 = RequestUtils.getToken(username1, password1)
 
         when: "request is sent"
-        HttpResponseDecorator response = RequestUtils.getRestClient().delete(
+        def response = RequestUtils.getRestClient().delete(
                 path: PATH + userId2,
-                headers: ["Authorization": "Bearer $token1"])
+                headers: ["Authorization": "Bearer $token1"]) as HttpResponseDecorator
 
         then: "response is correct"
         assert response.status == 200
@@ -124,9 +124,9 @@ class TestRemoveFriendRequest extends Specification {
         def token1 = RequestUtils.getToken(username1, password1)
 
         when: "request is sent"
-        HttpResponseDecorator response = RequestUtils.getRestClient().delete(
+        def response = RequestUtils.getRestClient().delete(
                 path: PATH + userId2,
-                headers: ["Authorization": "Bearer $token1"])
+                headers: ["Authorization": "Bearer $token1"]) as HttpResponseDecorator
 
         then: "response is correct"
         assert response.status == 200
