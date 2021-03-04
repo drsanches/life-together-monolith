@@ -3,7 +3,6 @@ package ru.drsanches.life_together.friends
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.HttpResponseException
 import net.sf.json.JSONArray
-import net.sf.json.JSONNull
 import ru.drsanches.life_together.utils.DataGenerator
 import ru.drsanches.life_together.utils.RequestUtils
 import spock.lang.Specification
@@ -18,14 +17,18 @@ class TestGetFriends extends Specification {
         def password1 = DataGenerator.createValidPassword()
         def username2 = DataGenerator.createValidUsername()
         def password2 = DataGenerator.createValidPassword()
-        def firstName2 = DataGenerator.createValidFirstName()
-        def lastName2 = DataGenerator.createValidLastName()
-        RequestUtils.registerUser(username1, password1, null)
-        RequestUtils.registerUser(username2, password2, null)
-        RequestUtils.sendFriendRequest(username1, password1, username2)
-        RequestUtils.sendFriendRequest(username2, password2, username1)
+
+        def userId1 = RequestUtils.registerUser(username1, password1, null)
+        def userId2 = RequestUtils.registerUser(username2, password2, null)
+
+        RequestUtils.sendFriendRequest(username1, password1, userId2)
+        RequestUtils.sendFriendRequest(username2, password2, userId1)
+
         def token1 = RequestUtils.getToken(username1, password1)
         def token2 = RequestUtils.getToken(username2, password2)
+
+        def firstName2 = DataGenerator.createValidFirstName()
+        def lastName2 = DataGenerator.createValidLastName()
         RequestUtils.changeUserProfile(token2, firstName2, lastName2)
 
         when: "request is sent"
@@ -35,10 +38,9 @@ class TestGetFriends extends Specification {
 
         then: "response is correct"
         assert response.status == 200
-        JSONArray body = ((JSONArray) response.getData())
+        def body = response.getData() as JSONArray
         assert body.size() == 1
-        assert body.get(0)["id"] != null
-        assert body.get(0)["id"] != JSONNull.getInstance()
+        assert body.get(0)["id"] == userId2
         assert body.get(0)["username"] == username2
         assert body.get(0)["firstName"] == firstName2
         assert body.get(0)["lastName"] == lastName2
@@ -52,11 +54,14 @@ class TestGetFriends extends Specification {
         def password2 = DataGenerator.createValidPassword()
         def username3 = DataGenerator.createValidUsername()
         def password3 = DataGenerator.createValidPassword()
-        RequestUtils.registerUser(username1, password1, null)
-        RequestUtils.registerUser(username2, password2, null)
+
+        def userId1 = RequestUtils.registerUser(username1, password1, null)
+        def userId2 = RequestUtils.registerUser(username2, password2, null)
         RequestUtils.registerUser(username3, password3, null)
-        RequestUtils.sendFriendRequest(username1, password1, username2)
-        RequestUtils.sendFriendRequest(username3, password3, username1)
+
+        RequestUtils.sendFriendRequest(username1, password1, userId2)
+        RequestUtils.sendFriendRequest(username3, password3, userId1)
+
         def token1 = RequestUtils.getToken(username1, password1)
 
         when: "request is sent"
@@ -66,8 +71,7 @@ class TestGetFriends extends Specification {
 
         then: "response is correct"
         assert response.status == 200
-        JSONArray body = ((JSONArray) response.getData())
-        assert body.size() == 0
+        assert response.getData() == new JSONArray()
     }
 
     def "get friends with invalid token"() {

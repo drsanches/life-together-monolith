@@ -3,7 +3,6 @@ package ru.drsanches.life_together.profile
 import groovyx.net.http.ContentType
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.HttpResponseException
-import net.sf.json.JSONNull
 import net.sf.json.JSONObject
 import ru.drsanches.life_together.utils.DataGenerator
 import ru.drsanches.life_together.utils.RequestUtils
@@ -17,7 +16,7 @@ class TestChangeCurrentProfile extends Specification {
         given: "user, token and new profile data"
         def username = DataGenerator.createValidUsername()
         def password = DataGenerator.createValidPassword()
-        RequestUtils.registerUser(username, password, null)
+        def userId = RequestUtils.registerUser(username, password, null)
         def token = RequestUtils.getToken(username, password)
         def firstName = DataGenerator.createValidFirstName()
         def lastName = DataGenerator.createValidLastName()
@@ -35,8 +34,7 @@ class TestChangeCurrentProfile extends Specification {
 
         and: "user profile was updated"
         JSONObject userProfile = RequestUtils.getUserProfile(username, password)
-        userProfile['id'] != null
-        userProfile['id'] != JSONNull.getInstance()
+        userProfile['id'] == userId
         userProfile['username'] == username
         userProfile['firstName'] == firstName
         userProfile['lastName'] == lastName

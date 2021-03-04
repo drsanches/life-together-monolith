@@ -3,7 +3,6 @@ package ru.drsanches.life_together.friends
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.HttpResponseException
 import net.sf.json.JSONArray
-import net.sf.json.JSONNull
 import ru.drsanches.life_together.utils.DataGenerator
 import ru.drsanches.life_together.utils.RequestUtils
 import spock.lang.Specification
@@ -22,16 +21,19 @@ class TestSendFriendRequest extends Specification {
         def password2 = DataGenerator.createValidPassword()
         def firstName2 = DataGenerator.createValidFirstName()
         def lastName2 = DataGenerator.createValidLastName()
-        RequestUtils.registerUser(username1, password1, null)
-        RequestUtils.registerUser(username2, password2, null)
+
+        def userId1 = RequestUtils.registerUser(username1, password1, null)
+        def userId2 = RequestUtils.registerUser(username2, password2, null)
+
         def token1 = RequestUtils.getToken(username1, password1)
         def token2 = RequestUtils.getToken(username2, password2)
+
         RequestUtils.changeUserProfile(token1, firstName1, lastName1)
         RequestUtils.changeUserProfile(token2, firstName2, lastName2)
 
         when: "request is sent"
         HttpResponseDecorator response = RequestUtils.getRestClient().post(
-                path: PATH + username2,
+                path: PATH + userId2,
                 headers: ["Authorization": "Bearer $token1"])
 
         then: "response is correct"
@@ -40,10 +42,9 @@ class TestSendFriendRequest extends Specification {
         and: "the first user has correct relationships"
         assert RequestUtils.getIncomingRequests(username1, password1) == new JSONArray()
         assert RequestUtils.getFriends(username1, password1) == new JSONArray()
-        JSONArray outgoingRequests = RequestUtils.getOutgoingRequests(username1, password1)
+        def outgoingRequests = RequestUtils.getOutgoingRequests(username1, password1)
         assert outgoingRequests.size() == 1
-        assert outgoingRequests.get(0)["id"] != null
-        assert outgoingRequests.get(0)["id"] != JSONNull.getInstance()
+        assert outgoingRequests.get(0)["id"] == userId2
         assert outgoingRequests.get(0)["username"] == username2
         assert outgoingRequests.get(0)["firstName"] == firstName2
         assert outgoingRequests.get(0)["lastName"] == lastName2
@@ -51,10 +52,9 @@ class TestSendFriendRequest extends Specification {
         and: "the second user has correct relationships"
         assert RequestUtils.getOutgoingRequests(username2, password2) == new JSONArray()
         assert RequestUtils.getFriends(username2, password2) == new JSONArray()
-        JSONArray incomingRequests = RequestUtils.getIncomingRequests(username2, password2)
+        def incomingRequests = RequestUtils.getIncomingRequests(username2, password2)
         assert incomingRequests.size() == 1
-        assert incomingRequests.get(0)["id"] != null
-        assert incomingRequests.get(0)["id"] != JSONNull.getInstance()
+        assert incomingRequests.get(0)["id"] == userId1
         assert incomingRequests.get(0)["username"] == username1
         assert incomingRequests.get(0)["firstName"] == firstName1
         assert incomingRequests.get(0)["lastName"] == lastName1
@@ -70,17 +70,21 @@ class TestSendFriendRequest extends Specification {
         def password2 = DataGenerator.createValidPassword()
         def firstName2 = DataGenerator.createValidFirstName()
         def lastName2 = DataGenerator.createValidLastName()
-        RequestUtils.registerUser(username1, password1, null)
-        RequestUtils.registerUser(username2, password2, null)
-        RequestUtils.sendFriendRequest(username2, password2, username1)
+
+        def userId1 = RequestUtils.registerUser(username1, password1, null)
+        def userId2 = RequestUtils.registerUser(username2, password2, null)
+
+        RequestUtils.sendFriendRequest(username2, password2, userId1)
+
         def token1 = RequestUtils.getToken(username1, password1)
         def token2 = RequestUtils.getToken(username2, password2)
+
         RequestUtils.changeUserProfile(token1, firstName1, lastName1)
         RequestUtils.changeUserProfile(token2, firstName2, lastName2)
 
         when: "request is sent"
         HttpResponseDecorator response = RequestUtils.getRestClient().post(
-                path: PATH + username2,
+                path: PATH + userId2,
                 headers: ["Authorization": "Bearer $token1"])
 
         then: "response is correct"
@@ -89,10 +93,9 @@ class TestSendFriendRequest extends Specification {
         and: "the first user has correct relationships"
         assert RequestUtils.getIncomingRequests(username1, password1) == new JSONArray()
         assert RequestUtils.getOutgoingRequests(username1, password1) == new JSONArray()
-        JSONArray friends1 = RequestUtils.getFriends(username1, password1)
+        def friends1 = RequestUtils.getFriends(username1, password1)
         assert friends1.size() == 1
-        assert friends1.get(0)["id"] != null
-        assert friends1.get(0)["id"] != JSONNull.getInstance()
+        assert friends1.get(0)["id"] == userId2
         assert friends1.get(0)["username"] == username2
         assert friends1.get(0)["firstName"] == firstName2
         assert friends1.get(0)["lastName"] == lastName2
@@ -100,10 +103,9 @@ class TestSendFriendRequest extends Specification {
         and: "the second user has correct relationships"
         assert RequestUtils.getIncomingRequests(username2, password2) == new JSONArray()
         assert RequestUtils.getOutgoingRequests(username2, password2) == new JSONArray()
-        JSONArray friends2 = RequestUtils.getFriends(username2, password2)
+        def friends2 = RequestUtils.getFriends(username2, password2)
         assert friends2.size() == 1
-        assert friends2.get(0)["id"] != null
-        assert friends2.get(0)["id"] != JSONNull.getInstance()
+        assert friends2.get(0)["id"] == userId1
         assert friends2.get(0)["username"] == username1
         assert friends2.get(0)["firstName"] == firstName1
         assert friends2.get(0)["lastName"] == lastName1
@@ -119,17 +121,21 @@ class TestSendFriendRequest extends Specification {
         def password2 = DataGenerator.createValidPassword()
         def firstName2 = DataGenerator.createValidFirstName()
         def lastName2 = DataGenerator.createValidLastName()
-        RequestUtils.registerUser(username1, password1, null)
-        RequestUtils.registerUser(username2, password2, null)
-        RequestUtils.sendFriendRequest(username1, password1, username2)
+
+        def userId1 = RequestUtils.registerUser(username1, password1, null)
+        def userId2 = RequestUtils.registerUser(username2, password2, null)
+
+        RequestUtils.sendFriendRequest(username1, password1, userId2)
+
         def token1 = RequestUtils.getToken(username1, password1)
         def token2 = RequestUtils.getToken(username2, password2)
+
         RequestUtils.changeUserProfile(token1, firstName1, lastName1)
         RequestUtils.changeUserProfile(token2, firstName2, lastName2)
 
         when: "request is sent"
         HttpResponseDecorator response = RequestUtils.getRestClient().post(
-                path: PATH + username2,
+                path: PATH + userId2,
                 headers: ["Authorization": "Bearer $token1"])
 
         then: "response is correct"
@@ -138,10 +144,9 @@ class TestSendFriendRequest extends Specification {
         and: "the first user relationship has not changed"
         assert RequestUtils.getIncomingRequests(username1, password1) == new JSONArray()
         assert RequestUtils.getFriends(username1, password1) == new JSONArray()
-        JSONArray outgoingRequests = RequestUtils.getOutgoingRequests(username1, password1)
+        def outgoingRequests = RequestUtils.getOutgoingRequests(username1, password1)
         assert outgoingRequests.size() == 1
-        assert outgoingRequests.get(0)["id"] != null
-        assert outgoingRequests.get(0)["id"] != JSONNull.getInstance()
+        assert outgoingRequests.get(0)["id"] == userId2
         assert outgoingRequests.get(0)["username"] == username2
         assert outgoingRequests.get(0)["firstName"] == firstName2
         assert outgoingRequests.get(0)["lastName"] == lastName2
@@ -149,10 +154,9 @@ class TestSendFriendRequest extends Specification {
         and: "the second user relationship has not changed"
         assert RequestUtils.getOutgoingRequests(username2, password2) == new JSONArray()
         assert RequestUtils.getFriends(username2, password2) == new JSONArray()
-        JSONArray incomingRequests = RequestUtils.getIncomingRequests(username2, password2)
+        def incomingRequests = RequestUtils.getIncomingRequests(username2, password2)
         assert incomingRequests.size() == 1
-        assert incomingRequests.get(0)["id"] != null
-        assert incomingRequests.get(0)["id"] != JSONNull.getInstance()
+        assert incomingRequests.get(0)["id"] == userId1
         assert incomingRequests.get(0)["username"] == username1
         assert incomingRequests.get(0)["firstName"] == firstName1
         assert incomingRequests.get(0)["lastName"] == lastName1
@@ -164,11 +168,11 @@ class TestSendFriendRequest extends Specification {
         def password = DataGenerator.createValidPassword()
         RequestUtils.registerUser(username, password, null)
         def token = RequestUtils.getToken(username, password)
-        def nonexistentUsername = DataGenerator.createValidUsername()
+        def nonexistentId = UUID.randomUUID().toString()
 
         when: "request is sent"
         RequestUtils.getRestClient().post(
-                path: PATH + nonexistentUsername,
+                path: PATH + nonexistentId,
                 headers: ["Authorization": "Bearer $token"])
 
         then: "response is correct"
@@ -180,12 +184,12 @@ class TestSendFriendRequest extends Specification {
         given: "user"
         def username = DataGenerator.createValidUsername()
         def password = DataGenerator.createValidPassword()
-        RequestUtils.registerUser(username, password, null)
+        def userId = RequestUtils.registerUser(username, password, null)
         def token = RequestUtils.getToken(username, password)
 
         when: "request is sent"
         RequestUtils.getRestClient().post(
-                path: PATH + username,
+                path: PATH + userId,
                 headers: ["Authorization": "Bearer $token"])
 
         then: "response is correct"
@@ -199,13 +203,15 @@ class TestSendFriendRequest extends Specification {
         def password1 = DataGenerator.createValidPassword()
         def username2 = DataGenerator.createValidUsername()
         def password2 = DataGenerator.createValidPassword()
+
         RequestUtils.registerUser(username1, password1, null)
-        RequestUtils.registerUser(username2, password2, null)
+        def userId2 = RequestUtils.registerUser(username2, password2, null)
+
         def token1 = UUID.randomUUID().toString()
 
         when: "request is sent"
         RequestUtils.getRestClient().post(
-                path: PATH + username2,
+                path: PATH + userId2,
                 headers: ["Authorization": "Bearer $token1"])
 
         then: "response is correct"

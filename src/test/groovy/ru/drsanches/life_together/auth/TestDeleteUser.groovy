@@ -22,15 +22,17 @@ class TestDeleteUser extends Specification {
         def outgoingPassword = DataGenerator.createValidPassword()
         def incomingUsername = DataGenerator.createValidUsername()
         def incomingPassword = DataGenerator.createValidPassword()
-        RequestUtils.registerUser(username, password, null)
-        RequestUtils.registerUser(friendUsername, friendPassword, null)
-        RequestUtils.registerUser(outgoingUsername, outgoingPassword, null)
+
+        def userId = RequestUtils.registerUser(username, password, null)
+        def friendId = RequestUtils.registerUser(friendUsername, friendPassword, null)
+        def outgoingId = RequestUtils.registerUser(outgoingUsername, outgoingPassword, null)
         RequestUtils.registerUser(incomingUsername, incomingPassword, null)
+
+        RequestUtils.sendFriendRequest(username, password, friendId)
+        RequestUtils.sendFriendRequest(friendUsername, friendPassword, userId)
+        RequestUtils.sendFriendRequest(username, password, outgoingId)
+        RequestUtils.sendFriendRequest(incomingUsername, incomingPassword, userId)
         def token = RequestUtils.getToken(username, password)
-        RequestUtils.sendFriendRequest(username, password, friendUsername)
-        RequestUtils.sendFriendRequest(friendUsername, friendPassword, username)
-        RequestUtils.sendFriendRequest(username, password, outgoingUsername)
-        RequestUtils.sendFriendRequest(incomingUsername, incomingPassword, username)
 
         when: "request is sent"
         HttpResponseDecorator response = RequestUtils.getRestClient().post(
@@ -43,11 +45,14 @@ class TestDeleteUser extends Specification {
         assert response.status == 200
 
         and: "user was deleted"
-        assert RequestUtils.getAuthInfo(token) == null
-        assert RequestUtils.getToken(username, password) == null
-        
+        assert RequestUtils.getAuthInfo(username, password) == null
+
         and: "user profile was deleted"
         assert RequestUtils.getUserProfile(username, password) == null
+
+        and: "token is invalid"
+        assert RequestUtils.getAuthInfo(token) == null
+        assert RequestUtils.getToken(username, password) == null
 
         and: "new user with old user credentials has different token"
         RequestUtils.registerUser(username, password, null)
@@ -90,10 +95,10 @@ class TestDeleteUser extends Specification {
         assert e.response.status == 400
 
         and: "user was not deleted"
-        assert RequestUtils.getAuthInfo(username, password) != null
+        assert RequestUtils.getAuthInfo(token) != null
     }
 
-    def "disable user with invalid token"() {
+    def "delete user with invalid token"() {
         given: "registered user, password and invalid token"
         def username = DataGenerator.createValidUsername()
         def password = DataGenerator.createValidPassword()

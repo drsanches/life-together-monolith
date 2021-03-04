@@ -7,11 +7,11 @@ import ru.drsanches.life_together.utils.DataGenerator
 import ru.drsanches.life_together.utils.RequestUtils
 import spock.lang.Specification
 
-class TestGetProfile extends Specification {
+class TestSearchProfile extends Specification {
 
-    String PATH = "/profile/"
+    String PATH = "/profile/search/"
 
-    def "successful user profile getting"() {
+    def "successful user profile searching"() {
         given: "user with token and another user"
         def username1 = DataGenerator.createValidUsername()
         def password1 = DataGenerator.createValidPassword()
@@ -30,7 +30,7 @@ class TestGetProfile extends Specification {
 
         when: "request is sent"
         HttpResponseDecorator response = RequestUtils.getRestClient().get(
-                path: PATH + userId2,
+                path: PATH + username2,
                 headers: ["Authorization": "Bearer $token1"],
                 requestContentType : ContentType.JSON)
 
@@ -42,17 +42,17 @@ class TestGetProfile extends Specification {
         assert response.getData()["lastName"] == lastName2
     }
 
-    def "get nonexistent user profile"() {
+    def "search nonexistent user profile"() {
         given: "user, token and nonexistent id"
         def username = DataGenerator.createValidUsername()
         def password = DataGenerator.createValidPassword()
         RequestUtils.registerUser(username, password, null)
         def token = RequestUtils.getToken(username, password)
-        def nonexistentId = UUID.randomUUID().toString()
+        def nonexistentUsername = DataGenerator.createValidUsername()
 
         when: "request is sent"
         RequestUtils.getRestClient().get(
-                path: PATH + nonexistentId,
+                path: PATH + nonexistentUsername,
                 headers: ["Authorization": "Bearer $token"],
                 requestContentType : ContentType.JSON)
 
@@ -65,12 +65,12 @@ class TestGetProfile extends Specification {
         given: "user and invalid token"
         def username = DataGenerator.createValidUsername()
         def password = DataGenerator.createValidPassword()
-        def userId = RequestUtils.registerUser(username, password, null)
+        RequestUtils.registerUser(username, password, null)
         def token = UUID.randomUUID().toString()
 
         when: "request is sent"
         RequestUtils.getRestClient().get(
-                path: PATH + userId,
+                path: PATH + username,
                 headers: ["Authorization": "Bearer $token"],
                 requestContentType : ContentType.JSON)
 

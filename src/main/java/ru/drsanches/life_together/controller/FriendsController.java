@@ -54,17 +54,17 @@ public class FriendsController {
 
     @ApiOperation(value = "Sends a friend request or confirms of another user's request")
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
-    @RequestMapping(path = "/manage/{username}", method = RequestMethod.POST)
+    @RequestMapping(path = "/manage/{userId}", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void sendRequest(@ApiIgnore OAuth2Authentication authentication, @PathVariable String username) {
-        friendsService.sendRequest(authentication, username);
+    public void sendRequest(@ApiIgnore OAuth2Authentication authentication, @PathVariable String userId) {
+        friendsService.sendRequest(authentication, userId);
     }
 
     @ApiOperation(value = "Cancels the friend request of the current or another user or removes user from friends")
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
-    @RequestMapping(path = "/manage/{username}", method = RequestMethod.DELETE)
-    public void removeRequest(@ApiIgnore OAuth2Authentication authentication, @PathVariable String username) {
-        friendsService.removeRequest(authentication, username);
+    @RequestMapping(path = "/manage/{userId}", method = RequestMethod.DELETE)
+    public void removeRequest(@ApiIgnore OAuth2Authentication authentication, @PathVariable String userId) {
+        friendsService.removeRequest(authentication, userId);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

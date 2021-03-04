@@ -3,7 +3,6 @@ package ru.drsanches.life_together.auth
 import groovyx.net.http.ContentType
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.HttpResponseException
-import net.sf.json.JSONNull
 import ru.drsanches.life_together.utils.DataGenerator
 import ru.drsanches.life_together.utils.RequestUtils
 import spock.lang.Specification
@@ -17,7 +16,7 @@ class TestInfo extends Specification {
         def username = DataGenerator.createValidUsername()
         def password = DataGenerator.createValidPassword()
         def email = DataGenerator.createValidEmail()
-        RequestUtils.registerUser(username, password, email)
+        def userId = RequestUtils.registerUser(username, password, email)
         def token = RequestUtils.getToken(username, password)
 
         when: "request is sent"
@@ -28,8 +27,7 @@ class TestInfo extends Specification {
 
         then: "response is correct"
         assert response.status == 200
-        assert response.getData()["id"] != null
-        assert response.getData()["id"] != JSONNull.getInstance()
+        assert response.getData()["id"] == userId
         assert response.getData()["username"] == username
         assert response.getData()["email"] == email
         assert response.getData()["password"] == null

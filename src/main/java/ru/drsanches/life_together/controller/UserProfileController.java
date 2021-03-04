@@ -46,11 +46,18 @@ public class UserProfileController {
         userProfileService.changeCurrentProfile(authentication, changeUserProfileDTO);
     }
 
-    @ApiOperation(value = "Returns another user profile information")
+    @ApiOperation(value = "Returns another user profile information by username")
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
-    @RequestMapping(value = "/{username}", method = RequestMethod.GET)
-    public UserInfoDTO getProfile(@PathVariable String username) {
-        return userProfileService.getProfile(username);
+    @RequestMapping(value = "/search/{username}", method = RequestMethod.GET)
+    public UserInfoDTO searchProfile(@PathVariable String username) {
+        return userProfileService.searchProfile(username);
+    }
+
+    @ApiOperation(value = "Returns another user profile information by id")
+    @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
+    @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
+    public UserInfoDTO getProfile(@PathVariable String userId) {
+        return userProfileService.getProfile(userId);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

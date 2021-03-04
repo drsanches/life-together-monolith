@@ -4,7 +4,6 @@ import groovyx.net.http.ContentType
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.HttpResponseException
 import net.sf.json.JSONNull
-import net.sf.json.JSONObject
 import ru.drsanches.life_together.utils.DataGenerator
 import ru.drsanches.life_together.utils.RequestUtils
 import spock.lang.Specification
@@ -29,17 +28,17 @@ class TestRegistration extends Specification {
 
         then: "response is correct"
         assert response.status == 201
+        assert response.getData()['id'] != null
+        assert response.getData()['id'] != JSONNull.getInstance()
+        assert response.getData()['username'] == username
+        assert response.getData()['email'] == email
 
         and: "correct user was created"
-        JSONObject authInfo = RequestUtils.getAuthInfo(username, password)
-        assert authInfo['id'] != null
-        assert authInfo['id'] != JSONNull.getInstance()
-        assert authInfo['username'] == username
-        assert authInfo['email'] == email
+        assert response.getData() == RequestUtils.getAuthInfo(username, password)
 
         and: "user profile was created"
-        JSONObject userProfile = RequestUtils.getUserProfile(username, password)
-        assert userProfile['id'] == authInfo['id']
+        def userProfile = RequestUtils.getUserProfile(username, password)
+        assert userProfile['id'] == response.getData()['id']
         assert userProfile['username'] == username
         assert userProfile['firstName'] == JSONNull.getInstance()
         assert userProfile['lastName'] == JSONNull.getInstance()
@@ -48,14 +47,15 @@ class TestRegistration extends Specification {
     def "already existing user registration"() {
         given: "registered user"
         def username = DataGenerator.createValidUsername()
-        def password = DataGenerator.createValidPassword()
-        RequestUtils.registerUser(username, password, null)
+        def password1 = DataGenerator.createValidPassword()
+        def password2 = DataGenerator.createValidPassword()
+        RequestUtils.registerUser(username, password1, null)
 
         when: "request is sent"
         RequestUtils.getRestClient().post(
                 path: PATH,
                 body:  [username: username,
-                        password: password],
+                        password: password2],
                 requestContentType : ContentType.JSON)
 
         then: "response is correct"

@@ -11,7 +11,7 @@ import ru.drsanches.life_together.data.friends.model.FriendRequest;
 import ru.drsanches.life_together.data.friends.model.FriendRequestKey;
 import ru.drsanches.life_together.data.profile.dto.UserInfoDTO;
 import ru.drsanches.life_together.exception.ApplicationException;
-import ru.drsanches.life_together.exception.NoUserException;
+import ru.drsanches.life_together.exception.NoUserIdException;
 import ru.drsanches.life_together.repository.FriendRequestRepository;
 import ru.drsanches.life_together.service.utils.UserIdService;
 import ru.drsanches.life_together.service.utils.UserInfoService;
@@ -62,11 +62,10 @@ public class FriendsService {
         return userInfoService.getUserInfoSet(friends);
     }
 
-    public void sendRequest(OAuth2Authentication authentication, String username) {
+    public void sendRequest(OAuth2Authentication authentication, String toUserId) {
         String fromUserId = userIdService.getUserIdFromAuth(authentication);
-        String toUserId = userIdService.getUserIdFromDB(username);
-        if (toUserId == null) {
-            throw new NoUserException(username);
+        if (!userInfoService.userProfileExists(toUserId)) {
+            throw new NoUserIdException(toUserId);
         }
         if (fromUserId.equals(toUserId)) {
             throw new ApplicationException("You can't send yourself a friend request");
@@ -80,24 +79,23 @@ public class FriendsService {
         }
     }
 
-    public void removeRequest(OAuth2Authentication authentication, String username) {
-        String fromUserId = userIdService.getUserIdFromAuth(authentication);
-        String toUserId = userIdService.getUserIdFromDB(username);
-        if (toUserId == null) {
-            throw new NoUserException(username);
+    public void removeRequest(OAuth2Authentication authentication, String userId) {
+        String currentUserId = userIdService.getUserIdFromAuth(authentication);
+        if (!userInfoService.userProfileExists(userId)) {
+            throw new NoUserIdException(userId);
         }
-        if (fromUserId.equals(toUserId)) {
-            LOG.warn("fromUsername and toUsername is equal");
+        if (currentUserId.equals(userId)) {
+            LOG.warn("currentUserId and userId is equal");
             return;
         }
-        FriendRequestKey friendRequestKey1 = new FriendRequestKey(fromUserId, toUserId);
+        FriendRequestKey friendRequestKey1 = new FriendRequestKey(currentUserId, userId);
         try {
             friendRequestRepository.deleteById(friendRequestKey1);
             LOG.info("Friend request has been removed: {}", friendRequestKey1.toString());
         } catch(EmptyResultDataAccessException e) {
             LOG.warn("Friend request does not exist: " + friendRequestKey1.toString(), e);
         }
-        FriendRequestKey reversedFriendRequestKey = new FriendRequestKey(toUserId, fromUserId);
+        FriendRequestKey reversedFriendRequestKey = new FriendRequestKey(userId, currentUserId);
         try {
             friendRequestRepository.deleteById(reversedFriendRequestKey);
             LOG.info("Reversed friend request has been removed: {}", reversedFriendRequestKey.toString());

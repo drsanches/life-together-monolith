@@ -40,7 +40,7 @@ public class UserAuthService {
     @Autowired
     private TokenService tokenService;
 
-    public void registration(RegistrationDTO registrationDTO) {
+    public UserAuthInfoDTO registration(RegistrationDTO registrationDTO) {
         UserAuth userAuth = new UserAuth();
         userAuth.setId(UUID.randomUUID().toString());
         userAuth.setUsername(registrationDTO.getUsername());
@@ -50,6 +50,7 @@ public class UserAuthService {
         userAuth.setRole(Role.USER);
         userAuthAndUserProfileIntegrationService.saveUserAuthAndUserProfile(userAuth, new UserProfile(userAuth.getId()));
         LOG.info("New user has been created: {}", userAuth.toString());
+        return new UserAuthInfoDTO(userAuth.getId(), userAuth.getUsername(), userAuth.getEmail());
     }
 
     public TokenDTO login(LoginDTO loginDTO) {

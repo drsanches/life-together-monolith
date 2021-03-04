@@ -37,11 +37,11 @@ public class UserAuthController {
     @Autowired
     private UserAuthService userAuthService;
 
-    @ApiOperation(value = "Registers new user account")
+    @ApiOperation(value = "Registers new user account and returns user information")
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void registration(@RequestBody RegistrationDTO registrationDTO) {
-        userAuthService.registration(registrationDTO);
+    public UserAuthInfoDTO registration(@RequestBody RegistrationDTO registrationDTO) {
+        return userAuthService.registration(registrationDTO);
     }
 
     @ApiOperation(value = "Returns authorization tokens")

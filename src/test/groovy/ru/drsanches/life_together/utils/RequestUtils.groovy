@@ -16,13 +16,23 @@ class RequestUtils {
         return new RESTClient( "$SERVER_URL:$PORT")
     }
 
-    static void registerUser(String username, String password, String email) {
-        getRestClient().post(
-                path: '/auth/registration',
-                body: [username: username,
-                       password: password,
-                       email: email],
-                 requestContentType: ContentType.JSON)
+    /**
+     * Registers user and returns user id
+     * @return user id
+     */
+    static String registerUser(String username, String password, String email) {
+        try {
+            HttpResponseDecorator response = getRestClient().post(
+                    path: '/auth/registration',
+                    body: [username: username,
+                           password: password,
+                           email: email],
+                    requestContentType: ContentType.JSON)
+            return response.status == 201 ? response.getData()["id"] : null
+        } catch(Exception e) {
+            e.printStackTrace()
+            return null
+        }
     }
 
     static JSONObject getAuthInfo(String username, String password) {
@@ -78,10 +88,10 @@ class RequestUtils {
                 requestContentType: ContentType.JSON)
     }
 
-    static void sendFriendRequest(String username1, String password1, String username2) {
-        String token = getToken(username1, password1)
+    static void sendFriendRequest(String username, String password, String userId) {
+        String token = getToken(username, password)
         getRestClient().post(
-                path: "/friends/manage/$username2",
+                path: "/friends/manage/$userId",
                 headers: ["Authorization": "Bearer $token"],
                 requestContentType: ContentType.JSON)
     }
