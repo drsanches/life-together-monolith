@@ -42,6 +42,31 @@ class TestGetProfile extends Specification {
         assert response.getData()["lastName"] == lastName2
     }
 
+    def "get deleted user profile"() {
+        given: "user, token and deleted user"
+        def username1 = DataGenerator.createValidUsername()
+        def password1 = DataGenerator.createValidPassword()
+        def username2 = DataGenerator.createValidUsername()
+        def password2 = DataGenerator.createValidPassword()
+
+        RequestUtils.registerUser(username1, password1, null)
+        def userId2 = RequestUtils.registerUser(username2, password2, null)
+
+        def token = RequestUtils.getToken(username1, password1)
+
+        RequestUtils.deleteUser(username2, password2)
+
+        when: "request is sent"
+        RequestUtils.getRestClient().get(
+                path: PATH + userId2,
+                headers: ["Authorization": "Bearer $token"],
+                requestContentType : ContentType.JSON)
+
+        then: "response is correct"
+        HttpResponseException e = thrown(HttpResponseException)
+        assert e.response.status == 400
+    }
+
     def "get nonexistent user profile"() {
         given: "user, token and nonexistent id"
         def username = DataGenerator.createValidUsername()

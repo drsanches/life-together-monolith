@@ -81,7 +81,7 @@ public class FriendsService {
 
     public void removeRequest(OAuth2Authentication authentication, String userId) {
         String currentUserId = userIdService.getUserIdFromAuth(authentication);
-        if (!userInfoService.userProfileExists(userId)) {
+        if (!userInfoService.userAuthExists(userId)) {
             throw new NoUserIdException(userId);
         }
         if (currentUserId.equals(userId)) {

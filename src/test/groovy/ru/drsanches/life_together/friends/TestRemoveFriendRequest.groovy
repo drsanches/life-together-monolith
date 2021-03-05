@@ -111,6 +111,67 @@ class TestRemoveFriendRequest extends Specification {
         assert RequestUtils.getFriends(username2, password2) == new JSONArray()
     }
 
+    def "success deleted user friend request deletion"() {
+        given: "user with incoming friend request from deleted user"
+        def username1 = DataGenerator.createValidUsername()
+        def password1 = DataGenerator.createValidPassword()
+        def username2 = DataGenerator.createValidUsername()
+        def password2 = DataGenerator.createValidPassword()
+
+        def userId1 = RequestUtils.registerUser(username1, password1, null)
+        def userId2 = RequestUtils.registerUser(username2, password2, null)
+
+        RequestUtils.sendFriendRequest(username2, password2, userId1)
+
+        def token1 = RequestUtils.getToken(username1, password1)
+
+        RequestUtils.deleteUser(username2, password2)
+
+        when: "request is sent"
+        def response = RequestUtils.getRestClient().delete(
+                path: PATH + userId2,
+                headers: ["Authorization": "Bearer $token1"]) as HttpResponseDecorator
+
+        then: "response is correct"
+        assert response.status == 200
+
+        and: "the user has correct relationships"
+        assert RequestUtils.getIncomingRequests(username1, password1) == new JSONArray()
+        assert RequestUtils.getOutgoingRequests(username1, password1) == new JSONArray()
+        assert RequestUtils.getFriends(username1, password1) == new JSONArray()
+    }
+
+    def "success deleted friend deletion"() {
+        given: "user with deleted friend"
+        def username1 = DataGenerator.createValidUsername()
+        def password1 = DataGenerator.createValidPassword()
+        def username2 = DataGenerator.createValidUsername()
+        def password2 = DataGenerator.createValidPassword()
+
+        def userId1 = RequestUtils.registerUser(username1, password1, null)
+        def userId2 = RequestUtils.registerUser(username2, password2, null)
+
+        RequestUtils.sendFriendRequest(username1, password1, userId2)
+        RequestUtils.sendFriendRequest(username2, password2, userId1)
+
+        RequestUtils.deleteUser(username2, password2)
+
+        def token1 = RequestUtils.getToken(username1, password1)
+
+        when: "request is sent"
+        def response = RequestUtils.getRestClient().delete(
+                path: PATH + userId2,
+                headers: ["Authorization": "Bearer $token1"]) as HttpResponseDecorator
+
+        then: "response is correct"
+        assert response.status == 200
+
+        and: "the user has correct relationships"
+        assert RequestUtils.getIncomingRequests(username1, password1) == new JSONArray()
+        assert RequestUtils.getOutgoingRequests(username1, password1) == new JSONArray()
+        assert RequestUtils.getFriends(username1, password1) == new JSONArray()
+    }
+
     def "delete nonexistent request"() {
         given: "two users"
         def username1 = DataGenerator.createValidUsername()

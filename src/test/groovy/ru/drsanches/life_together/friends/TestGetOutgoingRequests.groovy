@@ -3,6 +3,7 @@ package ru.drsanches.life_together.friends
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.HttpResponseException
 import net.sf.json.JSONArray
+import net.sf.json.JSONNull
 import ru.drsanches.life_together.utils.DataGenerator
 import ru.drsanches.life_together.utils.RequestUtils
 import spock.lang.Specification
@@ -72,6 +73,37 @@ class TestGetOutgoingRequests extends Specification {
         then: "response is correct"
         assert response.status == 200
         assert response.getData() == new JSONArray()
+    }
+
+    def "success deleted friend outgoing requests getting"() {
+        given: "user with deleted friend"
+        def username1 = DataGenerator.createValidUsername()
+        def password1 = DataGenerator.createValidPassword()
+        def username2 = DataGenerator.createValidUsername()
+        def password2 = DataGenerator.createValidPassword()
+
+        RequestUtils.registerUser(username1, password1, null)
+        def userId2 = RequestUtils.registerUser(username2, password2, null)
+
+        RequestUtils.sendFriendRequest(username1, password1, userId2)
+
+        def token1 = RequestUtils.getToken(username1, password1)
+
+        RequestUtils.deleteUser(username2, password2)
+
+        when: "request is sent"
+        def response = RequestUtils.getRestClient().get(
+                path: PATH,
+                headers: ["Authorization": "Bearer $token1"]) as HttpResponseDecorator
+
+        then: "response is correct"
+        assert response.status == 200
+        def body = response.getData() as JSONArray
+        assert body.size() == 1
+        assert body.get(0)["id"] == userId2
+        assert body.get(0)["username"] == JSONNull.getInstance()
+        assert body.get(0)["firstName"] == JSONNull.getInstance()
+        assert body.get(0)["lastName"] == JSONNull.getInstance()
     }
 
     def "get outgoing requests with invalid token"() {

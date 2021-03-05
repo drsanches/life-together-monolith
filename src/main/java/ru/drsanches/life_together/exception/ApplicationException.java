@@ -4,9 +4,9 @@ import java.util.UUID;
 
 public class ApplicationException extends RuntimeException {
 
-    private final String message;
+    protected final String message;
 
-    private final String uuid = UUID.randomUUID().toString();
+    protected final String uuid = UUID.randomUUID().toString();
 
     public ApplicationException(String message) {
         this.message = message;

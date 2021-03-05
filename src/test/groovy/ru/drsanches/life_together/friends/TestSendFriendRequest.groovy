@@ -162,6 +162,30 @@ class TestSendFriendRequest extends Specification {
         assert incomingRequests.get(0)["lastName"] == lastName1
     }
 
+    def "send friend request to deleted user"() {
+        given: "user and deleted user"
+        def username1 = DataGenerator.createValidUsername()
+        def password1 = DataGenerator.createValidPassword()
+        def username2 = DataGenerator.createValidUsername()
+        def password2 = DataGenerator.createValidPassword()
+
+        RequestUtils.registerUser(username1, password1, null)
+        def userId2 = RequestUtils.registerUser(username2, password2, null)
+
+        def token = RequestUtils.getToken(username1, password1)
+
+        RequestUtils.deleteUser(username2, password2)
+
+        when: "request is sent"
+        RequestUtils.getRestClient().post(
+                path: PATH + userId2,
+                headers: ["Authorization": "Bearer $token"])
+
+        then: "response is correct"
+        HttpResponseException e = thrown(HttpResponseException)
+        assert e.response.status == 400
+    }
+
     def "send friend request to nonexistent user"() {
         given: "user"
         def username = DataGenerator.createValidUsername()

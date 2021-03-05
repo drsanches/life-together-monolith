@@ -11,6 +11,7 @@ import ru.drsanches.life_together.repository.UserAuthRepository;
 import ru.drsanches.life_together.repository.UserProfileRepository;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -26,8 +27,12 @@ public class UserInfoService {
     @Autowired
     UserProfileRepository userProfileRepository;
 
+    public boolean userAuthExists(String userId) {
+        return userAuthRepository.existsById(userId);
+    }
+
     public boolean userProfileExists(String userId) {
-        return userProfileRepository.findById(userId).isPresent();
+        return userProfileRepository.existsById(userId);
     }
 
     public UserInfoDTO getUserInfo(String userId) {
@@ -47,35 +52,38 @@ public class UserInfoService {
         return userInfoDTO;
     }
 
+    /**
+     * @param userIds collection of user id
+     * @return Set of UserInfoDTO objects. If the user was deleted, then only id will be filled.
+     */
     public Set<UserInfoDTO> getUserInfoSet(Collection<String> userIds) {
-        Map<String, String> userAuthMap = getUserAuthMap(userIds);
-        Map<String, UserInfoDTO> userProfileMap = getUserProfileMap(userIds);
-        userProfileMap.forEach((userId, userInfo) -> {
-            String username = userAuthMap.get(userId);
-            if (username != null) {
-                userInfo.setUsername(userAuthMap.get(userId));
-            } else {
-                LOG.error("No UserAuth for UserProfile with id '{}'", userId);
+        Map<String, String> usernameMap = getUsernameMap(userIds);
+        Map<String, UserProfile> userProfileMap = getUserProfileMap(userIds);
+
+        Set<UserInfoDTO> result = new HashSet<>();
+        for (String id: usernameMap.keySet()) {
+            UserInfoDTO userInfoDTO = new UserInfoDTO();
+            userInfoDTO.setId(id);
+            UserProfile userProfile = userProfileMap.get(id);
+            if (userProfile != null) {
+                userInfoDTO.setUsername(usernameMap.get(id));
+                userInfoDTO.setFirstName(userProfile.getFirstName());
+                userInfoDTO.setLastName(userProfile.getLastName());
             }
-        });
-        return Set.copyOf(userProfileMap.values());
+            result.add(userInfoDTO);
+        }
+        return result;
     }
 
-    private Map<String, String> getUserAuthMap(Collection<String> userIds) {
+    private Map<String, String> getUsernameMap(Collection<String> userIds) {
         Map<String, String> userAuthMap = new HashMap<>();
         userAuthRepository.findAllById(userIds).forEach(x -> userAuthMap.put(x.getId(), x.getUsername()));
         return userAuthMap;
     }
     
-    private Map<String, UserInfoDTO> getUserProfileMap(Collection<String> userIds) {
-        Map<String, UserInfoDTO> userProfileMap = new HashMap<>();
-        userProfileRepository.findAllById(userIds).forEach(x -> {
-            UserInfoDTO userInfo = new UserInfoDTO();
-            userInfo.setId(x.getId());
-            userInfo.setFirstName(x.getFirstName());
-            userInfo.setLastName(x.getLastName());
-            userProfileMap.put(x.getId(), userInfo);
-        });
+    private Map<String, UserProfile> getUserProfileMap(Collection<String> userIds) {
+        Map<String, UserProfile> userProfileMap = new HashMap<>();
+        userProfileRepository.findAllById(userIds).forEach(x -> userProfileMap.put(x.getId(), x));
         return userProfileMap;
     }
 }

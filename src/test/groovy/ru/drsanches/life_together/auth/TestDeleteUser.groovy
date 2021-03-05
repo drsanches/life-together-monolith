@@ -4,6 +4,7 @@ import groovyx.net.http.ContentType
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.HttpResponseException
 import net.sf.json.JSONArray
+import net.sf.json.JSONNull
 import ru.drsanches.life_together.utils.DataGenerator
 import ru.drsanches.life_together.utils.RequestUtils
 import spock.lang.Specification
@@ -62,17 +63,32 @@ class TestDeleteUser extends Specification {
         and: "friend's relationships is correct"
         assert RequestUtils.getIncomingRequests(friendUsername, friendPassword) == new JSONArray()
         assert RequestUtils.getOutgoingRequests(friendUsername, friendPassword) == new JSONArray()
-        assert RequestUtils.getFriends(friendUsername, friendPassword) == new JSONArray()
+        JSONArray friends = RequestUtils.getFriends(friendUsername, friendPassword)
+        assert friends.size() == 1
+        assert friends.get(0)["id"] == userId
+        assert friends.get(0)["username"] == JSONNull.getInstance()
+        assert friends.get(0)["firstName"] == JSONNull.getInstance()
+        assert friends.get(0)["lastName"] == JSONNull.getInstance()
 
         and: "incoming user relationships is correct"
         assert RequestUtils.getIncomingRequests(incomingUsername, incomingPassword) == new JSONArray()
-        assert RequestUtils.getOutgoingRequests(incomingUsername, incomingPassword) == new JSONArray()
         assert RequestUtils.getFriends(incomingUsername, incomingPassword) == new JSONArray()
+        JSONArray outgoing = RequestUtils.getOutgoingRequests(incomingUsername, incomingPassword)
+        assert outgoing.size() == 1
+        assert outgoing.get(0)["id"] == userId
+        assert outgoing.get(0)["username"] == JSONNull.getInstance()
+        assert outgoing.get(0)["firstName"] == JSONNull.getInstance()
+        assert outgoing.get(0)["lastName"] == JSONNull.getInstance()
 
         and: "outgoing user relationships is correct"
-        assert RequestUtils.getIncomingRequests(outgoingUsername, outgoingPassword) == new JSONArray()
         assert RequestUtils.getOutgoingRequests(outgoingUsername, outgoingPassword) == new JSONArray()
         assert RequestUtils.getFriends(outgoingUsername, outgoingPassword) == new JSONArray()
+        JSONArray incoming = RequestUtils.getIncomingRequests(outgoingUsername, outgoingPassword)
+        assert incoming.size() == 1
+        assert incoming.get(0)["id"] == userId
+        assert incoming.get(0)["username"] == JSONNull.getInstance()
+        assert incoming.get(0)["firstName"] == JSONNull.getInstance()
+        assert incoming.get(0)["lastName"] == JSONNull.getInstance()
     }
 
     def "user deleting with invalid password"() {

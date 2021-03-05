@@ -144,6 +144,15 @@ class RequestUtils {
         }
     }
 
+    static void deleteUser(String username, String password) {
+        String token = getToken(username, password)
+        getRestClient().post(
+                path: "/auth/deleteUser",
+                headers: ["Authorization": "Bearer $token"],
+                body:  [password: password],
+                requestContentType : ContentType.JSON)
+    }
+
     static String getToken(String username, String password) {
         try {
             HttpResponseDecorator response = getRestClient().post(

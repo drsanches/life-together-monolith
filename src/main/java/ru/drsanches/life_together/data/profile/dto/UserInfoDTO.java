@@ -7,13 +7,13 @@ public class UserInfoDTO {
     @ApiModelProperty(required = true)
     private String id;
 
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, notes = "null for deleted user")
     private String username;
 
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, notes = "null for deleted user")
     private String firstName;
 
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, notes = "null for deleted user")
     private String lastName;
 
     public UserInfoDTO() {}
