@@ -64,7 +64,7 @@ class TestSearchProfile extends Specification {
 
         then: "response is correct"
         HttpResponseException e = thrown(HttpResponseException)
-        assert e.response.status == 400
+        assert e.response.status == 404
     }
 
     def "search nonexistent user profile"() {
@@ -83,7 +83,7 @@ class TestSearchProfile extends Specification {
 
         then: "response is correct"
         HttpResponseException e = thrown(HttpResponseException)
-        assert e.response.status == 400
+        assert e.response.status == 404
     }
 
     def "get user profile with invalid token"() {

@@ -218,7 +218,7 @@ class TestRemoveFriendRequest extends Specification {
 
         then: "response is correct"
         HttpResponseException e = thrown(HttpResponseException)
-        assert e.response.status == 400
+        assert e.response.status == 404
     }
 
     def "delete current user request"() {

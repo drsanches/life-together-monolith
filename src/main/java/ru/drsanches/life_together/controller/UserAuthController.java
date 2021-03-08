@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,8 +20,6 @@ import ru.drsanches.life_together.data.auth.dto.LoginDTO;
 import ru.drsanches.life_together.data.auth.dto.RegistrationDTO;
 import ru.drsanches.life_together.data.auth.dto.TokenDTO;
 import ru.drsanches.life_together.data.auth.dto.UserAuthInfoDTO;
-import ru.drsanches.life_together.exception.ApplicationException;
-import ru.drsanches.life_together.exception.ServerError;
 import ru.drsanches.life_together.service.controller.UserAuthService;
 import springfox.documentation.annotations.ApiIgnore;
 import java.security.Principal;
@@ -92,19 +89,5 @@ public class UserAuthController {
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
     public void deleteUser(@ApiIgnore Principal principal, @RequestBody DeleteUserDTO deleteUserDTO) {
         userAuthService.deleteUser(principal.getName(), deleteUserDTO);
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({ApplicationException.class})
-    public String handleUserException(Exception e) {
-        LOG.warn(e.getMessage(), e);
-        return e.getMessage();
-    }
-
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler({ServerError.class})
-    public String handleServerException(ServerError e) {
-        LOG.error(e.getInfo(), e);
-        return e.getMessage();
     }
 }

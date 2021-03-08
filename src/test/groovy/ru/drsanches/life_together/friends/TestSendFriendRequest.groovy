@@ -183,7 +183,7 @@ class TestSendFriendRequest extends Specification {
 
         then: "response is correct"
         HttpResponseException e = thrown(HttpResponseException)
-        assert e.response.status == 400
+        assert e.response.status == 404
     }
 
     def "send friend request to nonexistent user"() {
@@ -201,7 +201,7 @@ class TestSendFriendRequest extends Specification {
 
         then: "response is correct"
         HttpResponseException e = thrown(HttpResponseException)
-        assert e.response.status == 400
+        assert e.response.status == 404
     }
 
     def "send friend request to current user"() {
