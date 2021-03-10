@@ -21,4 +21,8 @@ class DataGenerator {
     static String createValidLastName() {
         return "lastName-" + UUID.randomUUID().toString()
     }
+
+    static String createValidMessage() {
+        return "message-" + UUID.randomUUID().toString()
+    }
 }

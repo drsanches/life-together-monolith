@@ -96,6 +96,14 @@ class RequestUtils {
                 requestContentType: ContentType.JSON)
     }
 
+    static void deleteFriendRequest(String username, String password, String userId) {
+        String token = getToken(username, password)
+        getRestClient().delete(
+                path: "/friends/manage/$userId",
+                headers: ["Authorization": "Bearer $token"],
+                requestContentType: ContentType.JSON)
+    }
+
     static JSONArray getIncomingRequests(String username, String password) {
         String token = getToken(username, password)
         if (token == null) {
@@ -151,6 +159,51 @@ class RequestUtils {
                 headers: ["Authorization": "Bearer $token"],
                 body:  [password: password],
                 requestContentType : ContentType.JSON)
+    }
+
+    static Date[] sendMoney(String token, String[] toUserIds, Integer money, String message) {
+        Date dateBefore = new Date()
+        getRestClient().post(
+                path: '/debts/send',
+                headers: ["Authorization": "Bearer $token"],
+                body: [toUserIds: toUserIds,
+                       money: money,
+                       message: message],
+                requestContentType: ContentType.JSON)
+        Date dateAfter = new Date()
+        return [dateBefore, dateAfter]
+    }
+
+    static JSONObject getDebts(String username, String password) {
+        String token = getToken(username, password)
+        if (token == null) {
+            return null
+        }
+        try {
+            HttpResponseDecorator response = getRestClient().get(
+                    path: "/debts",
+                    headers: ["Authorization": "Bearer $token"]) as HttpResponseDecorator
+            return response.status == 200 ? response.getData() as JSONObject : null
+        } catch(Exception e) {
+            e.printStackTrace()
+            return null
+        }
+    }
+
+    static JSONArray getHistory(String username, String password) {
+        String token = getToken(username, password)
+        if (token == null) {
+            return null
+        }
+        try {
+            HttpResponseDecorator response = getRestClient().get(
+                    path: "/debts/history",
+                    headers: ["Authorization": "Bearer $token"]) as HttpResponseDecorator
+            return response.status == 200 ? response.getData() as JSONArray : null
+        } catch(Exception e) {
+            e.printStackTrace()
+            return null
+        }
     }
 
     static String getToken(String username, String password) {
