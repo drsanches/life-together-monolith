@@ -24,7 +24,8 @@ public class SwaggerConfig {
                 .select().paths(or(
                         regex("/auth.*"),
                         regex("/profile.*"),
-                        regex("/friends.*")))
+                        regex("/friends.*"),
+                        regex("/debts.*")))
                 .build();
     }
 
