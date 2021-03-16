@@ -29,6 +29,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().mvcMatchers("/swagger-ui.html", "/webjars/springfox-swagger-ui/**",
                 "/configuration/ui", "/configuration/security", "/images/favicon-32x32.png",
                 "/images/favicon-16x16.png", "/swagger-resources", "/v2/api-docs**"); //Swagger
+        web.ignoring().mvcMatchers("/ui/**"); //UI
     }
 
     @Bean

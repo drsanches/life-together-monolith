@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>LT: Registration</title>
+        <link rel="stylesheet" type="text/css" href="/ui/css/header.css"/>
+        <link rel="stylesheet" type="text/css" href="/ui/css/user_card.css"/>
+        <link rel="stylesheet" type="text/css" href="/ui/css/registration.css"/>
+        <script src="/ui/js/lib/vue.js"></script>
+        <script type="module" src="/ui/js/common.js"></script>
+        <script type="module" src="/ui/js/header.js"></script>
+        <script type="module" src="/ui/js/user_card/user_card.js"></script>
+        <script type="module" src="/ui/js/user_card/current_user_card.js"></script>
+        <script type="module" src="/ui/js/registration.js"></script>
+    </head>
+    <body>
+        <div id="app">
+            <custom-header></custom-header>
+            <registration></registration>
+        </div>
+
+        <script type="module">
+            import {header} from '/ui/js/header.js';
+            import {userCard} from '/ui/js/user_card/user_card.js';
+            import {currentUserCard} from '/ui/js/user_card/current_user_card.js';
+            import {registration} from '/ui/js/registration.js';
+
+            var app = Vue.createApp({});
+            app.component('custom-header', header);
+            app.component('user-card', userCard);
+            app.component('current-user-card', currentUserCard);
+            app.component('registration', registration);
+            app.mount("#app");
+        </script>
+    </body>
+</html>

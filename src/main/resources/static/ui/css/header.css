@@ -1,0 +1,32 @@
+.header button {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.header {
+    display: flow-root;
+}
+.header .logo {
+    display: inline-block;
+    cursor: pointer;
+}
+.header .logo .text {
+    font-weight: bold;
+    font-size: 200%;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+.header .auth {
+    display: inline-block;
+    float: right;
+}
+.header .auth .current-user-card {
+    display: inline-block;
+}
+.header .auth .buttons {
+    width: 120px;
+    display: inline-block;
+}
+.header .auth .buttons button {
+    width: -webkit-fill-available;
+    display: inline-block;
+}
