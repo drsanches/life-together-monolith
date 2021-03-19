@@ -49,7 +49,7 @@ export function getData(path) {
 function processError(status, data) {
     if (status == 401) {
         deleteToken();
-        followLink("/ui/index.html");
+        followLink("/ui/login.html");
     }
     console.error(JSON.stringify(data));
     alert("ERROR:\n" + JSON.stringify(data));

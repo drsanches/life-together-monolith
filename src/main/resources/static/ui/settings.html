@@ -4,31 +4,48 @@
     <title>LT: Settings</title>
     <link rel="stylesheet" type="text/css" href="/ui/css/header.css"/>
     <link rel="stylesheet" type="text/css" href="/ui/css/user_card.css"/>
-    <link rel="stylesheet" type="text/css" href="/ui/css/change_username.css"/>
+    <link rel="stylesheet" type="text/css" href="/ui/css/settings/settings.css"/>
+    <link rel="stylesheet" type="text/css" href="/ui/css/settings/change_username.css"/>
+    <link rel="stylesheet" type="text/css" href="/ui/css/settings/change_email.css"/>
+    <link rel="stylesheet" type="text/css" href="/ui/css/settings/change_password.css"/>
+    <link rel="stylesheet" type="text/css" href="/ui/css/settings/delete_account.css"/>
     <script src="/ui/js/lib/vue.js"></script>
     <script type="module" src="/ui/js/common.js"></script>
     <script type="module" src="/ui/js/header.js"></script>
     <script type="module" src="/ui/js/user_card/user_card.js"></script>
     <script type="module" src="/ui/js/user_card/current_user_card.js"></script>
+    <script type="module" src="/ui/js/settings/settings.js"></script>
     <script type="module" src="/ui/js/settings/change_username.js"></script>
+    <script type="module" src="/ui/js/settings/change_email.js"></script>
+    <script type="module" src="/ui/js/settings/change_password.js"></script>
+    <script type="module" src="/ui/js/settings/delete_account.js"></script>
 </head>
 <body>
 <div id="app">
     <custom-header></custom-header>
-    <change-username></change-username>
+    <br>
+    <settings></settings>
 </div>
 
 <script type="module">
             import {header} from '/ui/js/header.js';
             import {userCard} from '/ui/js/user_card/user_card.js';
             import {currentUserCard} from '/ui/js/user_card/current_user_card.js';
+            import {settings} from '/ui/js/settings/settings.js';
             import {changeUsername} from '/ui/js/settings/change_username.js';
+            import {changeEmail} from '/ui/js/settings/change_email.js';
+            import {changePassword} from '/ui/js/settings/change_password.js';
+            import {deleteAccount} from '/ui/js/settings/delete_account.js';
 
             var app = Vue.createApp({});
             app.component('custom-header', header);
             app.component('user-card', userCard);
             app.component('current-user-card', currentUserCard);
+            app.component('settings', settings);
             app.component('change-username', changeUsername);
+            app.component('change-email', changeEmail);
+            app.component('change-password', changePassword);
+            app.component('delete-account', deleteAccount);
             app.mount("#app");
         </script>
 </body>

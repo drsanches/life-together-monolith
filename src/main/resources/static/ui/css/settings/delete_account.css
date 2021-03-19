@@ -1,0 +1,11 @@
+.delete-account .title {
+    font-weight: bold;
+}
+.delete-account .input-title {
+    display: inline-block;
+}
+.delete-account input {
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}

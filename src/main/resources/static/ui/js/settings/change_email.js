@@ -1,41 +1,38 @@
-import {followLink, getData, sendData} from "/ui/js/common.js"
-import {deleteToken} from "/ui/js/token.js"
+import {getData, sendData} from "/ui/js/common.js"
 
-export var changeUsername = {
+export var changeEmail = {
     data() {
         return {
-            username: "",
+            email: "",
             password: ""
         }
     },
     methods: {
         change: function() {
-            if (this.username == "" || this.password == "") {
+            if (this.email == "" || this.password == "") {
                 alert("Enter all data");
                 return;
             }
             //TODO: hash password
             var body = {
-                newUsername: this.username,
+                newEmail: this.email,
                 password: this.password
             }
-            sendData("/auth/changeUsername", "PUT", body, false, function() {
-                deleteToken();
+            sendData("/auth/changeEmail", "PUT", body, false, function() {
                 alert("Success");
-                followLink("/ui/login.html");
             });
         }
     },
     mounted() {
         getData("/auth/info").then(data => {
-            this.username = data.username;
+            this.email = data.email;
         });
     },
     template: `
-        <div class="change-username">
-            <div class="title">Change username:</div>
-            <div class="input-title">Username:</div>
-            <input class="variable-value" v-model="username">
+        <div class="change-email">
+            <div class="title">Change email:</div>
+            <div class="input-title">Email:</div>
+            <input class="variable-value" v-model="email">
             <div class="input-title">Password:</div>
             <input class="password-value" type="password" v-model="password">
             <button v-on:click="change">Change</button>

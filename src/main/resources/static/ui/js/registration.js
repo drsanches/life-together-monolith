@@ -1,4 +1,5 @@
 import {sendData, followLink} from "/ui/js/common.js";
+import {setToken} from "/ui/js/token.js";
 
 export var registration = {
     data() {
@@ -20,14 +21,20 @@ export var registration = {
                 return;
             }
             //TODO: hash password
-            var body = {
+            var registrationBody = {
                 username: this.username,
                 email: this.email,
-                password: this.password1,
+                password: this.password1
             }
-            sendData("/auth/registration", "POST", body, true, function(data) {
-                alert("Success");
-                followLink("/ui/index.html");
+            var loginBody = {
+                username: this.username,
+                password: this.password1
+            }
+            sendData("/auth/registration", "POST", registrationBody, false, function() {
+                sendData("/auth/login", "POST", loginBody, true, function(data) {
+                    setToken(data.accessToken);
+                    followLink("/ui/index.html");
+                });
             });
         }
     },

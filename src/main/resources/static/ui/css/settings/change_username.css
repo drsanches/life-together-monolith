@@ -1,7 +1,11 @@
 .change-username .title {
     font-weight: bold;
 }
+.change-username .input-title {
+    display: inline-block;
+}
 .change-username input {
+    margin-top: 10px;
     margin-left: 10px;
     margin-right: 10px;
 }

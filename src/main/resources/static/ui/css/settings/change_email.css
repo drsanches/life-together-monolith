@@ -1,0 +1,11 @@
+.change-email .title {
+    font-weight: bold;
+}
+.change-email .input-title {
+    display: inline-block;
+}
+.change-email input {
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
