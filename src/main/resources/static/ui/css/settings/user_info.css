@@ -1,0 +1,12 @@
+.user-info .title {
+    font-size: 120%;
+    font-weight: bold;
+}
+.user-info .key {
+    display: inline-block;
+    width: 100px;
+    font-weight: bold;
+}
+.user-info .value {
+    display: inline-block;
+}

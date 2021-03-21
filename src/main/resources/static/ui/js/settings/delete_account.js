@@ -8,7 +8,7 @@ export var deleteAccount = {
         }
     },
     methods: {
-        change: function() {
+        deleteAccount: function() {
             if (this.password == "") {
                 alert("Enter password");
                 return;
@@ -32,7 +32,7 @@ export var deleteAccount = {
             <div class="title">Delete account:</div>
             <div class="input-title">Password:</div>
             <input class="password-value" type="password" v-model="password">
-            <button v-on:click="change">Delete</button>
+            <button v-on:click="deleteAccount">Delete</button>
         </div>
     `
 }

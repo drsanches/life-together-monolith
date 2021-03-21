@@ -1,4 +1,4 @@
-import {getData, sendData} from "/ui/js/common.js"
+import {getData, sendData, followLink} from "/ui/js/common.js"
 
 export var changeEmail = {
     data() {
@@ -19,7 +19,7 @@ export var changeEmail = {
                 password: this.password
             }
             sendData("/auth/changeEmail", "PUT", body, false, function() {
-                alert("Success");
+                followLink("/ui/settings.html");
             });
         }
     },

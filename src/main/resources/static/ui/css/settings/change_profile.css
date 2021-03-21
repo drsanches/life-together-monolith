@@ -1,0 +1,13 @@
+.change-profile .title {
+    font-weight: bold;
+}
+.change-profile .input-title {
+    display: inline-block;
+}
+.change-profile input {
+    margin-top: 10px;
+    margin-right: 10px;
+}
+.change-profile button {
+    margin-top: 10px;
+}

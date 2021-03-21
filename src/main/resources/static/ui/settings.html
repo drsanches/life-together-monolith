@@ -1,37 +1,43 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>LT: Settings</title>
-    <link rel="stylesheet" type="text/css" href="/ui/css/header.css"/>
-    <link rel="stylesheet" type="text/css" href="/ui/css/user_card.css"/>
-    <link rel="stylesheet" type="text/css" href="/ui/css/settings/settings.css"/>
-    <link rel="stylesheet" type="text/css" href="/ui/css/settings/change_username.css"/>
-    <link rel="stylesheet" type="text/css" href="/ui/css/settings/change_email.css"/>
-    <link rel="stylesheet" type="text/css" href="/ui/css/settings/change_password.css"/>
-    <link rel="stylesheet" type="text/css" href="/ui/css/settings/delete_account.css"/>
-    <script src="/ui/js/lib/vue.js"></script>
-    <script type="module" src="/ui/js/common.js"></script>
-    <script type="module" src="/ui/js/header.js"></script>
-    <script type="module" src="/ui/js/user_card/user_card.js"></script>
-    <script type="module" src="/ui/js/user_card/current_user_card.js"></script>
-    <script type="module" src="/ui/js/settings/settings.js"></script>
-    <script type="module" src="/ui/js/settings/change_username.js"></script>
-    <script type="module" src="/ui/js/settings/change_email.js"></script>
-    <script type="module" src="/ui/js/settings/change_password.js"></script>
-    <script type="module" src="/ui/js/settings/delete_account.js"></script>
-</head>
-<body>
-<div id="app">
-    <custom-header></custom-header>
-    <br>
-    <settings></settings>
-</div>
+    <head>
+        <title>LT: Settings</title>
+        <link rel="stylesheet" type="text/css" href="/ui/css/header.css"/>
+        <link rel="stylesheet" type="text/css" href="/ui/css/user_card.css"/>
+        <link rel="stylesheet" type="text/css" href="/ui/css/settings/settings.css"/>
+        <link rel="stylesheet" type="text/css" href="/ui/css/settings/user_info.css"/>
+        <link rel="stylesheet" type="text/css" href="/ui/css/settings/change_profile.css"/>
+        <link rel="stylesheet" type="text/css" href="/ui/css/settings/change_username.css"/>
+        <link rel="stylesheet" type="text/css" href="/ui/css/settings/change_email.css"/>
+        <link rel="stylesheet" type="text/css" href="/ui/css/settings/change_password.css"/>
+        <link rel="stylesheet" type="text/css" href="/ui/css/settings/delete_account.css"/>
+        <script src="/ui/js/lib/vue.js"></script>
+        <script type="module" src="/ui/js/common.js"></script>
+        <script type="module" src="/ui/js/header.js"></script>
+        <script type="module" src="/ui/js/user_card/user_card.js"></script>
+        <script type="module" src="/ui/js/user_card/current_user_card.js"></script>
+        <script type="module" src="/ui/js/settings/settings.js"></script>
+        <script type="module" src="/ui/js/settings/user_info.js"></script>
+        <script type="module" src="/ui/js/settings/change_profile.js"></script>
+        <script type="module" src="/ui/js/settings/change_username.js"></script>
+        <script type="module" src="/ui/js/settings/change_email.js"></script>
+        <script type="module" src="/ui/js/settings/change_password.js"></script>
+        <script type="module" src="/ui/js/settings/delete_account.js"></script>
+    </head>
+    <body>
+        <div id="app">
+            <custom-header></custom-header>
+            <br>
+            <settings></settings>
+        </div>
 
-<script type="module">
+        <script type="module">
             import {header} from '/ui/js/header.js';
             import {userCard} from '/ui/js/user_card/user_card.js';
             import {currentUserCard} from '/ui/js/user_card/current_user_card.js';
             import {settings} from '/ui/js/settings/settings.js';
+            import {userInfo} from '/ui/js/settings/user_info.js';
+            import {changeProfile} from '/ui/js/settings/change_profile.js';
             import {changeUsername} from '/ui/js/settings/change_username.js';
             import {changeEmail} from '/ui/js/settings/change_email.js';
             import {changePassword} from '/ui/js/settings/change_password.js';
@@ -42,11 +48,13 @@
             app.component('user-card', userCard);
             app.component('current-user-card', currentUserCard);
             app.component('settings', settings);
+            app.component('user-info', userInfo);
+            app.component('change-profile', changeProfile);
             app.component('change-username', changeUsername);
             app.component('change-email', changeEmail);
             app.component('change-password', changePassword);
             app.component('delete-account', deleteAccount);
             app.mount("#app");
         </script>
-</body>
+    </body>
 </html>

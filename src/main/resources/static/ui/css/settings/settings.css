@@ -1,15 +1,6 @@
-.settings .user-info .title {
-    font-size: 120%;
-    font-weight: bold;
-}
 .settings .user-info .key {
-    display: inline-block;
-    width: 100px;
-    font-weight: bold;
-}
-.settings .user-info .value {
-    display: inline-block;
+    width: 110px
 }
 .settings .input-title {
-    width: 100px
+    width: 110px
 }
