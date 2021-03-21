@@ -1,16 +1,20 @@
 export var userCard = {
     props: {
         id: {
-            type: String
+            type: String,
+            require: true
         },
         username: {
-            type: String
+            type: String,
+            require: true
         },
         firstName: {
-            type: String
+            type: String,
+            require: true
         },
         lastName: {
-            type: String
+            type: String,
+            require: true
         }
     },
     computed: {

@@ -3,7 +3,12 @@ import {getData} from "/ui/js/common.js"
 export var currentUserCard = {
     data() {
         return {
-            userInfo: null
+            userInfo: {
+                id: "",
+                username: "",
+                firstName: "",
+                lastName: ""
+            }
         }
     },
     mounted() {
@@ -12,6 +17,11 @@ export var currentUserCard = {
         });
     },
     template: `
-        <user-card class="current-user-card" v-bind="userInfo"></user-card>
+        <user-card class="current-user-card"
+            :id="userInfo.id"
+            :username="userInfo.username"
+            :firstName="userInfo.firstName"
+            :lastName="userInfo.lastName"
+        ></user-card>
     `
 }
