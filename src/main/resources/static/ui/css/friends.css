@@ -1,0 +1,15 @@
+.friend-list .title,
+.incoming-request-list .title,
+.outgoing-request-list .title {
+    font-weight: bold;
+    font-size: 120%;
+}
+.search-user .user-card,
+.friend-list .user-card,
+.incoming-request-list .user-card,
+.outgoing-request-list .user-card {
+    width: 200px;
+}
+.search-user input {
+    width: 192px; /* 2x2 - border, 2x2 - padding */
+}

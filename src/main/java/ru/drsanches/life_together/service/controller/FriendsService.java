@@ -75,6 +75,7 @@ public class FriendsService {
             friendRequestRepository.save(friendRequest);
             LOG.info("New friend request has been added: {}", friendRequest.toString());
         } catch(DataIntegrityViolationException e) {
+            //TODO: Never uses
             LOG.warn("Friend request already exists: " + friendRequest.toString(),  e);
         }
     }

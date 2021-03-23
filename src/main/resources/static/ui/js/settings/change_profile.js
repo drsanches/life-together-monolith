@@ -1,4 +1,4 @@
-import {getData, sendData, followLink} from "/ui/js/common.js"
+import {getData, sendData, followLink} from "/ui/js/utils/common.js"
 
 export var changeProfile = {
     data() {

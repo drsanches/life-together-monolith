@@ -1,0 +1,6 @@
+.friend-card button {
+    margin-left: 10px;
+}
+.friend-card .user-card {
+    display: inline-block;
+}

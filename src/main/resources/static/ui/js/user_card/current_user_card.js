@@ -1,4 +1,4 @@
-import {getData} from "/ui/js/common.js"
+import {getData} from "/ui/js/utils/common.js"
 
 export var currentUserCard = {
     data() {

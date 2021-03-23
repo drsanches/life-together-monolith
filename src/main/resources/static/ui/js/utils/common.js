@@ -1,4 +1,4 @@
-import {getToken, deleteToken} from "/ui/js/token.js"
+import {getToken, deleteToken} from "/ui/js/utils/token.js"
 
 var BASE_URL = "http://localhost:8080";
 
@@ -7,14 +7,25 @@ export function followLink(path) {
 }
 
 export function sendData(path, method, body, needResponseData, onSuccess) {
-    fetch(BASE_URL + path, {
-        method: method,
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": getToken()
-        },
-        body: JSON.stringify(body),
-    })
+    var response;
+    if (body != null) {
+        response = {
+            method: method,
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": getToken()
+            },
+            body: JSON.stringify(body)
+        }
+    } else {
+        response = {
+            method: method,
+            headers: {
+                "Authorization": getToken()
+            }
+        }
+    }
+    fetch(BASE_URL + path, response)
     .then(response => {
         if (response.ok) {
             if (needResponseData) {

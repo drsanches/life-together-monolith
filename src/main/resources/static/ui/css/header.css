@@ -1,19 +1,18 @@
-.header button {
-    margin-left: 10px;
-    margin-right: 10px;
-}
 .header {
     display: flow-root;
 }
-.header .logo {
+.header .menu {
     display: inline-block;
     cursor: pointer;
 }
-.header .logo .text {
+.header .menu .logo {
     font-weight: bold;
     font-size: 200%;
     margin-right: 10px;
     margin-left: 10px;
+}
+.header .menu button {
+    margin-right: 10px;
 }
 .header .auth {
     display: inline-block;
@@ -24,6 +23,8 @@
 }
 .header .auth .buttons {
     width: 120px;
+    margin-left: 10px;
+    margin-right: 10px;
     display: inline-block;
 }
 .header .auth .buttons button {

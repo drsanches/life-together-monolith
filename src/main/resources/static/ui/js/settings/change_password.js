@@ -1,5 +1,5 @@
-import {followLink, sendData} from "/ui/js/common.js"
-import {deleteToken} from "/ui/js/token.js"
+import {followLink, sendData} from "/ui/js/utils/common.js"
+import {deleteToken} from "/ui/js/utils/token.js"
 
 export var changePassword = {
     data() {

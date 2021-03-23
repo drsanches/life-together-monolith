@@ -1,5 +1,5 @@
-import {followLink, getData} from "/ui/js/common.js";
-import {isAuthorized, deleteToken} from "/ui/js/token.js";
+import {followLink, getData} from "/ui/js/utils/common.js";
+import {isAuthorized, deleteToken} from "/ui/js/utils/token.js";
 
 export var header = {
     data() {
@@ -9,6 +9,7 @@ export var header = {
     },
     methods: {
             home: () => followLink("/ui/index.html"),
+            friends: () => followLink("/ui/friends.html"),
             registration: () => followLink("/ui/registration.html"),
             login: () => followLink("/ui/login.html"),
             settings: () => followLink("/ui/settings.html"),
@@ -25,9 +26,10 @@ export var header = {
     template: `
         <div>
             <div class="header">
-                <!-- Logo -->
-                <div class="logo" v-on:click="home">
-                    <span class="text">Life Together</span>
+                <!-- Menu -->
+                <div class="menu">
+                    <span class="logo" v-on:click="home">Life Together</span>
+                    <button v-on:click="friends" v-if="authorized">Friends</button>
                 </div>
 
                 <!-- Without token -->

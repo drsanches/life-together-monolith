@@ -1,5 +1,5 @@
-import {sendData, followLink} from "/ui/js/common.js";
-import {setToken} from "/ui/js/token.js";
+import {sendData, followLink} from "/ui/js/utils/common.js";
+import {setToken} from "/ui/js/utils/token.js";
 
 export var login = {
     data() {
