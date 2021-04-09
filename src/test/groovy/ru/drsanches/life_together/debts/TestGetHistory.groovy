@@ -72,6 +72,92 @@ class TestGetHistory extends Specification {
         assert Utils.checkTimestamp(period3[0], transaction4["timestamp"] as String, period3[1])
     }
 
+    // TODO: group with "success history getting with pagination"()
+    // Strange Spock "where" limit on 12, may be fixed later
+    def "success history getting with order check"() {
+        given: "two friends"
+        def username1 = DataGenerator.createValidUsername()
+        def password1 = DataGenerator.createValidPassword()
+        def username2 = DataGenerator.createValidUsername()
+        def password2 = DataGenerator.createValidPassword()
+
+        def userId1 = RequestUtils.registerUser(username1, password1, null)
+        def userId2 = RequestUtils.registerUser(username2, password2, null)
+
+        RequestUtils.sendFriendRequest(username1, password1, userId2)
+        RequestUtils.sendFriendRequest(username2, password2, userId1)
+
+        def token1 = RequestUtils.getToken(username1, password1)
+
+        for (int i = 0; i < 10; i++) {
+            RequestUtils.sendMoney(token1, [userId2] as String[], 100, i as String)
+        }
+
+        when: "request is sent"
+        def response = RequestUtils.getRestClient().get(
+                path: PATH,
+                headers: ["Authorization": "Bearer $token1"],
+                requestContentType : ContentType.JSON) as HttpResponseDecorator
+
+        then: "response is correct"
+        assert response.status == 200
+        def transactions = response.getData() as JSONArray
+        assert transactions.stream()
+                .map({ x -> x["message"] })
+                .reduce({ x1, x2 -> x1 + x2 })
+                .orElse("") == "9876543210"
+    }
+
+    def "success history getting with pagination"() {
+        given: "two friends"
+        def username1 = DataGenerator.createValidUsername()
+        def password1 = DataGenerator.createValidPassword()
+        def username2 = DataGenerator.createValidUsername()
+        def password2 = DataGenerator.createValidPassword()
+
+        def userId1 = RequestUtils.registerUser(username1, password1, null)
+        def userId2 = RequestUtils.registerUser(username2, password2, null)
+
+        RequestUtils.sendFriendRequest(username1, password1, userId2)
+        RequestUtils.sendFriendRequest(username2, password2, userId1)
+
+        def token1 = RequestUtils.getToken(username1, password1)
+
+        for (int i = 0; i < NUM; i++) {
+            RequestUtils.sendMoney(token1, [userId2] as String[], 100, i as String)
+        }
+
+        when: "request is sent"
+        def response = RequestUtils.getRestClient().get(
+                path: PATH,
+                query: params,
+                headers: ["Authorization": "Bearer $token1"],
+                requestContentType : ContentType.JSON) as HttpResponseDecorator
+
+        then: "response is correct"
+        assert response.status == 200
+        def transactions = response.getData() as JSONArray
+        assert transactions.stream()
+                .map({ x -> x["message"] })
+                .reduce({ x1, x2 -> x1 + x2 })
+                .orElse("") == messages
+
+        where:
+        NUM | params          || messages
+        // 10  | []              || "9876543210"
+        10  | [from:2,to:5]   || "765"
+        10  | [from:0,to:11]  || "9876543210"
+        10  | [from:-1,to:-1] || "9876543210"
+        10  | [from:5,to:-1]  || "43210"
+        10  | [from:-1,to:5]  || "98765"
+        10  | [from:20]       || ""
+        10  | [from:5]        || "43210"
+        10  | [from:-1]       || "9876543210"
+        10  | [to:20]         || "9876543210"
+        10  | [to:5]          || "98765"
+        10  | [to:-1]         || "9876543210"
+    }
+
     def "success empty history getting"() {
         given: "user"
         def username = DataGenerator.createValidUsername()
