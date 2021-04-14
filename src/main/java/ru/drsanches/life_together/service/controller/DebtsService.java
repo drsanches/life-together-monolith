@@ -15,6 +15,7 @@ import ru.drsanches.life_together.exception.ApplicationException;
 import ru.drsanches.life_together.exception.NoUserIdException;
 import ru.drsanches.life_together.exception.WrongRecipientsException;
 import ru.drsanches.life_together.repository.TransactionRepository;
+import ru.drsanches.life_together.service.utils.PaginationService;
 import ru.drsanches.life_together.service.utils.RecipientsValidator;
 import ru.drsanches.life_together.service.utils.UserIdService;
 import ru.drsanches.life_together.service.utils.UserInfoService;
@@ -29,6 +30,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class DebtsService {
@@ -46,6 +48,9 @@ public class DebtsService {
 
     @Autowired
     private RecipientsValidator recipientsValidator;
+
+    @Autowired
+    private PaginationService<Transaction> paginationService;
 
     public void sendMoney(OAuth2Authentication authentication, SendMoneyDTO sendMoneyDTO) {
         String fromUserId = userIdService.getUserIdFromAuth(authentication);
@@ -80,7 +85,7 @@ public class DebtsService {
 
     public AmountsDTO getDebts(OAuth2Authentication authentication) {
         String userId = userIdService.getUserIdFromAuth(authentication);
-        Set<Transaction> outgoingTransactions = transactionRepository.findByFromUserId(userId);
+        List<Transaction> outgoingTransactions = transactionRepository.findByFromUserId(userId);
         Map<String, Integer> total = new HashMap<>();
         outgoingTransactions.forEach(transaction -> {
             String toUserId = transaction.getToUserId();
@@ -90,7 +95,7 @@ public class DebtsService {
                 total.put(toUserId, transaction.getAmount());
             }
         });
-        Set<Transaction> incomingTransactions = transactionRepository.findByToUserId(userId);
+        List<Transaction> incomingTransactions = transactionRepository.findByToUserId(userId);
         incomingTransactions.forEach(transaction -> {
             String fromUserId = transaction.getFromUserId();
             if (total.containsKey(fromUserId)) {
@@ -111,11 +116,13 @@ public class DebtsService {
         return new AmountsDTO(sent, received);
     }
 
-    public List<TransactionDTO> getHistory(OAuth2Authentication authentication) {
+    public List<TransactionDTO> getHistory(OAuth2Authentication authentication, Integer from, Integer to) {
         String userId = userIdService.getUserIdFromAuth(authentication);
-        Set<Transaction> transactions = transactionRepository.findByFromUserId(userId);
+        List<Transaction> transactions = transactionRepository.findByFromUserId(userId);
         transactions.addAll(transactionRepository.findByToUserId(userId));
-        return transactions.stream()
+        Stream<Transaction> sorted = transactions.stream()
+                .sorted((x, y) -> -x.getTimestamp().compareTo(y.getTimestamp()));
+        return paginationService.pagination(sorted, from, to)
                 .map(t -> new TransactionDTO(
                         t.getId(),
                         t.getFromUserId().equals(userId) ? t.getToUserId() : t.getFromUserId(),
@@ -126,7 +133,6 @@ public class DebtsService {
                         t.getMessage(),
                         t.getTimestamp()
                 ))
-                .sorted(Comparator.comparing(TransactionDTO::getTimestamp))
                 .collect(Collectors.toList());
     }
 
@@ -141,10 +147,10 @@ public class DebtsService {
 
         AtomicReference<Integer> total = new AtomicReference<>(0);
 
-        Set<Transaction> outgoingTransactions = transactionRepository.findByFromUserIdAndToUserId(currentUserId, userId);
+        List<Transaction> outgoingTransactions = transactionRepository.findByFromUserIdAndToUserId(currentUserId, userId);
         outgoingTransactions.forEach(transaction -> total.updateAndGet(v -> v + transaction.getAmount()));
 
-        Set<Transaction> incomingTransactions = transactionRepository.findByFromUserIdAndToUserId(userId, currentUserId);
+        List<Transaction> incomingTransactions = transactionRepository.findByFromUserIdAndToUserId(userId, currentUserId);
         incomingTransactions.forEach(transaction -> total.updateAndGet(v -> v - transaction.getAmount()));
 
         if (total.get() != 0) {

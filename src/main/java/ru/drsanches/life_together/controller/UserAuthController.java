@@ -75,8 +75,6 @@ public class UserAuthController {
         userAuthService.changeEmail(principal.getName(), changeEmailDTO);
     }
 
-    //TODO: Add refresh token endpoint
-
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     @ApiOperation(value = "Logs out of the current user, old tokens become invalid")
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
