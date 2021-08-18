@@ -1,0 +1,7 @@
+.debt-card {
+    display: table;
+}
+.debt-card .user-card {
+    width: 200px;
+    display: inline-block;
+}

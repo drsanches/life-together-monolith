@@ -10,6 +10,7 @@ export var header = {
     methods: {
             home: () => followLink("/ui/index.html"),
             friends: () => followLink("/ui/friends.html"),
+            debts: () => followLink("/ui/debts.html"),
             registration: () => followLink("/ui/registration.html"),
             login: () => followLink("/ui/login.html"),
             settings: () => followLink("/ui/settings.html"),
@@ -30,6 +31,7 @@ export var header = {
                 <div class="menu">
                     <span class="logo" v-on:click="home">Life Together</span>
                     <button v-on:click="friends" v-if="authorized">Friends</button>
+                    <button v-on:click="debts" v-if="authorized">Debts</button>
                 </div>
 
                 <!-- Without token -->

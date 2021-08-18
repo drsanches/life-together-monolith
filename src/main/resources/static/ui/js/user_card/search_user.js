@@ -20,6 +20,8 @@ export var searchUser = {
     },
     template: `
         <div class="search-user">
+            <div class="title">Search user:</div>
+            <br>
             <input v-model="username">
             <button class="search-button" v-on:click="search">Search</button>
             <br><br>

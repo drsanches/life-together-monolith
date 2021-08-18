@@ -1,6 +1,7 @@
-.friend-list .title,
+.search-user .title,
 .incoming-request-list .title,
-.outgoing-request-list .title {
+.outgoing-request-list .title,
+.friend-list .title {
     font-weight: bold;
     font-size: 120%;
 }

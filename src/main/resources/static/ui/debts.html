@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>LT: Debts</title>
+        <link rel="stylesheet" type="text/css" href="/ui/css/header.css"/>
+        <link rel="stylesheet" type="text/css" href="/ui/css/user_card/user_card.css"/>
+        <link rel="stylesheet" type="text/css" href="/ui/css/user_card/friend_selector.css"/>
+        <link rel="stylesheet" type="text/css" href="/ui/css/debts/money_send_panel.css"/>
+        <link rel="stylesheet" type="text/css" href="/ui/css/debts/total_debts.css"/>
+        <link rel="stylesheet" type="text/css" href="/ui/css/user_card/debt_card.css"/>
+        <script src="/ui/js/lib/vue.js"></script>
+        <script type="module" src="/ui/js/utils/common.js"></script>
+        <script type="module" src="/ui/js/header.js"></script>
+        <script type="module" src="/ui/js/user_card/user_card.js"></script>
+        <script type="module" src="/ui/js/user_card/current_user_card.js"></script>
+        <script type="module" src="/ui/js/debts.js"></script>
+        <script type="module" src="/ui/js/user_card/friend_selector.js"></script>
+        <script type="module" src="/ui/js/debts/money_send_panel.js"></script>
+        <script type="module" src="/ui/js/debts/total_debts.js"></script>
+        <script type="module" src="/ui/js/list/debt_list.js"></script>
+        <script type="module" src="/ui/js/user_card/debt_card.js"></script>
+    </head>
+    <body>
+        <div id="app">
+            <custom-header></custom-header>
+            <br>
+            <debts></debts>
+        </div>
+
+        <script type="module">
+            import {header} from '/ui/js/header.js';
+            import {userCard} from '/ui/js/user_card/user_card.js';
+            import {currentUserCard} from '/ui/js/user_card/current_user_card.js';
+            import {debts} from '/ui/js/debts.js';
+            import {friendSelector} from '/ui/js/user_card/friend_selector.js';
+            import {moneySendPanel} from '/ui/js/debts/money_send_panel.js';
+            import {totalDebts} from '/ui/js/debts/total_debts.js';
+            import {debtList} from '/ui/js/list/debt_list.js';
+            import {debtCard} from '/ui/js/user_card/debt_card.js';
+
+            var app = Vue.createApp({});
+            app.component('custom-header', header);
+            app.component('user-card', userCard);
+            app.component('current-user-card', currentUserCard);
+            app.component('debts', debts);
+            app.component('friend-selector', friendSelector);
+            app.component('money-send-panel', moneySendPanel);
+            app.component('total-debts', totalDebts);
+            app.component('debt-list', debtList);
+            app.component('debt-card', debtCard);
+            app.mount("#app");
+        </script>
+    </body>
+</html>

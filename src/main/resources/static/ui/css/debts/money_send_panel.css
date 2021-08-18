@@ -1,0 +1,11 @@
+.money-send-panel .title {
+    font-weight: bold;
+    font-size: 120%;
+}
+.money-send-panel .friend-selector {
+    margin-top: 10px;
+}
+.money-send-panel .user-card {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}

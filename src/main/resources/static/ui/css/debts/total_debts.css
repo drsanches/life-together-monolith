@@ -1,0 +1,11 @@
+.total-debts .main-title {
+    font-weight: bold;
+    font-size: 120%;
+}
+.total-debts .title {
+    font-weight: bold;
+}
+.total-debts .sent,
+.total-debts .received {
+    margin-top: 10px;
+}
