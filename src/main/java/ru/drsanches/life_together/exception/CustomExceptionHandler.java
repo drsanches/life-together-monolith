@@ -18,6 +18,12 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<String> handleAuthException(AuthException e) {
+        LOG.warn(e.getMessage(), e);
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler({NoUserIdException.class, NoUsernameException.class})
     public ResponseEntity<String> handleNoUserException(ApplicationException e) {
         LOG.warn(e.getMessage(), e);

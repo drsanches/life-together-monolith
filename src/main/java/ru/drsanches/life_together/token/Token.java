@@ -1,29 +1,39 @@
-package ru.drsanches.life_together.data.auth.dto;
+package ru.drsanches.life_together.token;
 
-import io.swagger.annotations.ApiModelProperty;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.GregorianCalendar;
 
-public class TokenDTO {
+@Entity
+@Table(name="token")
+public class Token {
 
-    @ApiModelProperty(required = true)
+    @Id
+    @Column
     private String accessToken;
 
-    @ApiModelProperty(required = true)
+    @Column(unique = true, nullable = false)
     private String refreshToken;
 
-    @ApiModelProperty(required = true)
+    @Column(nullable = false)
     private String tokenType;
 
-    @ApiModelProperty(required = true)
+    @Column(nullable = false)
     private GregorianCalendar expiresAt;
 
-    public TokenDTO() {}
+    @Column(nullable = false)
+    private String userId;
 
-    public TokenDTO(String accessToken, String refreshToken, String tokenType, GregorianCalendar expiresAt) {
+    public Token() {}
+
+    public Token(String accessToken, String refreshToken, String tokenType, GregorianCalendar expiresAt, String userId) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.tokenType = tokenType;
         this.expiresAt = expiresAt;
+        this.userId = userId;
     }
 
     public String getAccessToken() {
@@ -42,6 +52,10 @@ public class TokenDTO {
         return expiresAt;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
@@ -58,10 +72,15 @@ public class TokenDTO {
         this.expiresAt = expiresAt;
     }
 
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     @Override
     public String toString() {
-        return "TokenDTO{" +
+        return "Token{" +
                 "tokenType='" + tokenType + '\'' +
+                ", userId='" + userId + '\'' +
                 '}';
     }
 }

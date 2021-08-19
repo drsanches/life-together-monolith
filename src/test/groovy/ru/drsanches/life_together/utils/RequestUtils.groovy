@@ -219,4 +219,18 @@ class RequestUtils {
             return null
         }
     }
+
+    static String getRefreshToken(String username, String password) {
+        try {
+            HttpResponseDecorator response = getRestClient().post(
+                    path: "/auth/login",
+                    body: ["username": username,
+                           "password": password],
+                    requestContentType : ContentType.JSON) as HttpResponseDecorator
+            return response.status == 200 ? response.getData()["refreshToken"] : null
+        } catch (Exception e) {
+            e.printStackTrace()
+            return null
+        }
+    }
 }
