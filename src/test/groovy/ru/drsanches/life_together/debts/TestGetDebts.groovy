@@ -11,7 +11,7 @@ import spock.lang.Specification
 
 class TestGetDebts extends Specification {
 
-    String PATH = "/debts"
+    String PATH = "/api/v1/debts"
 
     def "success sent debts getting"() {
         given: "user with friend, other user, users with incoming and outgoing requests and deleted user"

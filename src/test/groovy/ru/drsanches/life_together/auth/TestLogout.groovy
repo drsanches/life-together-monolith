@@ -8,7 +8,7 @@ import spock.lang.Specification
 
 class TestLogout extends Specification {
 
-    String PATH = "/auth/logout"
+    String PATH = "/api/v1/auth/logout"
 
     def "successful logout"() {
         given: "user after login"

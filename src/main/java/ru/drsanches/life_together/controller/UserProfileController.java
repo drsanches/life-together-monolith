@@ -17,7 +17,7 @@ import ru.drsanches.life_together.data.profile.dto.UserInfoDTO;
 import ru.drsanches.life_together.service.controller.UserProfileService;
 
 @RestController
-@RequestMapping(value = "/profile")
+@RequestMapping(value = "/api/v1/profile")
 @Api(description = "viewing and editing public user profiles")
 public class UserProfileController {
 

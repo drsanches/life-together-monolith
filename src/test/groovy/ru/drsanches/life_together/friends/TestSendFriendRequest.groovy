@@ -9,7 +9,7 @@ import spock.lang.Specification
 
 class TestSendFriendRequest extends Specification {
 
-    String PATH = "/friends/manage/"
+    String PATH = "/api/v1/friends/manage/"
 
     def "success one side friend request sending"() {
         given: "two users"

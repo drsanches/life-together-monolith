@@ -2,6 +2,8 @@ import {getToken, deleteToken} from "/ui/js/utils/token.js"
 
 var BASE_URL = "http://localhost:8080";
 
+var API_BASE_URL = "http://localhost:8080/api/v1";
+
 export function followLink(path) {
     window.location.href = BASE_URL + path;
 }
@@ -25,7 +27,7 @@ export function sendData(path, method, body, needResponseData, onSuccess) {
             }
         }
     }
-    fetch(BASE_URL + path, response)
+    fetch(API_BASE_URL + path, response)
     .then(response => {
         if (response.ok) {
             if (needResponseData) {
@@ -41,7 +43,7 @@ export function sendData(path, method, body, needResponseData, onSuccess) {
 }
 
 export function getData(path) {
-    return fetch(BASE_URL + path, {
+    return fetch(API_BASE_URL + path, {
         method: 'GET',
         headers: {
             "Authorization": getToken()

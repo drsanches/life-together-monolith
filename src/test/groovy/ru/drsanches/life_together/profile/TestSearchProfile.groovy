@@ -9,7 +9,7 @@ import spock.lang.Specification
 
 class TestSearchProfile extends Specification {
 
-    String PATH = "/profile/search/"
+    String PATH = "/api/v1/profile/search/"
 
     def "successful user profile searching"() {
         given: "user with token and another user"

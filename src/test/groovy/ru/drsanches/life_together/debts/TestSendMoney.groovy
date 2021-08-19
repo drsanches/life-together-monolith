@@ -12,7 +12,7 @@ import spock.lang.Specification
 
 class TestSendMoney extends Specification {
 
-    String PATH = "/debts/send"
+    String PATH = "/api/v1/debts/send"
 
     def "success money send to one user"() {
         given: "two friends"

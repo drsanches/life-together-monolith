@@ -12,7 +12,7 @@ import spock.lang.Specification
 
 class TestCancel extends Specification {
 
-    String PATH = "/debts/cancel/"
+    String PATH = "/api/v1/debts/cancel/"
 
     String messageFormat = "Debt has been canceled by user with id '%s'"
 

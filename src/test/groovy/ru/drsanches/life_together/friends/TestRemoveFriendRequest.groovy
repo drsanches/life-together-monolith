@@ -9,7 +9,7 @@ import spock.lang.Specification
 
 class TestRemoveFriendRequest extends Specification {
 
-    String PATH = "/friends/manage/"
+    String PATH = "/api/v1/friends/manage/"
 
     def "success current user friend request deletion"() {
         given: "two users and one side friend request"

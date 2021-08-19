@@ -9,7 +9,7 @@ import spock.lang.Specification
 
 class TestChangeEmail extends Specification {
 
-    String PATH = "/auth/changeEmail"
+    String PATH = "/api/v1/auth/changeEmail"
 
     def "success email change"() {
         given: "registered user, password, token and new email"

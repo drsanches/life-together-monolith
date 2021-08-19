@@ -9,7 +9,7 @@ import spock.lang.Specification
 
 class TestChangeUsername extends Specification {
 
-    String PATH = "/auth/changeUsername"
+    String PATH = "/api/v1/auth/changeUsername"
 
     def "success username change"() {
         given: "registered user, password, token and new username"

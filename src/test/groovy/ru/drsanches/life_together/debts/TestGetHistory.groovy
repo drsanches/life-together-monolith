@@ -12,7 +12,7 @@ import spock.lang.Specification
 
 class TestGetHistory extends Specification {
 
-    String PATH = "/debts/history"
+    String PATH = "/api/v1/debts/history"
 
     def "success history getting"() {
         given: "two users and deleted user"

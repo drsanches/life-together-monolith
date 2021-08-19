@@ -9,7 +9,7 @@ import spock.lang.Specification
 
 class TestLogin extends Specification {
 
-    String PATH = "/auth/login"
+    String PATH = "/api/v1/auth/login"
 
     def "successful login"() {
         given: "user"

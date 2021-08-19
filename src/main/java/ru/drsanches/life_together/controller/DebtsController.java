@@ -22,7 +22,7 @@ import ru.drsanches.life_together.service.controller.DebtsService;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/debts")
+@RequestMapping(value = "/api/v1/debts")
 @Api(description = "all debts operations")
 public class DebtsController {
 

@@ -22,10 +22,10 @@ public class SwaggerConfig {
                 .ignoredParameterTypes(ApiIgnore.class)
                 .apiInfo(apiInfo())
                 .select().paths(or(
-                        regex("/auth.*"),
-                        regex("/profile.*"),
-                        regex("/friends.*"),
-                        regex("/debts.*")))
+                        regex("/api/v1/auth.*"),
+                        regex("/api/v1/profile.*"),
+                        regex("/api/v1/friends.*"),
+                        regex("/api/v1/debts.*")))
                 .build();
     }
 

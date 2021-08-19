@@ -10,7 +10,7 @@ import spock.lang.Specification
 
 class TestRegistration extends Specification {
 
-    String PATH = "/auth/registration"
+    String PATH = "/api/v1/auth/registration"
 
     def "success user registration"() {
         given: "username and password"

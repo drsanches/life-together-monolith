@@ -23,7 +23,7 @@ import ru.drsanches.life_together.data.auth.dto.UserAuthInfoDTO;
 import ru.drsanches.life_together.service.controller.UserAuthService;
 
 @RestController
-@RequestMapping(value = "/auth")
+@RequestMapping(value = "/api/v1/auth")
 @Api(description = "authentication data management")
 public class UserAuthController {
 

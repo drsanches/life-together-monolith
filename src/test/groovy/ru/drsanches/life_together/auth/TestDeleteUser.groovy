@@ -11,7 +11,7 @@ import spock.lang.Specification
 
 class TestDeleteUser extends Specification {
 
-    String PATH = "/auth/deleteUser"
+    String PATH = "/api/v1/auth/deleteUser"
 
     def "success user deleting"() {
         given: "registered user with friend and friend requests, password and token"

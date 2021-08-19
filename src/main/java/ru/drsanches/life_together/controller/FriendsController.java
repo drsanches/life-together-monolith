@@ -17,7 +17,7 @@ import ru.drsanches.life_together.service.controller.FriendsService;
 import java.util.Set;
 
 @RestController
-@RequestMapping(value = "/friends")
+@RequestMapping(value = "/api/v1/friends")
 @Api(description = "friend requests and friends list operations")
 public class FriendsController {
 

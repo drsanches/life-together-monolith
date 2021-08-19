@@ -9,7 +9,7 @@ import spock.lang.Specification
 
 class TestGetCurrentProfile extends Specification {
 
-    String PATH = "/profile"
+    String PATH = "/api/v1/profile"
 
     def "successful current user profile getting"() {
         given: "user with token"
