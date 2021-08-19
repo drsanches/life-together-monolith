@@ -76,7 +76,7 @@ class TestChangeEmail extends Specification {
 
         then: "response is correct"
         HttpResponseException e = thrown(HttpResponseException)
-        assert e.response.status == 400
+        assert e.response.status == 401
     }
 
     def "email change with invalid token"() {

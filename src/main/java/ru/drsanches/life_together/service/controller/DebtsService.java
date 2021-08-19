@@ -3,7 +3,6 @@ package ru.drsanches.life_together.service.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Service;
 import ru.drsanches.life_together.data.debts.dto.AmountDTO;
 import ru.drsanches.life_together.data.debts.dto.AmountsDTO;
@@ -17,10 +16,9 @@ import ru.drsanches.life_together.exception.WrongRecipientsException;
 import ru.drsanches.life_together.repository.TransactionRepository;
 import ru.drsanches.life_together.service.utils.PaginationService;
 import ru.drsanches.life_together.service.utils.RecipientsValidator;
-import ru.drsanches.life_together.service.utils.UserIdService;
 import ru.drsanches.life_together.service.utils.UserInfoService;
+import ru.drsanches.life_together.token.TokenService;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,9 +39,6 @@ public class DebtsService {
     private TransactionRepository transactionRepository;
 
     @Autowired
-    private UserIdService userIdService;
-
-    @Autowired
     private UserInfoService userInfoService;
 
     @Autowired
@@ -52,8 +47,11 @@ public class DebtsService {
     @Autowired
     private PaginationService<Transaction> paginationService;
 
-    public void sendMoney(OAuth2Authentication authentication, SendMoneyDTO sendMoneyDTO) {
-        String fromUserId = userIdService.getUserIdFromAuth(authentication);
+    @Autowired
+    private TokenService tokenService;
+
+    public void sendMoney(String token, SendMoneyDTO sendMoneyDTO) {
+        String fromUserId = tokenService.getUserId(token);
         if (sendMoneyDTO.getMoney() == null || sendMoneyDTO.getMoney() <= 0) {
             throw new ApplicationException("Money must be positive: money=" + sendMoneyDTO.getMoney());
         }
@@ -83,8 +81,8 @@ public class DebtsService {
         LOG.info("Transactions has been created: {}", transactions.toString());
     }
 
-    public AmountsDTO getDebts(OAuth2Authentication authentication) {
-        String userId = userIdService.getUserIdFromAuth(authentication);
+    public AmountsDTO getDebts(String token) {
+        String userId = tokenService.getUserId(token);
         List<Transaction> outgoingTransactions = transactionRepository.findByFromUserId(userId);
         Map<String, Integer> total = new HashMap<>();
         outgoingTransactions.forEach(transaction -> {
@@ -116,8 +114,8 @@ public class DebtsService {
         return new AmountsDTO(sent, received);
     }
 
-    public List<TransactionDTO> getHistory(OAuth2Authentication authentication, Integer from, Integer to) {
-        String userId = userIdService.getUserIdFromAuth(authentication);
+    public List<TransactionDTO> getHistory(String token, Integer from, Integer to) {
+        String userId = tokenService.getUserId(token);
         List<Transaction> transactions = transactionRepository.findByFromUserId(userId);
         transactions.addAll(transactionRepository.findByToUserId(userId));
         Stream<Transaction> sorted = transactions.stream()
@@ -136,8 +134,8 @@ public class DebtsService {
                 .collect(Collectors.toList());
     }
 
-    public void cancel(OAuth2Authentication authentication, String userId) {
-        String currentUserId = userIdService.getUserIdFromAuth(authentication);
+    public void cancel(String token, String userId) {
+        String currentUserId = tokenService.getUserId(token);
         if (!userInfoService.userAuthExists(userId)) {
             throw new NoUserIdException(userId);
         }

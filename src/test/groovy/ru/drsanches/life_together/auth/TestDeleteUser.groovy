@@ -108,7 +108,7 @@ class TestDeleteUser extends Specification {
 
         then: "response is correct"
         HttpResponseException e = thrown(HttpResponseException)
-        assert e.response.status == 400
+        assert e.response.status == 401
 
         and: "user was not deleted"
         assert RequestUtils.getAuthInfo(token) != null

@@ -79,7 +79,7 @@ class TestChangeUsername extends Specification {
 
         then: "response is correct"
         HttpResponseException e = thrown(HttpResponseException)
-        assert e.response.status == 400
+        assert e.response.status == 401
     }
 
     def "username change with invalid token"() {

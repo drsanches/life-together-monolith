@@ -14,6 +14,7 @@ import ru.drsanches.life_together.repository.UserProfileRepository;
 import ru.drsanches.life_together.exception.ServerError;
 import ru.drsanches.life_together.service.utils.UserIdService;
 import ru.drsanches.life_together.service.utils.UserInfoService;
+import ru.drsanches.life_together.token.TokenService;
 import java.util.Optional;
 
 @Service
@@ -30,9 +31,12 @@ public class UserProfileService {
     @Autowired
     private UserInfoService userInfoService;
 
-    public UserInfoDTO getProfile(OAuth2Authentication authentication) {
-        String userId = userIdService.getUserIdFromAuth(authentication);
-        return getUserInfo(userId, authentication.getName());
+    @Autowired
+    private TokenService tokenService;
+
+    public UserInfoDTO getCurrentProfile(String token) {
+        String userId = tokenService.getUserId(token);
+        return userInfoService.getUserInfo(userId);
     }
 
     public UserInfoDTO searchProfile(String username) {
@@ -40,7 +44,7 @@ public class UserProfileService {
         if (userId == null) {
             throw new NoUsernameException(username);
         }
-        return getUserInfo(userId, username);
+        return userInfoService.getUserInfo(userId);
     }
 
     public UserInfoDTO getProfile(String userId) {
@@ -51,23 +55,13 @@ public class UserProfileService {
         return userInfoDTO;
     }
 
-    public void changeCurrentProfile(OAuth2Authentication authentication, ChangeUserProfileDTO changeUserProfileDTO) {
-        String userId = userIdService.getUserIdFromAuth(authentication);
+    public void changeCurrentProfile(String token, ChangeUserProfileDTO changeUserProfileDTO) {
+        String userId = tokenService.getUserId(token);
         UserProfile userProfile = getUserByIdIfExists(userId);
         userProfile.setFirstName(changeUserProfileDTO.getFirstName());
         userProfile.setLastName(changeUserProfileDTO.getLastName());
         userProfileRepository.save(userProfile);
         LOG.info("User profile has been changed: {}", userProfile.toString());
-    }
-
-    private UserInfoDTO getUserInfo(String userId, String username) {
-        UserProfile userProfile = getUserByIdIfExists(userId);
-        UserInfoDTO userInfoDTO = new UserInfoDTO();
-        userInfoDTO.setId(userId);
-        userInfoDTO.setUsername(username);
-        userInfoDTO.setFirstName(userProfile.getFirstName());
-        userInfoDTO.setLastName(userProfile.getLastName());
-        return userInfoDTO;
     }
 
     private UserProfile getUserByIdIfExists(String userId) {

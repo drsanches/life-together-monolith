@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Service;
 import ru.drsanches.life_together.data.friends.model.FriendRequest;
 import ru.drsanches.life_together.data.friends.model.FriendRequestKey;
@@ -13,8 +12,8 @@ import ru.drsanches.life_together.data.profile.dto.UserInfoDTO;
 import ru.drsanches.life_together.exception.ApplicationException;
 import ru.drsanches.life_together.exception.NoUserIdException;
 import ru.drsanches.life_together.repository.FriendRequestRepository;
-import ru.drsanches.life_together.service.utils.UserIdService;
 import ru.drsanches.life_together.service.utils.UserInfoService;
+import ru.drsanches.life_together.token.TokenService;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,13 +26,13 @@ public class FriendsService {
     private FriendRequestRepository friendRequestRepository;
 
     @Autowired
-    private UserIdService userIdService;
-
-    @Autowired
     private UserInfoService userInfoService;
 
-    public Set<UserInfoDTO> getFriends(OAuth2Authentication authentication) {
-        String userId = userIdService.getUserIdFromAuth(authentication);
+    @Autowired
+    private TokenService tokenService;
+
+    public Set<UserInfoDTO> getFriends(String token) {
+        String userId = tokenService.getUserId(token);
         Set<String> outgoing = getOutgoingRequestIds(userId);
         Set<String> incoming = getIncomingRequestIds(userId);
         Set<String> friends = incoming.stream()
@@ -42,8 +41,8 @@ public class FriendsService {
         return userInfoService.getUserInfoSet(friends);
     }
 
-    public Set<UserInfoDTO> getIncomingRequests(OAuth2Authentication authentication) {
-        String userId = userIdService.getUserIdFromAuth(authentication);
+    public Set<UserInfoDTO> getIncomingRequests(String token) {
+        String userId = tokenService.getUserId(token);
         Set<String> outgoing = getOutgoingRequestIds(userId);
         Set<String> incoming = getIncomingRequestIds(userId);
         Set<String> friends = incoming.stream()
@@ -52,8 +51,8 @@ public class FriendsService {
         return userInfoService.getUserInfoSet(friends);
     }
 
-    public Set<UserInfoDTO> getOutgoingRequests(OAuth2Authentication authentication) {
-        String userId = userIdService.getUserIdFromAuth(authentication);
+    public Set<UserInfoDTO> getOutgoingRequests(String token) {
+        String userId = tokenService.getUserId(token);
         Set<String> outgoing = getOutgoingRequestIds(userId);
         Set<String> incoming = getIncomingRequestIds(userId);
         Set<String> friends = outgoing.stream()
@@ -62,8 +61,8 @@ public class FriendsService {
         return userInfoService.getUserInfoSet(friends);
     }
 
-    public void sendRequest(OAuth2Authentication authentication, String toUserId) {
-        String fromUserId = userIdService.getUserIdFromAuth(authentication);
+    public void sendRequest(String token, String toUserId) {
+        String fromUserId = tokenService.getUserId(token);
         if (!userInfoService.userProfileExists(toUserId)) {
             throw new NoUserIdException(toUserId);
         }
@@ -80,8 +79,8 @@ public class FriendsService {
         }
     }
 
-    public void removeRequest(OAuth2Authentication authentication, String userId) {
-        String currentUserId = userIdService.getUserIdFromAuth(authentication);
+    public void removeRequest(String token, String userId) {
+        String currentUserId = tokenService.getUserId(token);
         if (!userInfoService.userAuthExists(userId)) {
             throw new NoUserIdException(userId);
         }
