@@ -1,5 +1,8 @@
+import Cookies from "/ui/js/lib/js.cookie.m.js";
+
 export function setToken(token) {
     localStorage.setItem("token", "Bearer " + token);
+    Cookies.set("Authorization", "Bearer " + token);
 }
 
 export function getToken() {
@@ -12,4 +15,5 @@ export function isAuthorized() {
 
 export function deleteToken() {
     localStorage.removeItem("token");
+    Cookies.remove("Authorization");
 }

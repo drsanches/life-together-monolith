@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.drsanches.life_together.exception.AuthException;
 import ru.drsanches.life_together.service.utils.UserIdService;
+import javax.servlet.http.Cookie;
 import java.util.GregorianCalendar;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,7 +33,12 @@ public class TokenService {
     }
 
     public String extractTokenId(String token) {
-        return token.substring(TOKEN_TYPE.length() + 1);
+        if (token.contains(TOKEN_TYPE + " ")) {
+            return token.substring(TOKEN_TYPE.length() + 1);
+        } else if (token.contains(TOKEN_TYPE + "%20")) {
+            return token.substring(TOKEN_TYPE.length() + 3);
+        }
+        return null;
     }
 
     public void validate(String token) {
@@ -69,6 +75,18 @@ public class TokenService {
             throw new AuthException();
         }
         return tokenModel.get().getUserId();
+    }
+
+    public String getAccessTokenFromCookies(Cookie[] cookies) {
+        if (cookies == null) {
+            return null;
+        }
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("Authorization")) {
+                return cookie.getValue();
+            }
+        }
+        return null;
     }
 
     private Token createToken(String userId) {

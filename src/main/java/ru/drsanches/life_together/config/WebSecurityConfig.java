@@ -9,15 +9,21 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
+import ru.drsanches.life_together.security.AdminFilter;
 import ru.drsanches.life_together.security.TokenFilter;
 import ru.drsanches.life_together.service.utils.UserDetailsServiceImpl;
+import ru.drsanches.life_together.service.utils.UserPermissionService;
 import ru.drsanches.life_together.token.TokenService;
 import java.util.regex.Pattern;
 
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final Pattern EXCLUDE_URI_PATTERN = Pattern.compile("/auth/registration.*|/auth/login.*|/auth/refreshToken.*");
+    private final Pattern EXCLUDE_URI_PATTERN = Pattern.compile("/auth/registration.*|/auth/login.*" +
+            "|/auth/refreshToken.*|/ui.*|/h2-console.*");
+
+    private final Pattern ADMIN_URI_PATTERN = Pattern.compile("/h2-console.*");
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
@@ -25,10 +31,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private UserPermissionService userPermissionService;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.addFilterAfter(new TokenFilter(tokenService, EXCLUDE_URI_PATTERN), BasicAuthenticationFilter.class);
+        http.addFilterAfter(new AdminFilter(tokenService, userPermissionService, ADMIN_URI_PATTERN), TokenFilter.class);
         http.csrf().disable()
+                .headers().frameOptions().disable()
+                .addHeaderWriter(new StaticHeadersWriter("X-FRAME-OPTIONS", "SAMEORIGIN"))
+                .and()
                 .authorizeRequests()
                 .anyRequest().permitAll();
     }
