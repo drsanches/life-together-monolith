@@ -22,7 +22,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     //TODO: Refactor
     private final Pattern EXCLUDE_URI_PATTERN = Pattern.compile("/api/v1/auth/registration.*|/api/v1/auth/login.*" +
-            "|/api/v1/auth/refreshToken.*|/ui.*|/h2-console.*" +
+            "|/api/v1/auth/refreshToken.*|/ui.*|/favicon.ico|/h2-console.*" +
             //Swagger
             "|/swagger-ui.html.*|/webjars/springfox-swagger-ui/.*|/configuration/ui|/configuration/security" +
             "|/images/favicon-32x32.png|/images/favicon-16x16.png|/swagger-resources|/v2/api-docs.*");

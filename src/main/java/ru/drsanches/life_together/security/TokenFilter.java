@@ -1,5 +1,7 @@
 package ru.drsanches.life_together.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.GenericFilterBean;
 import ru.drsanches.life_together.exception.AuthException;
@@ -15,6 +17,8 @@ import java.util.regex.Pattern;
 
 public class TokenFilter extends GenericFilterBean {
 
+    private final static Logger LOG = LoggerFactory.getLogger(TokenFilter.class);
+
     private final TokenService TOKEN_SERVICE;
 
     private final Pattern EXCLUDE_URI_PATTERN;
@@ -29,11 +33,15 @@ public class TokenFilter extends GenericFilterBean {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse  httpResponse = (HttpServletResponse) response;
         String token = httpRequest.getHeader("Authorization");
+        if (token == null) {
+            token = TOKEN_SERVICE.getAccessTokenFromCookies(httpRequest.getCookies());
+        }
         String uri = httpRequest.getRequestURI();
         if (!EXCLUDE_URI_PATTERN.matcher(uri).matches()) {
             try {
                 TOKEN_SERVICE.validate(token);
             } catch (AuthException e) {
+                LOG.info("Wrong token for uri '{}'", uri);
                 httpResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
                 httpResponse.getOutputStream().flush();
                 httpResponse.getOutputStream().println("Wrong token");

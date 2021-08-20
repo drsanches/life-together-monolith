@@ -17,7 +17,7 @@ public class UserPermissionService {
     public boolean isAdmin(String userId) {
         Optional<UserAuth> user = userAuthRepository.findById(userId);
         if (user.isEmpty() || !user.get().isEnabled()) {
-            throw new AuthException();
+            return false;
         }
         return Role.ADMIN.equals(user.get().getRole());
     }

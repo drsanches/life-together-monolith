@@ -1,5 +1,7 @@
 package ru.drsanches.life_together.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.GenericFilterBean;
 import ru.drsanches.life_together.service.utils.UserPermissionService;
@@ -14,6 +16,8 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 
 public class AdminFilter extends GenericFilterBean {
+
+    private final static Logger LOG = LoggerFactory.getLogger(AdminFilter.class);
 
     private final TokenService TOKEN_SERVICE;
 
@@ -39,6 +43,7 @@ public class AdminFilter extends GenericFilterBean {
         if (ADMIN_URI_PATTERN.matcher(uri).matches()) {
             String userId = TOKEN_SERVICE.getUserId(token);
             if (!USER_PERMISSION_SERVICE.isAdmin(userId)) {
+                LOG.info("User {} have no permissions for uri '{}'", userId, uri);
                 httpResponse.setStatus(HttpStatus.FORBIDDEN.value());
                 httpResponse.getOutputStream().flush();
                 httpResponse.getOutputStream().println("You do not have permission");

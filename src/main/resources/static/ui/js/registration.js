@@ -27,7 +27,7 @@ export var registration = {
             }
             var loginBody = {
                 username: this.username,
-                password: this.password1
+                password: hash(this.password1)
             }
             sendData("/auth/registration", "POST", registrationBody, false, function() {
                 sendData("/auth/login", "POST", loginBody, true, function(data) {
