@@ -1,4 +1,4 @@
-import {getData, sendData, followLink} from "/ui/js/utils/common.js"
+import {getData, sendData, followLink, hash} from "/ui/js/utils/common.js"
 
 export var changeEmail = {
     data() {
@@ -13,10 +13,9 @@ export var changeEmail = {
                 alert("Enter all data");
                 return;
             }
-            //TODO: hash password
             var body = {
                 newEmail: this.email,
-                password: this.password
+                password: hash(this.password)
             }
             sendData("/auth/changeEmail", "PUT", body, false, function() {
                 followLink("/ui/settings.html");

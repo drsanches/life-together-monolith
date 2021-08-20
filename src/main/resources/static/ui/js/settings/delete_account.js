@@ -1,4 +1,4 @@
-import {followLink, sendData} from "/ui/js/utils/common.js"
+import {followLink, sendData, hash} from "/ui/js/utils/common.js"
 import {deleteToken} from "/ui/js/utils/token.js"
 
 export var deleteAccount = {
@@ -15,9 +15,8 @@ export var deleteAccount = {
             }
             if (confirm("Are you sure you want to delete your account?\n"
                     + "It will be impossible to restore it after this operation.")) {
-                //TODO: hash password
                 var body = {
-                    password: this.password
+                    password: hash(this.password)
                 }
                 sendData("/auth/deleteUser", "POST", body, false, function() {
                     deleteToken();

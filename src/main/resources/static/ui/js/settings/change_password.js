@@ -1,4 +1,4 @@
-import {followLink, sendData} from "/ui/js/utils/common.js"
+import {followLink, sendData, hash} from "/ui/js/utils/common.js"
 import {deleteToken} from "/ui/js/utils/token.js"
 
 export var changePassword = {
@@ -19,10 +19,9 @@ export var changePassword = {
                 alert("Passwords do not match");
                 return;
             }
-            //TODO: hash password
             var body = {
-                oldPassword: this.oldPassword,
-                newPassword: this.newPassword1
+                oldPassword: hash(this.oldPassword),
+                newPassword: hash(this.newPassword1)
             }
             sendData("/auth/changePassword", "PUT", body, false, function() {
                 deleteToken();

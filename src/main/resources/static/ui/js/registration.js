@@ -1,4 +1,4 @@
-import {sendData, followLink} from "/ui/js/utils/common.js";
+import {sendData, followLink, hash} from "/ui/js/utils/common.js";
 import {setToken} from "/ui/js/utils/token.js";
 
 export var registration = {
@@ -20,11 +20,10 @@ export var registration = {
                 alert("Passwords do not equal");
                 return;
             }
-            //TODO: hash password
             var registrationBody = {
                 username: this.username,
                 email: this.email,
-                password: this.password1
+                password: hash(this.password1)
             }
             var loginBody = {
                 username: this.username,

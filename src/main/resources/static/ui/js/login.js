@@ -1,4 +1,4 @@
-import {sendData, followLink} from "/ui/js/utils/common.js";
+import {sendData, followLink, hash} from "/ui/js/utils/common.js";
 import {setToken} from "/ui/js/utils/token.js";
 
 export var login = {
@@ -14,10 +14,9 @@ export var login = {
                 alert("Enter all data");
                 return;
             }
-            //TODO: hash password
             var body = {
                 username: this.username,
-                password: this.password,
+                password: hash(this.password),
             }
             sendData("/auth/login", "POST", body, true, function(data) {
                 setToken(data.accessToken);

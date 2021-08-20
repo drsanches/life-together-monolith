@@ -1,4 +1,4 @@
-import {followLink, getData, sendData} from "/ui/js/utils/common.js"
+import {followLink, getData, sendData, hash} from "/ui/js/utils/common.js"
 import {deleteToken} from "/ui/js/utils/token.js"
 
 export var changeUsername = {
@@ -14,10 +14,9 @@ export var changeUsername = {
                 alert("Enter all data");
                 return;
             }
-            //TODO: hash password
             var body = {
                 newUsername: this.username,
-                password: this.password
+                password: hash(this.password)
             }
             sendData("/auth/changeUsername", "PUT", body, false, function() {
                 deleteToken();
