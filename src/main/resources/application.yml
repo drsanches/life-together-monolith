@@ -6,10 +6,10 @@ spring:
     console:
       enabled: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/life_together
     driverClassName: org.postgresql.Driver
-    username: life_together_server
-    password: pswd
+    url: ${JDBC_DATABASE_URL}
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
   jpa:
     show-sql: false
     database-platform: postgres
