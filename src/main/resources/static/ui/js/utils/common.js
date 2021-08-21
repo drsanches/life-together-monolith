@@ -1,9 +1,8 @@
 import {getToken, deleteToken} from "/ui/js/utils/token.js"
 import Sha1 from '/ui/js/lib/sha1.js'
 
-var BASE_URL = "http://localhost:8080";
-
-var API_BASE_URL = "http://localhost:8080/api/v1";
+var BASE_URL = window.location.host;
+var API_BASE_URL = BASE_URL + "/api/v1";
 
 export function hash(password) {
     return Sha1.hash(password);
