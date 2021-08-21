@@ -5,6 +5,9 @@ spring:
   h2: # http://localhost:8080/h2-console/
     console:
       enabled: true
+      settings:
+        web-allow-others: true
+
   datasource:
     driverClassName: org.postgresql.Driver
     url: ${JDBC_DATABASE_URL}
