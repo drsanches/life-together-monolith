@@ -13,6 +13,7 @@ import ru.drsanches.life_together.auth.data.dto.RegistrationDTO;
 import ru.drsanches.life_together.auth.data.dto.TokenDTO;
 import ru.drsanches.life_together.auth.data.dto.UserAuthInfoDTO;
 import ru.drsanches.life_together.auth.data.enumeration.Role;
+import ru.drsanches.life_together.auth.data.mapper.UserAuthInfoMapper;
 import ru.drsanches.life_together.auth.data.model.UserAuth;
 import ru.drsanches.life_together.integration.token.TokenMapper;
 import ru.drsanches.life_together.exception.NoUserIdException;
@@ -45,6 +46,9 @@ public class UserAuthService {
     @Autowired
     private TokenMapper tokenMapper;
 
+    @Autowired
+    private UserAuthInfoMapper userAuthInfoMapper;
+
     public UserAuthInfoDTO registration(RegistrationDTO registrationDTO) {
         registrationDTO.setUsername(registrationDTO.getUsername().toLowerCase());
         UserAuth userAuth = new UserAuth();
@@ -56,7 +60,7 @@ public class UserAuthService {
         userAuth.setRole(Role.USER);
         profileIntegrationService.createUser(userAuth);
         LOG.info("New user has been created: {}", userAuth.toString());
-        return new UserAuthInfoDTO(userAuth.getId(), userAuth.getUsername(), userAuth.getEmail());
+        return userAuthInfoMapper.convert(userAuth);
     }
 
     public TokenDTO login(LoginDTO loginDTO) {
@@ -69,11 +73,7 @@ public class UserAuthService {
     public UserAuthInfoDTO info(String token) {
         String userId = tokenService.getUserId(token);
         UserAuth current = getUserByIdIfExists(userId);
-        UserAuthInfoDTO userAuthInfoDTO = new UserAuthInfoDTO();
-        userAuthInfoDTO.setId(current.getId());
-        userAuthInfoDTO.setUsername(current.getUsername());
-        userAuthInfoDTO.setEmail(current.getEmail());
-        return userAuthInfoDTO;
+        return userAuthInfoMapper.convert(current);
     }
 
     public void changeUsername(String token, ChangeUsernameDTO changeUsernameDTO) {

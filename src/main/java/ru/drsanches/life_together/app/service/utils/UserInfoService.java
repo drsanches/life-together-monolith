@@ -3,8 +3,9 @@ package ru.drsanches.life_together.app.service.utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.drsanches.life_together.app.data.profile.dto.UserInfoDTO;
+import ru.drsanches.life_together.app.data.profile.mapper.UserInfoMapper;
 import ru.drsanches.life_together.app.data.profile.model.UserProfile;
-import ru.drsanches.life_together.app.data.repository.UserProfileRepository;
+import ru.drsanches.life_together.app.data.profile.repository.UserProfileRepository;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
@@ -14,7 +15,10 @@ import java.util.Set;
 public class UserInfoService {
 
     @Autowired
-    UserProfileRepository userProfileRepository;
+    private UserProfileRepository userProfileRepository;
+
+    @Autowired
+    private UserInfoMapper userInfoMapper;
 
     public boolean userProfileExists(String userId) {
         return userProfileRepository.existsById(userId);
@@ -30,12 +34,7 @@ public class UserInfoService {
         if (userProfile.isEmpty() || !userProfile.get().isEnabled()) {
             return null;
         }
-        UserInfoDTO userInfoDTO = new UserInfoDTO();
-        userInfoDTO.setId(userId);
-        userInfoDTO.setUsername(userProfile.get().getUsername());
-        userInfoDTO.setFirstName(userProfile.get().getFirstName());
-        userInfoDTO.setLastName(userProfile.get().getLastName());
-        return userInfoDTO;
+        return userInfoMapper.convert(userProfile.get());
     }
 
     /**
@@ -44,16 +43,7 @@ public class UserInfoService {
      */
     public Set<UserInfoDTO> getUserInfoSet(Collection<String> userIds) {
         Set<UserInfoDTO> result = new HashSet<>();
-        userProfileRepository.findAllById(userIds).forEach(userProfile -> {
-            UserInfoDTO userInfoDTO = new UserInfoDTO();
-            userInfoDTO.setId(userProfile.getId());
-            if (userProfile.isEnabled()) {
-                userInfoDTO.setUsername(userProfile.getUsername());
-                userInfoDTO.setFirstName(userProfile.getFirstName());
-                userInfoDTO.setLastName(userProfile.getLastName());
-            }
-            result.add(userInfoDTO);
-        });
+        userProfileRepository.findAllById(userIds).forEach(userProfile -> result.add(userInfoMapper.convert(userProfile)));
         return result;
     }
 }

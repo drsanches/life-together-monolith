@@ -11,7 +11,7 @@ import ru.drsanches.life_together.app.data.friends.model.FriendRequestKey;
 import ru.drsanches.life_together.app.data.profile.dto.UserInfoDTO;
 import ru.drsanches.life_together.exception.ApplicationException;
 import ru.drsanches.life_together.exception.NoUserIdException;
-import ru.drsanches.life_together.app.data.repository.FriendRequestRepository;
+import ru.drsanches.life_together.app.data.friends.repository.FriendRequestRepository;
 import ru.drsanches.life_together.app.service.utils.UserInfoService;
 import ru.drsanches.life_together.integration.token.TokenService;
 import java.util.Set;

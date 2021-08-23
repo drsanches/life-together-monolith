@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.app.data.repository;
+package ru.drsanches.life_together.app.data.profile.repository;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

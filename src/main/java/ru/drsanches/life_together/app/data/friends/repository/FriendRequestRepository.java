@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.app.data.repository;
+package ru.drsanches.life_together.app.data.friends.repository;
 
 import org.springframework.data.repository.CrudRepository;
 import ru.drsanches.life_together.app.data.friends.model.FriendRequest;

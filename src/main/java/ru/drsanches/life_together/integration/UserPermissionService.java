@@ -11,7 +11,7 @@ import java.util.Optional;
 public class UserPermissionService {
 
     @Autowired
-    UserAuthRepository userAuthRepository;
+    private UserAuthRepository userAuthRepository;
 
     public boolean isAdmin(String userId) {
         Optional<UserAuth> user = userAuthRepository.findById(userId);

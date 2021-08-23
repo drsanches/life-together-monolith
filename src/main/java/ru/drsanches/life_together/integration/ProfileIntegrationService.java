@@ -10,7 +10,7 @@ import ru.drsanches.life_together.auth.data.model.UserAuth;
 import ru.drsanches.life_together.app.data.profile.model.UserProfile;
 import ru.drsanches.life_together.exception.UserAlreadyExistsException;
 import ru.drsanches.life_together.auth.data.repository.UserAuthRepository;
-import ru.drsanches.life_together.app.data.repository.UserProfileRepository;
+import ru.drsanches.life_together.app.data.profile.repository.UserProfileRepository;
 import java.util.Optional;
 
 //TODO: Refactor logic
@@ -20,10 +20,10 @@ public class ProfileIntegrationService {
     private final Logger LOG = LoggerFactory.getLogger(ProfileIntegrationService.class);
 
     @Autowired
-    UserAuthRepository userAuthRepository;
+    private UserAuthRepository userAuthRepository;
 
     @Autowired
-    UserProfileRepository userProfileRepository;
+    private UserProfileRepository userProfileRepository;
 
     //TODO: Transaction
     /**

@@ -9,7 +9,7 @@ import ru.drsanches.life_together.app.data.profile.dto.UserInfoDTO;
 import ru.drsanches.life_together.app.data.profile.model.UserProfile;
 import ru.drsanches.life_together.exception.NoUserIdException;
 import ru.drsanches.life_together.exception.NoUsernameException;
-import ru.drsanches.life_together.app.data.repository.UserProfileRepository;
+import ru.drsanches.life_together.app.data.profile.repository.UserProfileRepository;
 import ru.drsanches.life_together.exception.ServerError;
 import ru.drsanches.life_together.app.service.utils.UserInfoService;
 import ru.drsanches.life_together.integration.token.TokenService;

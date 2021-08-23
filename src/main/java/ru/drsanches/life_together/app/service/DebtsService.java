@@ -4,26 +4,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.drsanches.life_together.app.data.debts.dto.AmountDTO;
 import ru.drsanches.life_together.app.data.debts.dto.AmountsDTO;
 import ru.drsanches.life_together.app.data.debts.dto.SendMoneyDTO;
 import ru.drsanches.life_together.app.data.debts.dto.TransactionDTO;
-import ru.drsanches.life_together.app.data.debts.enumeration.TransactionType;
+import ru.drsanches.life_together.app.data.debts.mapper.AmountsMapper;
+import ru.drsanches.life_together.app.data.debts.mapper.TransactionMapper;
 import ru.drsanches.life_together.app.data.debts.model.Transaction;
 import ru.drsanches.life_together.exception.ApplicationException;
 import ru.drsanches.life_together.exception.NoUserIdException;
 import ru.drsanches.life_together.exception.WrongRecipientsException;
-import ru.drsanches.life_together.app.data.repository.TransactionRepository;
+import ru.drsanches.life_together.app.data.debts.repository.TransactionRepository;
 import ru.drsanches.life_together.app.service.utils.PaginationService;
 import ru.drsanches.life_together.app.service.utils.RecipientsValidator;
 import ru.drsanches.life_together.app.service.utils.UserInfoService;
 import ru.drsanches.life_together.integration.token.TokenService;
-import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -49,6 +46,12 @@ public class DebtsService {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private AmountsMapper amountsMapper;
+
+    @Autowired
+    private TransactionMapper transactionMapper;
 
     public void sendMoney(String token, SendMoneyDTO sendMoneyDTO) {
         String fromUserId = tokenService.getUserId(token);
@@ -83,35 +86,9 @@ public class DebtsService {
 
     public AmountsDTO getDebts(String token) {
         String userId = tokenService.getUserId(token);
-        List<Transaction> outgoingTransactions = transactionRepository.findByFromUserId(userId);
-        Map<String, Integer> total = new HashMap<>();
-        outgoingTransactions.forEach(transaction -> {
-            String toUserId = transaction.getToUserId();
-            if (total.containsKey(toUserId)) {
-                total.put(toUserId, total.get(toUserId) + transaction.getAmount());
-            } else {
-                total.put(toUserId, transaction.getAmount());
-            }
-        });
         List<Transaction> incomingTransactions = transactionRepository.findByToUserId(userId);
-        incomingTransactions.forEach(transaction -> {
-            String fromUserId = transaction.getFromUserId();
-            if (total.containsKey(fromUserId)) {
-                total.put(fromUserId, total.get(fromUserId) - transaction.getAmount());
-            } else {
-                total.put(fromUserId, -1 * transaction.getAmount());
-            }
-        });
-        List<AmountDTO> sent = new ArrayList<>();
-        List<AmountDTO> received = new ArrayList<>();
-        total.forEach((id, money) -> {
-            if (money > 0) {
-                sent.add(new AmountDTO(id, money));
-            } else if (money < 0) {
-                received.add(new AmountDTO(id, Math.abs(money)));
-            }
-        });
-        return new AmountsDTO(sent, received);
+        List<Transaction> outgoingTransactions = transactionRepository.findByFromUserId(userId);
+        return amountsMapper.convert(incomingTransactions, outgoingTransactions);
     }
 
     public List<TransactionDTO> getHistory(String token, Integer from, Integer to) {
@@ -121,16 +98,7 @@ public class DebtsService {
         Stream<Transaction> sorted = transactions.stream()
                 .sorted((x, y) -> -x.getTimestamp().compareTo(y.getTimestamp()));
         return paginationService.pagination(sorted, from, to)
-                .map(t -> new TransactionDTO(
-                        t.getId(),
-                        t.getFromUserId().equals(userId) ? t.getToUserId() : t.getFromUserId(),
-                        t.isSystem() ?
-                                TransactionType.SYSTEM :
-                                t.getFromUserId().equals(userId) ? TransactionType.OUTGOING : TransactionType.INCOMING,
-                        t.getAmount(),
-                        t.getMessage(),
-                        t.getTimestamp()
-                ))
+                .map(transaction -> transactionMapper.convert(transaction, userId))
                 .collect(Collectors.toList());
     }
 

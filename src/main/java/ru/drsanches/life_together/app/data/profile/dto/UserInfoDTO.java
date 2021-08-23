@@ -18,13 +18,6 @@ public class UserInfoDTO {
 
     public UserInfoDTO() {}
 
-    public UserInfoDTO(String id, String username, String firstName, String lastName) {
-        this.id = id;
-        this.username = username;
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
-
     public String getId() {
         return id;
     }

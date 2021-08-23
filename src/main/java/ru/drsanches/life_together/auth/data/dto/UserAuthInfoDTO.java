@@ -15,12 +15,6 @@ public class UserAuthInfoDTO {
 
     public UserAuthInfoDTO() {}
 
-    public UserAuthInfoDTO(String id, String username, String email) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-    }
-
     public String getId() {
         return id;
     }

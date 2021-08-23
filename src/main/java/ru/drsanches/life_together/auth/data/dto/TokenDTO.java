@@ -19,13 +19,6 @@ public class TokenDTO {
 
     public TokenDTO() {}
 
-    public TokenDTO(String accessToken, String refreshToken, String tokenType, GregorianCalendar expiresAt) {
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
-        this.tokenType = tokenType;
-        this.expiresAt = expiresAt;
-    }
-
     public String getAccessToken() {
         return accessToken;
     }

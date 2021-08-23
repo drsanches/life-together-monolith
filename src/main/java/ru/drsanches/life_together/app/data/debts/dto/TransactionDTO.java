@@ -19,15 +19,6 @@ public class TransactionDTO {
 
     public TransactionDTO() {}
 
-    public TransactionDTO(String id, String userId, TransactionType type, Integer amount, String message, GregorianCalendar timestamp) {
-        this.id = id;
-        this.userId = userId;
-        this.type = type;
-        this.amount = amount;
-        this.message = message;
-        this.timestamp = timestamp;
-    }
-
     public String getId() {
         return id;
     }
