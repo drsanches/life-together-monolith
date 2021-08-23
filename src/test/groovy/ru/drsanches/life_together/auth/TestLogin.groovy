@@ -32,6 +32,29 @@ class TestLogin extends Specification {
         assert RequestUtils.getAuthInfo(token as String) != null
     }
 
+    def "successful check login with different username lower/upper case"() {
+        given: "user"
+        def uuid = UUID.randomUUID().toString()
+        def username1 = "user_NAME_" + uuid
+        def username2 = "USER_name_" + uuid
+        def password = DataGenerator.createValidPassword()
+        RequestUtils.registerUser(username1, password, null)
+
+        when: "request is sent"
+        def response = RequestUtils.getRestClient().post(
+                path: PATH,
+                body: ["username": username2,
+                       "password": password],
+                requestContentType : ContentType.JSON) as HttpResponseDecorator
+
+        then: "response is correct"
+        assert response.status == 200
+
+        and: "token is correct"
+        def token = response.getData()["accessToken"]
+        assert RequestUtils.getAuthInfo(token as String) != null
+    }
+
     def "login with invalid password"() {
         given: "user"
         def username = DataGenerator.createValidUsername()

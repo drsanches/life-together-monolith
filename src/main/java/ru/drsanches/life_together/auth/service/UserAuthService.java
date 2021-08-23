@@ -46,6 +46,7 @@ public class UserAuthService {
     private TokenMapper tokenMapper;
 
     public UserAuthInfoDTO registration(RegistrationDTO registrationDTO) {
+        registrationDTO.setUsername(registrationDTO.getUsername().toLowerCase());
         UserAuth userAuth = new UserAuth();
         userAuth.setId(UUID.randomUUID().toString());
         userAuth.setUsername(registrationDTO.getUsername());
@@ -59,6 +60,7 @@ public class UserAuthService {
     }
 
     public TokenDTO login(LoginDTO loginDTO) {
+        loginDTO.setUsername(loginDTO.getUsername().toLowerCase());
         String userId = getUserId(loginDTO.getUsername());
         Token token = tokenService.createToken(userId, loginDTO.getUsername(), loginDTO.getPassword());
         return tokenMapper.convert(token);
