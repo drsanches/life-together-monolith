@@ -15,8 +15,8 @@ import ru.drsanches.life_together.exception.NoUserIdException;
 import ru.drsanches.life_together.exception.WrongRecipientsException;
 import ru.drsanches.life_together.app.data.repository.TransactionRepository;
 import ru.drsanches.life_together.app.service.utils.PaginationService;
-import ru.drsanches.life_together.integration.RecipientsValidator;
-import ru.drsanches.life_together.integration.UserInfoService;
+import ru.drsanches.life_together.app.service.utils.RecipientsValidator;
+import ru.drsanches.life_together.app.service.utils.UserInfoService;
 import ru.drsanches.life_together.integration.token.TokenService;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -136,7 +136,7 @@ public class DebtsService {
 
     public void cancel(String token, String userId) {
         String currentUserId = tokenService.getUserId(token);
-        if (!userInfoService.userAuthExists(userId)) {
+        if (!userInfoService.userProfileExists(userId)) {
             throw new NoUserIdException(userId);
         }
         if (currentUserId.equals(userId)) {

@@ -140,7 +140,7 @@ public class UserAuthService {
         return user.get();
     }
 
-    public String getUserId(String username) {
+    private String getUserId(String username) {
         Optional<UserAuth> userAuth = userAuthRepository.findByUsername(username);
         if (userAuth.isEmpty() || !userAuth.get().isEnabled()) {
             LOG.warn("No user with username '{}'", username);

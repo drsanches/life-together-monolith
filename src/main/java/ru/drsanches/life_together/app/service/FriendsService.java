@@ -12,7 +12,7 @@ import ru.drsanches.life_together.app.data.profile.dto.UserInfoDTO;
 import ru.drsanches.life_together.exception.ApplicationException;
 import ru.drsanches.life_together.exception.NoUserIdException;
 import ru.drsanches.life_together.app.data.repository.FriendRequestRepository;
-import ru.drsanches.life_together.integration.UserInfoService;
+import ru.drsanches.life_together.app.service.utils.UserInfoService;
 import ru.drsanches.life_together.integration.token.TokenService;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -81,7 +81,7 @@ public class FriendsService {
 
     public void removeRequest(String token, String userId) {
         String currentUserId = tokenService.getUserId(token);
-        if (!userInfoService.userAuthExists(userId)) {
+        if (!userInfoService.userProfileExists(userId)) {
             throw new NoUserIdException(userId);
         }
         if (currentUserId.equals(userId)) {

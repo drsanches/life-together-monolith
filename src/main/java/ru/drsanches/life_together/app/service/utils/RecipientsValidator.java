@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.integration;
+package ru.drsanches.life_together.app.service.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
