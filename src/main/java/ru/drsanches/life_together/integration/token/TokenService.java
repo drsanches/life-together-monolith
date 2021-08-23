@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.drsanches.life_together.exception.AuthException;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.util.GregorianCalendar;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,7 +39,7 @@ public class TokenService {
     }
 
     public void validate(String token) {
-        if (token == null) {
+        if (token == null || extractTokenId(token) == null) {
             throw new AuthException();
         }
         Optional<Token> tokenObject = tokenRepository.findById(extractTokenId(token));
@@ -66,11 +67,22 @@ public class TokenService {
     }
 
     public String getUserId(String token) {
+        if (token == null || extractTokenId(token) == null) {
+            throw new AuthException();
+        }
         Optional<Token> tokenModel = tokenRepository.findById(extractTokenId(token));
         if (tokenModel.isEmpty()) {
             throw new AuthException();
         }
         return tokenModel.get().getUserId();
+    }
+
+    public String getTokenFromRequest(HttpServletRequest httpRequest) {
+        String token = httpRequest.getHeader("Authorization"); //TODO: Returns string "null" for incognito tab
+        if (token == null) {
+            token = getAccessTokenFromCookies(httpRequest.getCookies());
+        }
+        return token;
     }
 
     public String getAccessTokenFromCookies(Cookie[] cookies) {

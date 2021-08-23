@@ -2,8 +2,6 @@ package ru.drsanches.life_together.app.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,8 +18,6 @@ import java.util.Set;
 @RequestMapping(value = "/api/v1/friends")
 @Api(description = "friend requests and friends list operations")
 public class FriendsController {
-
-    private final Logger LOG = LoggerFactory.getLogger(FriendsController.class);
 
     @Autowired
     private FriendsService friendsService;

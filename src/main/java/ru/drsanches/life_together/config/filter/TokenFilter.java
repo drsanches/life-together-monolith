@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.config.security;
+package ru.drsanches.life_together.config.filter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +32,7 @@ public class TokenFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse  httpResponse = (HttpServletResponse) response;
-        String token = httpRequest.getHeader("Authorization");
-        if (token == null) {
-            token = TOKEN_SERVICE.getAccessTokenFromCookies(httpRequest.getCookies());
-        }
+        String token = TOKEN_SERVICE.getTokenFromRequest(httpRequest);
         String uri = httpRequest.getRequestURI();
         if (!EXCLUDE_URI_PATTERN.matcher(uri).matches()) {
             try {

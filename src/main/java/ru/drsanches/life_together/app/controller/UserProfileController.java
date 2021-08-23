@@ -3,8 +3,6 @@ package ru.drsanches.life_together.app.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,8 +18,6 @@ import ru.drsanches.life_together.app.service.UserProfileService;
 @RequestMapping(value = "/api/v1/profile")
 @Api(description = "viewing and editing public user profiles")
 public class UserProfileController {
-
-    private final Logger LOG = LoggerFactory.getLogger(UserProfileController.class);
 
     @Autowired
     private UserProfileService userProfileService;

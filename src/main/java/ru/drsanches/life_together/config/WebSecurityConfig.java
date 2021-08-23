@@ -6,8 +6,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
-import ru.drsanches.life_together.config.security.AdminFilter;
-import ru.drsanches.life_together.config.security.TokenFilter;
+import ru.drsanches.life_together.config.filter.AdminFilter;
+import ru.drsanches.life_together.config.filter.FilterLogger;
+import ru.drsanches.life_together.config.filter.TokenFilter;
 import ru.drsanches.life_together.integration.UserPermissionService;
 import ru.drsanches.life_together.integration.token.TokenService;
 import java.util.regex.Pattern;
@@ -24,6 +25,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final Pattern ADMIN_URI_PATTERN = Pattern.compile("/h2-console.*|/swagger-ui.html.*");
 
+    private final Pattern LOG_URI_PATTERN = Pattern.compile("/api.*|/h2-console.*|/swagger-ui.html.*");
+
     @Autowired
     private TokenService tokenService;
 
@@ -32,7 +35,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.addFilterAfter(new TokenFilter(tokenService, EXCLUDE_URI_PATTERN), BasicAuthenticationFilter.class);
+        http.addFilterAfter(new FilterLogger(tokenService, LOG_URI_PATTERN), BasicAuthenticationFilter.class);
+        http.addFilterAfter(new TokenFilter(tokenService, EXCLUDE_URI_PATTERN), FilterLogger.class);
         http.addFilterAfter(new AdminFilter(tokenService, userPermissionService, ADMIN_URI_PATTERN), TokenFilter.class);
         http.csrf().disable()
                 .headers().frameOptions().disable()

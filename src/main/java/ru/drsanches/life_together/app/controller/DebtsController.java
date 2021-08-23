@@ -3,8 +3,6 @@ package ru.drsanches.life_together.app.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,8 +23,6 @@ import java.util.List;
 @RequestMapping(value = "/api/v1/debts")
 @Api(description = "all debts operations")
 public class DebtsController {
-
-    private final Logger LOG = LoggerFactory.getLogger(DebtsController.class);
 
     @Autowired
     private DebtsService debtsService;

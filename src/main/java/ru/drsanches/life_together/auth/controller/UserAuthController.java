@@ -2,8 +2,6 @@ package ru.drsanches.life_together.auth.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,8 +24,6 @@ import ru.drsanches.life_together.auth.service.UserAuthService;
 @RequestMapping(value = "/api/v1/auth")
 @Api(description = "authentication data management")
 public class UserAuthController {
-
-    private final Logger LOG = LoggerFactory.getLogger(UserAuthController.class);
 
     @Autowired
     private UserAuthService userAuthService;
