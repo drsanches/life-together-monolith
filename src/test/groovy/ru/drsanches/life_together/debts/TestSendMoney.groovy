@@ -4,7 +4,7 @@ import groovyx.net.http.ContentType
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.HttpResponseException
 import net.sf.json.JSONArray
-import ru.drsanches.life_together.data.debts.enumeration.TransactionType
+import ru.drsanches.life_together.app.data.debts.enumeration.TransactionType
 import ru.drsanches.life_together.utils.DataGenerator
 import ru.drsanches.life_together.utils.RequestUtils
 import ru.drsanches.life_together.utils.Utils

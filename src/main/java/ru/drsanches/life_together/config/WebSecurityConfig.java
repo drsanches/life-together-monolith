@@ -6,10 +6,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
-import ru.drsanches.life_together.security.AdminFilter;
-import ru.drsanches.life_together.security.TokenFilter;
-import ru.drsanches.life_together.service.utils.UserPermissionService;
-import ru.drsanches.life_together.token.TokenService;
+import ru.drsanches.life_together.config.security.AdminFilter;
+import ru.drsanches.life_together.config.security.TokenFilter;
+import ru.drsanches.life_together.integration.UserPermissionService;
+import ru.drsanches.life_together.integration.token.TokenService;
 import java.util.regex.Pattern;
 
 @Configuration

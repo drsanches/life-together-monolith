@@ -2,7 +2,7 @@ package ru.drsanches.life_together.utils
 
 import net.sf.json.JSONArray
 import net.sf.json.JSONObject
-import ru.drsanches.life_together.data.debts.enumeration.TransactionType
+import ru.drsanches.life_together.app.data.debts.enumeration.TransactionType
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
