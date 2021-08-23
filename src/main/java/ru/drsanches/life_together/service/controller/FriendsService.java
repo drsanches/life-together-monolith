@@ -63,7 +63,7 @@ public class FriendsService {
 
     public void sendRequest(String token, String toUserId) {
         String fromUserId = tokenService.getUserId(token);
-        if (!userInfoService.userProfileExists(toUserId)) {
+        if (!userInfoService.userProfileEnabled(toUserId)) {
             throw new NoUserIdException(toUserId);
         }
         if (fromUserId.equals(toUserId)) {

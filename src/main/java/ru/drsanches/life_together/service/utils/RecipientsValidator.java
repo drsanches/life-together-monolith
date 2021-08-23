@@ -25,7 +25,11 @@ public class RecipientsValidator {
         Set<String> toFriends = getFriendIds(fromUserId).stream()
                 .filter(toUserIds::contains).collect(Collectors.toSet());
         Set<String> existingFriends = new HashSet<>();
-        userProfileRepository.findAllById(toFriends).forEach(userProfile -> existingFriends.add(userProfile.getId()));
+        userProfileRepository.findAllById(toFriends).forEach(userProfile -> {
+            if (userProfile.isEnabled()) {
+                existingFriends.add(userProfile.getId());
+            }
+        });
         return toUserIds.stream()
                 .filter(id -> !existingFriends.contains(id) && !id.equals(fromUserId))
                 .collect(Collectors.toSet());

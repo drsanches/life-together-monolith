@@ -31,8 +31,9 @@ public class UserInfoService {
         return userAuthRepository.existsById(userId);
     }
 
-    public boolean userProfileExists(String userId) {
-        return userProfileRepository.existsById(userId);
+    public boolean userProfileEnabled(String userId) {
+        Optional<UserProfile> userProfile = userProfileRepository.findById(userId);
+        return userProfile.isPresent() && userProfile.get().isEnabled();
     }
 
     public UserInfoDTO getUserInfo(String userId) {
@@ -41,7 +42,7 @@ public class UserInfoService {
             return null;
         }
         Optional<UserProfile> userProfile = userProfileRepository.findById(userId);
-        if (userProfile.isEmpty()) {
+        if (userProfile.isEmpty() || !userProfile.get().isEnabled()) {
             return null;
         }
         UserInfoDTO userInfoDTO = new UserInfoDTO();
@@ -65,7 +66,7 @@ public class UserInfoService {
             UserInfoDTO userInfoDTO = new UserInfoDTO();
             userInfoDTO.setId(id);
             UserProfile userProfile = userProfileMap.get(id);
-            if (userProfile != null) {
+            if (userProfile != null && userProfile.isEnabled()) {
                 userInfoDTO.setUsername(usernameMap.get(id));
                 userInfoDTO.setFirstName(userProfile.getFirstName());
                 userInfoDTO.setLastName(userProfile.getLastName());

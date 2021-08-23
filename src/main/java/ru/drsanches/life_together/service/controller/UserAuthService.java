@@ -15,14 +15,13 @@ import ru.drsanches.life_together.data.auth.dto.UserAuthInfoDTO;
 import ru.drsanches.life_together.data.auth.enumeration.Role;
 import ru.drsanches.life_together.data.auth.model.UserAuth;
 import ru.drsanches.life_together.data.mapper.TokenMapper;
-import ru.drsanches.life_together.data.profile.model.UserProfile;
 import ru.drsanches.life_together.exception.NoUserIdException;
 import ru.drsanches.life_together.repository.UserAuthRepository;
 import ru.drsanches.life_together.exception.ApplicationException;
 import ru.drsanches.life_together.token.CredentialsHelper;
 import ru.drsanches.life_together.token.Token;
 import ru.drsanches.life_together.token.TokenService;
-import ru.drsanches.life_together.service.utils.UserAuthAndUserProfileIntegrationService;
+import ru.drsanches.life_together.service.integration.ProfileIntegrationService;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,7 +34,7 @@ public class UserAuthService {
     private UserAuthRepository userAuthRepository;
 
     @Autowired
-    private UserAuthAndUserProfileIntegrationService userAuthAndUserProfileIntegrationService;
+    private ProfileIntegrationService profileIntegrationService;
 
     @Autowired
     private TokenService tokenService;
@@ -54,7 +53,7 @@ public class UserAuthService {
         userAuth.setEmail(registrationDTO.getEmail());
         userAuth.setEnabled(true);
         userAuth.setRole(Role.USER);
-        userAuthAndUserProfileIntegrationService.saveUserAuthAndUserProfile(userAuth, new UserProfile(userAuth.getId()));
+        profileIntegrationService.createUser(userAuth);
         LOG.info("New user has been created: {}", userAuth.toString());
         return new UserAuthInfoDTO(userAuth.getId(), userAuth.getUsername(), userAuth.getEmail());
     }
@@ -128,7 +127,7 @@ public class UserAuthService {
         logout(token);
         current.setEnabled(false);
         current.setUsername(UUID.randomUUID().toString() + "_" + current.getUsername());
-        userAuthAndUserProfileIntegrationService.updateUserAuthAndRemoveUserProfile(current, current.getId());
+        profileIntegrationService.disableUser(current);
         LOG.info("User has been disabled: {}", current.toString());
     }
 

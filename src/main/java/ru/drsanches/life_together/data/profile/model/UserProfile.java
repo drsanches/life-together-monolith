@@ -13,6 +13,12 @@ public class UserProfile {
     @Column
     private String id;
 
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @Column(nullable = false)
+    private boolean enabled;
+
     @Column
     private String firstName;
 
@@ -21,18 +27,24 @@ public class UserProfile {
 
     public UserProfile() {}
 
-    public UserProfile(String id) {
+    public UserProfile(String id, String username, boolean enabled, String firstName, String lastName) {
         this.id = id;
-    }
-
-    public UserProfile(String id, String firstName, String lastName) {
-        this.id = id;
+        this.username = username;
+        this.enabled = enabled;
         this.firstName = firstName;
         this.lastName = lastName;
     }
 
     public String getId() {
         return id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 
     public String getFirstName() {
@@ -47,6 +59,14 @@ public class UserProfile {
         this.id = id;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
@@ -59,6 +79,8 @@ public class UserProfile {
     public String toString() {
         return "UserProfile{" +
                 "id='" + id + '\'' +
+                ", username='" + username + '\'' +
+                ", enabled=" + enabled +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 '}';

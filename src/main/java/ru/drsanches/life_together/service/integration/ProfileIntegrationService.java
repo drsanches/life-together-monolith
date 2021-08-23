@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.service.utils;
+package ru.drsanches.life_together.service.integration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,11 +11,13 @@ import ru.drsanches.life_together.data.profile.model.UserProfile;
 import ru.drsanches.life_together.exception.UserAlreadyExistsException;
 import ru.drsanches.life_together.repository.UserAuthRepository;
 import ru.drsanches.life_together.repository.UserProfileRepository;
+import java.util.Optional;
 
+//TODO: Refactor logic
 @Service
-public class UserAuthAndUserProfileIntegrationService {
+public class ProfileIntegrationService {
 
-    private final Logger LOG = LoggerFactory.getLogger(UserAuthAndUserProfileIntegrationService.class);
+    private final Logger LOG = LoggerFactory.getLogger(ProfileIntegrationService.class);
 
     @Autowired
     UserAuthRepository userAuthRepository;
@@ -27,9 +29,12 @@ public class UserAuthAndUserProfileIntegrationService {
     /**
      * Saves UserAuth and UserProfile objects
      * @param userAuth UserAuth object
-     * @param userProfile UserProfile object
      */
-    public void saveUserAuthAndUserProfile(UserAuth userAuth, UserProfile userProfile) {
+    public void createUser(UserAuth userAuth) {
+        UserProfile userProfile = new UserProfile();
+        userProfile.setId(userAuth.getId());
+        userProfile.setUsername(userAuth.getUsername());
+        userProfile.setEnabled(true);
         try {
             userAuthRepository.save(userAuth);
             LOG.info("User auth has been saved to db: {}", userAuth.toString());
@@ -46,22 +51,25 @@ public class UserAuthAndUserProfileIntegrationService {
 
     //TODO: Transaction
     /**
-     * Updates UserAuth object and removes UserProfile object
+     * Disables UserAuth and UserProfile objects
      * @param userAuth UserAuth object
-     * @param userProfileId id of UserProfile object
      */
-    public void updateUserAuthAndRemoveUserProfile(UserAuth userAuth, String userProfileId) {
+    public void disableUser(UserAuth userAuth) {
         try {
             userAuthRepository.save(userAuth);
             LOG.info("User auth has been updated in db: {}", userAuth.toString());
         } catch(EmptyResultDataAccessException e) {
             LOG.error("User auth does not exist: " + userAuth.toString(), e);
         }
-        try {
-            userProfileRepository.deleteById(userProfileId);
-            LOG.info("User profile with id '{}' has been deleted from db", userProfileId);
-        } catch(EmptyResultDataAccessException e) {
-            LOG.error("User profile with id'" + userProfileId + "' does not exist", e);
+        Optional<UserProfile> optionalUserProfile = userProfileRepository.findById(userAuth.getId());
+        if (optionalUserProfile.isEmpty()) {
+            LOG.error("User profile with id'" + userAuth.getId() + "' does not exist");
+            return;
         }
+        UserProfile userProfile = optionalUserProfile.get();
+        userProfile.setEnabled(false);
+        userProfile.setUsername(userAuth.getUsername());
+        userProfileRepository.save(userProfile);
+        LOG.info("User profile with id '{}' has been updated: {}", userAuth.getId(), userProfile);
     }
 }
