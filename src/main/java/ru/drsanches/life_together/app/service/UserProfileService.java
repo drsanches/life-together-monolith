@@ -11,7 +11,6 @@ import ru.drsanches.life_together.exception.NoUserIdException;
 import ru.drsanches.life_together.exception.NoUsernameException;
 import ru.drsanches.life_together.app.data.repository.UserProfileRepository;
 import ru.drsanches.life_together.exception.ServerError;
-import ru.drsanches.life_together.integration.UserIdService;
 import ru.drsanches.life_together.integration.UserInfoService;
 import ru.drsanches.life_together.integration.token.TokenService;
 import java.util.Optional;
@@ -25,9 +24,6 @@ public class UserProfileService {
     private UserProfileRepository userProfileRepository;
 
     @Autowired
-    private UserIdService userIdService;
-
-    @Autowired
     private UserInfoService userInfoService;
 
     @Autowired
@@ -39,7 +35,7 @@ public class UserProfileService {
     }
 
     public UserInfoDTO searchProfile(String username) {
-        String userId = userIdService.getUserIdFromDB(username);
+        String userId = getUserId(username);
         if (userId == null) {
             throw new NoUsernameException(username);
         }
@@ -69,5 +65,14 @@ public class UserProfileService {
             throw new ServerError("An error occurred while getting the user with id'" + userId + "'");
         }
         return user.get();
+    }
+
+    private String getUserId(String username) {
+        Optional<UserProfile> userProfile = userProfileRepository.findByUsername(username);
+        if (userProfile.isEmpty() || !userProfile.get().isEnabled()) {
+            LOG.warn("No user with username '{}'", username);
+            return null;
+        }
+        return userProfile.get().getId();
     }
 }

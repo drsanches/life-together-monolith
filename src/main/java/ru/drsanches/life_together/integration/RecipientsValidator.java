@@ -18,9 +18,6 @@ public class RecipientsValidator {
     @Autowired
     private FriendRequestRepository friendRequestRepository;
 
-    @Autowired
-    private UserIdService userIdService;
-
     public Set<String> getWrongIds(String fromUserId, Set<String> toUserIds) {
         Set<String> toFriends = getFriendIds(fromUserId).stream()
                 .filter(toUserIds::contains).collect(Collectors.toSet());

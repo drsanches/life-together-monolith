@@ -3,7 +3,6 @@ package ru.drsanches.life_together.integration.token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.drsanches.life_together.exception.AuthException;
-import ru.drsanches.life_together.integration.UserIdService;
 import javax.servlet.http.Cookie;
 import java.util.GregorianCalendar;
 import java.util.Optional;
@@ -24,12 +23,9 @@ public class TokenService {
     @Autowired
     private CredentialsHelper credentialsHelper;
 
-    @Autowired
-    private UserIdService userIdService;
-
-    public Token createToken(String username, String password) {
+    public Token createToken(String userId, String username, String password) {
         credentialsHelper.checkUser(username, password);
-        return createToken(userIdService.getUserIdFromDB(username));
+        return createToken(userId);
     }
 
     public String extractTokenId(String token) {

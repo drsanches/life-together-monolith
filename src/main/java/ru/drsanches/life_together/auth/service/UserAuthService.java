@@ -59,7 +59,8 @@ public class UserAuthService {
     }
 
     public TokenDTO login(LoginDTO loginDTO) {
-        Token token = tokenService.createToken(loginDTO.getUsername(), loginDTO.getPassword());
+        String userId = getUserId(loginDTO.getUsername());
+        Token token = tokenService.createToken(userId, loginDTO.getUsername(), loginDTO.getPassword());
         return tokenMapper.convert(token);
     }
 
@@ -137,5 +138,14 @@ public class UserAuthService {
             throw new NoUserIdException(userId);
         }
         return user.get();
+    }
+
+    public String getUserId(String username) {
+        Optional<UserAuth> userAuth = userAuthRepository.findByUsername(username);
+        if (userAuth.isEmpty() || !userAuth.get().isEnabled()) {
+            LOG.warn("No user with username '{}'", username);
+            return null;
+        }
+        return userAuth.get().getId();
     }
 }
