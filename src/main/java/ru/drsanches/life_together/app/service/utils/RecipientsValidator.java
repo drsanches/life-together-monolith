@@ -18,7 +18,7 @@ public class RecipientsValidator {
     @Autowired
     private FriendsDomainService friendsDomainService;
 
-    public Set<String> getWrongIds(String fromUserId, Set<String> toUserIds) {
+    public List<String> getWrongIds(String fromUserId, Set<String> toUserIds) {
         List<String> toFriends = friendsDomainService.getFriendsIdList(fromUserId);
         List<String> existingFriends = userProfileDomainService.getAllByIds(toFriends).stream()
                 .filter(UserProfile::isEnabled)
@@ -26,6 +26,6 @@ public class RecipientsValidator {
                 .collect(Collectors.toList());
         return toUserIds.stream()
                 .filter(id -> !existingFriends.contains(id) && !id.equals(fromUserId))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 }

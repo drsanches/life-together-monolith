@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.time.format.DateTimeFormatter;
 import java.util.GregorianCalendar;
 
 @Entity
@@ -109,7 +110,7 @@ public class Transaction {
                 ", amount=" + amount +
                 ", message='" + message + '\'' +
                 ", isSystem=" + isSystem +
-                ", timestamp=" + timestamp +
+                ", timestamp=" + timestamp.toZonedDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss.SSS z")) +
                 '}';
     }
 }

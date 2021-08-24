@@ -1,6 +1,7 @@
 package ru.drsanches.life_together.app.data.debts.dto;
 
 import ru.drsanches.life_together.app.data.debts.enumeration.TransactionType;
+import java.time.format.DateTimeFormatter;
 import java.util.GregorianCalendar;
 
 public class TransactionDTO {
@@ -75,7 +76,7 @@ public class TransactionDTO {
                 ", type=" + type +
                 ", amount=" + amount +
                 ", message='" + message + '\'' +
-                ", timestamp=" + timestamp +
+                ", timestamp=" + timestamp.toZonedDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss.SSS z")) +
                 '}';
     }
 }

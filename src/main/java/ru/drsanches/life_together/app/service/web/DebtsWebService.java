@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.app.service;
+package ru.drsanches.life_together.app.service.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,30 +10,28 @@ import ru.drsanches.life_together.app.data.debts.dto.TransactionDTO;
 import ru.drsanches.life_together.app.data.debts.mapper.AmountsMapper;
 import ru.drsanches.life_together.app.data.debts.mapper.TransactionMapper;
 import ru.drsanches.life_together.app.data.debts.model.Transaction;
+import ru.drsanches.life_together.app.service.domain.DebtsDomainService;
 import ru.drsanches.life_together.app.service.domain.UserProfileDomainService;
 import ru.drsanches.life_together.exception.application.ApplicationException;
 import ru.drsanches.life_together.exception.application.NoUserIdException;
 import ru.drsanches.life_together.exception.application.WrongRecipientsException;
-import ru.drsanches.life_together.app.data.debts.repository.TransactionRepository;
 import ru.drsanches.life_together.app.service.utils.PaginationService;
 import ru.drsanches.life_together.app.service.utils.RecipientsValidator;
 import ru.drsanches.life_together.integration.token.TokenService;
 import java.util.GregorianCalendar;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
-public class DebtsService {
+public class DebtsWebService {
 
-    private final Logger LOG = LoggerFactory.getLogger(DebtsService.class);
+    private final Logger LOG = LoggerFactory.getLogger(DebtsWebService.class);
 
     @Autowired
-    private TransactionRepository transactionRepository;
+    private DebtsDomainService debtsDomainService;
 
     @Autowired
     private UserProfileDomainService userProfileDomainService;
@@ -61,12 +59,12 @@ public class DebtsService {
         if (sendMoneyDTO.getToUserIds() == null || sendMoneyDTO.getToUserIds().isEmpty()) {
             throw new ApplicationException("User id list is empty");
         }
-        Set<String> wrongIds = recipientsValidator.getWrongIds(fromUserId, sendMoneyDTO.getToUserIds());
+        List<String> wrongIds = recipientsValidator.getWrongIds(fromUserId, sendMoneyDTO.getToUserIds());
         if (!wrongIds.isEmpty()) {
             throw new WrongRecipientsException(wrongIds);
         }
         int money = sendMoneyDTO.getMoney() / sendMoneyDTO.getToUserIds().size();
-        Set<Transaction> transactions = new HashSet<>();
+        List<Transaction> transactions = new LinkedList<>();
         sendMoneyDTO.getToUserIds().forEach(toUserId -> {
             if (!fromUserId.equals(toUserId)) {
                 transactions.add(new Transaction(
@@ -80,24 +78,21 @@ public class DebtsService {
                 ));
             }
         });
-        transactionRepository.saveAll(transactions);
+        debtsDomainService.saveTransactions(transactions);
         LOG.info("Transactions has been created: {}", transactions.toString());
     }
 
     public AmountsDTO getDebts(String token) {
         String userId = tokenService.getUserIdByAccessToken(token);
-        List<Transaction> incomingTransactions = transactionRepository.findByToUserId(userId);
-        List<Transaction> outgoingTransactions = transactionRepository.findByFromUserId(userId);
+        List<Transaction> incomingTransactions = debtsDomainService.getIncomingTransactions(userId);
+        List<Transaction> outgoingTransactions = debtsDomainService.getOutgoingTransactions(userId);
         return amountsMapper.convert(incomingTransactions, outgoingTransactions);
     }
 
     public List<TransactionDTO> getHistory(String token, Integer from, Integer to) {
         String userId = tokenService.getUserIdByAccessToken(token);
-        List<Transaction> transactions = transactionRepository.findByFromUserId(userId);
-        transactions.addAll(transactionRepository.findByToUserId(userId));
-        Stream<Transaction> sorted = transactions.stream()
-                .sorted((x, y) -> -x.getTimestamp().compareTo(y.getTimestamp()));
-        return paginationService.pagination(sorted, from, to)
+        List<Transaction> transactions = debtsDomainService.getAllTransactions(userId);
+        return paginationService.pagination(transactions.stream(), from, to)
                 .map(transaction -> transactionMapper.convert(transaction, userId))
                 .collect(Collectors.toList());
     }
@@ -113,10 +108,10 @@ public class DebtsService {
 
         AtomicReference<Integer> total = new AtomicReference<>(0);
 
-        List<Transaction> outgoingTransactions = transactionRepository.findByFromUserIdAndToUserId(currentUserId, userId);
+        List<Transaction> outgoingTransactions = debtsDomainService.getOutgoingTransactions(currentUserId, userId);
         outgoingTransactions.forEach(transaction -> total.updateAndGet(v -> v + transaction.getAmount()));
 
-        List<Transaction> incomingTransactions = transactionRepository.findByFromUserIdAndToUserId(userId, currentUserId);
+        List<Transaction> incomingTransactions = debtsDomainService.getIncomingTransactions(currentUserId, userId);
         incomingTransactions.forEach(transaction -> total.updateAndGet(v -> v - transaction.getAmount()));
 
         if (total.get() != 0) {
@@ -133,7 +128,7 @@ public class DebtsService {
                 transaction.setFromUserId(currentUserId);
                 transaction.setToUserId(userId);
             }
-            transactionRepository.save(transaction);
+            debtsDomainService.saveTransaction(transaction);
             LOG.info("Transaction for cancel has been created: {}", transaction.toString());
         } else {
             throw new ApplicationException("There is no debts for this user");

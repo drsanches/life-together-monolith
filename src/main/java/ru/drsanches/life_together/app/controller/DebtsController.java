@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.drsanches.life_together.app.data.debts.dto.AmountsDTO;
 import ru.drsanches.life_together.app.data.debts.dto.SendMoneyDTO;
 import ru.drsanches.life_together.app.data.debts.dto.TransactionDTO;
-import ru.drsanches.life_together.app.service.DebtsService;
+import ru.drsanches.life_together.app.service.web.DebtsWebService;
 import java.util.List;
 
 @RestController
@@ -25,19 +25,19 @@ import java.util.List;
 public class DebtsController {
 
     @Autowired
-    private DebtsService debtsService;
+    private DebtsWebService debtsWebService;
 
     @RequestMapping(path = "/send", method = RequestMethod.POST)
     @ApiOperation(value = "Sends money to other user(s)")
     @ResponseStatus(HttpStatus.CREATED)
     public void sendMoney(@RequestHeader("Authorization") String token, @RequestBody SendMoneyDTO sendMoneyDTO) {
-        debtsService.sendMoney(token, sendMoneyDTO);
+        debtsWebService.sendMoney(token, sendMoneyDTO);
     }
 
     @RequestMapping(path = "", method = RequestMethod.GET)
     @ApiOperation(value = "Returns total sent and received amounts")
     public AmountsDTO getDebts(@RequestHeader("Authorization") String token) {
-        return debtsService.getDebts(token);
+        return debtsWebService.getDebts(token);
     }
 
     @RequestMapping(path = "/history", method = RequestMethod.GET)
@@ -47,12 +47,12 @@ public class DebtsController {
                                            @RequestParam(required = false) Integer from,
                                            @ApiParam("Pagination parameter. By which element to display (not inclusive)")
                                            @RequestParam(required = false) Integer to) {
-        return debtsService.getHistory(token, from, to);
+        return debtsWebService.getHistory(token, from, to);
     }
 
     @RequestMapping(path = "/cancel/{userId}", method = RequestMethod.GET)
     @ApiOperation(value = "Cancels all debts from/to other user")
     public void cancel(@RequestHeader("Authorization") String token, @PathVariable String userId) {
-        debtsService.cancel(token, userId);
+        debtsWebService.cancel(token, userId);
     }
 }
