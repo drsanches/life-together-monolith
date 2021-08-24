@@ -4,20 +4,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.drsanches.life_together.auth.data.enumeration.Role;
 import ru.drsanches.life_together.auth.data.model.UserAuth;
-import ru.drsanches.life_together.auth.data.repository.UserAuthRepository;
-import java.util.Optional;
+import ru.drsanches.life_together.auth.service.UserAuthDomainService;
+import ru.drsanches.life_together.exception.application.NoUserIdException;
 
 @Service
 public class UserPermissionService {
 
     @Autowired
-    private UserAuthRepository userAuthRepository;
+    private UserAuthDomainService userAuthDomainService;
 
     public boolean isAdmin(String userId) {
-        Optional<UserAuth> user = userAuthRepository.findById(userId);
-        if (user.isEmpty() || !user.get().isEnabled()) {
+        UserAuth userAuth;
+        try {
+            userAuth = userAuthDomainService.getEnabledById(userId);
+        } catch (NoUserIdException e) {
             return false;
         }
-        return Role.ADMIN.equals(user.get().getRole());
+        return Role.ADMIN.equals(userAuth.getRole());
     }
 }

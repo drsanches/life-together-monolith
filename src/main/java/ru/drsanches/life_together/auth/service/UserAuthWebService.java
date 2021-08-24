@@ -15,24 +15,23 @@ import ru.drsanches.life_together.auth.data.dto.UserAuthInfoDTO;
 import ru.drsanches.life_together.auth.data.enumeration.Role;
 import ru.drsanches.life_together.auth.data.mapper.UserAuthInfoMapper;
 import ru.drsanches.life_together.auth.data.model.UserAuth;
+import ru.drsanches.life_together.exception.application.NoUsernameException;
+import ru.drsanches.life_together.exception.auth.WrongUsernamePasswordException;
 import ru.drsanches.life_together.integration.token.TokenMapper;
-import ru.drsanches.life_together.exception.NoUserIdException;
-import ru.drsanches.life_together.auth.data.repository.UserAuthRepository;
-import ru.drsanches.life_together.exception.ApplicationException;
+import ru.drsanches.life_together.exception.application.ApplicationException;
 import ru.drsanches.life_together.integration.token.CredentialsHelper;
 import ru.drsanches.life_together.integration.token.Token;
 import ru.drsanches.life_together.integration.token.TokenService;
 import ru.drsanches.life_together.integration.UserIntegrationService;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class UserAuthService {
+public class UserAuthWebService {
 
-    private final Logger LOG = LoggerFactory.getLogger(UserAuthService.class);
+    private final Logger LOG = LoggerFactory.getLogger(UserAuthWebService.class);
 
     @Autowired
-    private UserAuthRepository userAuthRepository;
+    private UserAuthDomainService userAuthDomainService;
 
     @Autowired
     private UserIntegrationService userIntegrationService;
@@ -65,20 +64,25 @@ public class UserAuthService {
 
     public TokenDTO login(LoginDTO loginDTO) {
         loginDTO.setUsername(loginDTO.getUsername().toLowerCase());
-        String userId = getUserId(loginDTO.getUsername());
+        String userId;
+        try {
+            userId = userAuthDomainService.getEnabledByUsername(loginDTO.getUsername()).getId();
+        } catch (NoUsernameException e) {
+            throw new WrongUsernamePasswordException(e);
+        }
         Token token = tokenService.createToken(userId, loginDTO.getUsername(), loginDTO.getPassword());
         return tokenMapper.convert(token);
     }
 
     public UserAuthInfoDTO info(String token) {
         String userId = tokenService.getUserId(token);
-        UserAuth current = getUserByIdIfExists(userId);
+        UserAuth current = userAuthDomainService.getEnabledById(userId);
         return userAuthInfoMapper.convert(current);
     }
 
     public void changeUsername(String token, ChangeUsernameDTO changeUsernameDTO) {
         String userId = tokenService.getUserId(token);
-        UserAuth current = getUserByIdIfExists(userId);
+        UserAuth current = userAuthDomainService.getEnabledById(userId);
         credentialsHelper.checkPassword(changeUsernameDTO.getPassword(), current.getPassword());
         String oldUsername = current.getUsername();
         if (changeUsernameDTO.getNewUsername().equals(oldUsername)) {
@@ -92,26 +96,26 @@ public class UserAuthService {
 
     public void changePassword(String token, ChangePasswordDTO changePasswordDTO) {
         String userId = tokenService.getUserId(token);
-        UserAuth current = getUserByIdIfExists(userId);
+        UserAuth current = userAuthDomainService.getEnabledById(userId);
         credentialsHelper.checkPassword(changePasswordDTO.getOldPassword(), current.getPassword());
         if (changePasswordDTO.getOldPassword().equals(changePasswordDTO.getNewPassword())) {
             throw new ApplicationException("New password is equal to old");
         }
         current.setPassword(credentialsHelper.encodePassword(changePasswordDTO.getNewPassword()));
-        userAuthRepository.save(current);
+        userAuthDomainService.save(current);
         logout(token);
         LOG.info("Password has been changed for user: {}", current.toString());
     }
 
     public void changeEmail(String token, ChangeEmailDTO changeEmailDTO) {
         String userId = tokenService.getUserId(token);
-        UserAuth current = getUserByIdIfExists(userId);
+        UserAuth current = userAuthDomainService.getEnabledById(userId);
         credentialsHelper.checkPassword(changeEmailDTO.getPassword(), current.getPassword());
         if (changeEmailDTO.getNewEmail().equals(current.getEmail())) {
             throw new ApplicationException("New email is equal to old");
         }
         current.setEmail(changeEmailDTO.getNewEmail());
-        userAuthRepository.save(current);
+        userAuthDomainService.save(current);
         LOG.info("Email has been changed: {}", current.toString());
     }
 
@@ -125,29 +129,12 @@ public class UserAuthService {
 
     public void deleteUser(String token, DeleteUserDTO deleteUserDTO) {
         String userId = tokenService.getUserId(token);
-        UserAuth current = getUserByIdIfExists(userId);
+        UserAuth current = userAuthDomainService.getEnabledById(userId);
         credentialsHelper.checkPassword(deleteUserDTO.getPassword(), current.getPassword());
         logout(token);
         current.setEnabled(false);
         current.setUsername(UUID.randomUUID().toString() + "_" + current.getUsername());
         userIntegrationService.updateUser(current);
         LOG.info("User has been disabled: {}", current.toString());
-    }
-
-    private UserAuth getUserByIdIfExists(String userId) {
-        Optional<UserAuth> user = userAuthRepository.findById(userId);
-        if (user.isEmpty() || !user.get().isEnabled()) {
-            throw new NoUserIdException(userId);
-        }
-        return user.get();
-    }
-
-    private String getUserId(String username) {
-        Optional<UserAuth> userAuth = userAuthRepository.findByUsername(username);
-        if (userAuth.isEmpty() || !userAuth.get().isEnabled()) {
-            LOG.warn("No user with username '{}'", username);
-            return null;
-        }
-        return userAuth.get().getId();
     }
 }

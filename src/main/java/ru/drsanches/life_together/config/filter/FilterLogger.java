@@ -3,7 +3,7 @@ package ru.drsanches.life_together.config.filter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.GenericFilterBean;
-import ru.drsanches.life_together.exception.AuthException;
+import ru.drsanches.life_together.exception.auth.AuthException;
 import ru.drsanches.life_together.integration.token.TokenService;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

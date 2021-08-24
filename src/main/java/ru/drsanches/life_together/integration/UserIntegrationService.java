@@ -11,7 +11,7 @@ import ru.drsanches.life_together.auth.data.model.UserAuth;
 import ru.drsanches.life_together.app.data.profile.model.UserProfile;
 import ru.drsanches.life_together.auth.data.repository.UserAuthRepository;
 import ru.drsanches.life_together.app.data.profile.repository.UserProfileRepository;
-import ru.drsanches.life_together.exception.UserAlreadyExistsException;
+import ru.drsanches.life_together.exception.application.UserAlreadyExistsException;
 import java.util.Optional;
 
 /**
@@ -77,5 +77,6 @@ public class UserIntegrationService {
             userAuthRepository.save(userAuth);
             userProfileRepository.save(userProfile);
         });
+        LOG.info("UserAuth and UserProfile has been updated: {}, {}", userAuth, userProfile);
     }
 }

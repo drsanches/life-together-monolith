@@ -18,7 +18,7 @@ import ru.drsanches.life_together.auth.data.dto.LoginDTO;
 import ru.drsanches.life_together.auth.data.dto.RegistrationDTO;
 import ru.drsanches.life_together.auth.data.dto.TokenDTO;
 import ru.drsanches.life_together.auth.data.dto.UserAuthInfoDTO;
-import ru.drsanches.life_together.auth.service.UserAuthService;
+import ru.drsanches.life_together.auth.service.UserAuthWebService;
 
 @RestController
 @RequestMapping(value = "/api/v1/auth")
@@ -26,60 +26,60 @@ import ru.drsanches.life_together.auth.service.UserAuthService;
 public class UserAuthController {
 
     @Autowired
-    private UserAuthService userAuthService;
+    private UserAuthWebService userAuthWebService;
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     @ApiOperation(value = "Registers new user account and returns user information")
     @ResponseStatus(HttpStatus.CREATED)
     public UserAuthInfoDTO registration(@RequestBody RegistrationDTO registrationDTO) {
-        return userAuthService.registration(registrationDTO);
+        return userAuthWebService.registration(registrationDTO);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ApiOperation(value = "Returns authorization tokens")
     public TokenDTO login(@RequestBody LoginDTO loginDTO) {
-        return userAuthService.login(loginDTO);
+        return userAuthWebService.login(loginDTO);
     }
 
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ApiOperation(value = "Returns current user private information")
     public UserAuthInfoDTO info(@RequestHeader("Authorization") String token) {
-        return userAuthService.info(token);
+        return userAuthWebService.info(token);
     }
 
     @RequestMapping(value = "/changeUsername", method = RequestMethod.PUT)
     @ApiOperation(value = "Changes username")
     public void changeUsername(@RequestHeader("Authorization") String token, @RequestBody ChangeUsernameDTO changeUsernameDTO) {
-        userAuthService.changeUsername(token, changeUsernameDTO);
+        userAuthWebService.changeUsername(token, changeUsernameDTO);
     }
 
     @RequestMapping(value = "/changePassword", method = RequestMethod.PUT)
     @ApiOperation(value = "Changes password")
     public void changePassword(@RequestHeader("Authorization") String token, @RequestBody ChangePasswordDTO changePasswordDTO) {
-        userAuthService.changePassword(token, changePasswordDTO);
+        userAuthWebService.changePassword(token, changePasswordDTO);
     }
 
     @RequestMapping(value = "/changeEmail", method = RequestMethod.PUT)
     @ApiOperation(value = "Changes email")
     public void changeEmail(@RequestHeader("Authorization") String token, @RequestBody ChangeEmailDTO changeEmailDTO) {
-        userAuthService.changeEmail(token, changeEmailDTO);
+        userAuthWebService.changeEmail(token, changeEmailDTO);
     }
 
     @RequestMapping(value = "/refreshToken", method = RequestMethod.GET)
     @ApiOperation(value = "Returns new authorization token")
     public TokenDTO refreshToken(@RequestHeader("Authorization") String refreshToken) {
-        return userAuthService.refreshToken(refreshToken);
+        return userAuthWebService.refreshToken(refreshToken);
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     @ApiOperation(value = "Logs out of the current user, old tokens become invalid")
     public void logout(@RequestHeader("Authorization") String token) {
-        userAuthService.logout(token);
+        userAuthWebService.logout(token);
     }
 
     @RequestMapping(value = "/deleteUser", method = RequestMethod.POST)
     @ApiOperation(value = "Deletes current user account")
     public void deleteUser(@RequestHeader("Authorization") String token, @RequestBody DeleteUserDTO deleteUserDTO) {
-        userAuthService.deleteUser(token, deleteUserDTO);
+        userAuthWebService.deleteUser(token, deleteUserDTO);
     }
 }

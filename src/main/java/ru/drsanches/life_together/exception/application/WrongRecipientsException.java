@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.exception;
+package ru.drsanches.life_together.exception.application;
 
 import java.util.Set;
 

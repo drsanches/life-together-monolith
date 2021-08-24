@@ -6,6 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import ru.drsanches.life_together.exception.application.ApplicationException;
+import ru.drsanches.life_together.exception.application.NoUserIdException;
+import ru.drsanches.life_together.exception.application.NoUsernameException;
+import ru.drsanches.life_together.exception.auth.AuthException;
+import ru.drsanches.life_together.exception.server.ServerError;
 
 @ControllerAdvice
 public class CustomExceptionHandler {

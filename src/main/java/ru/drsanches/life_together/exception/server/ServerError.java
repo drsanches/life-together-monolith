@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.exception;
+package ru.drsanches.life_together.exception.server;
 
 import java.util.UUID;
 

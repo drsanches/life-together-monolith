@@ -1,18 +1,18 @@
-package ru.drsanches.life_together.exception;
+package ru.drsanches.life_together.exception.auth;
 
 import java.util.UUID;
 
-public class ApplicationException extends RuntimeException {
+public class AuthException extends RuntimeException {
 
     protected final String message;
 
     protected final String uuid = UUID.randomUUID().toString();
 
-    public ApplicationException(String message) {
+    public AuthException(String message) {
         this.message = message;
     }
 
-    public ApplicationException(String message, Exception cause) {
+    public AuthException(String message, Exception cause) {
         super(cause);
         this.message = message;
     }

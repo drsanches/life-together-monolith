@@ -2,7 +2,8 @@ package ru.drsanches.life_together.integration.token;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.drsanches.life_together.exception.AuthException;
+import ru.drsanches.life_together.exception.auth.WrongTokenException;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.GregorianCalendar;
@@ -40,22 +41,22 @@ public class TokenService {
 
     public void validate(String token) {
         if (token == null || extractTokenId(token) == null) {
-            throw new AuthException();
+            throw new WrongTokenException();
         }
         Optional<Token> tokenObject = tokenRepository.findById(extractTokenId(token));
 
         if (tokenObject.isEmpty()) {
-            throw new AuthException();
+            throw new WrongTokenException();
         }
         if (tokenObject.get().getExpiresAt().before(new GregorianCalendar())) {
-            throw new AuthException();
+            throw new WrongTokenException();
         }
     }
 
     public Token refreshToken(String refreshToken) {
         Optional<Token> tokenOptional = tokenRepository.findByRefreshToken(extractTokenId(refreshToken));
         if (tokenOptional.isEmpty()) {
-            throw new AuthException();
+            throw new WrongTokenException();
         }
         Token tokenObject = tokenOptional.get();
         tokenRepository.deleteById(tokenObject.getAccessToken());
@@ -68,11 +69,11 @@ public class TokenService {
 
     public String getUserId(String token) {
         if (token == null || extractTokenId(token) == null) {
-            throw new AuthException();
+            throw new WrongTokenException();
         }
         Optional<Token> tokenModel = tokenRepository.findById(extractTokenId(token));
         if (tokenModel.isEmpty()) {
-            throw new AuthException();
+            throw new WrongTokenException();
         }
         return tokenModel.get().getUserId();
     }
