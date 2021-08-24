@@ -79,7 +79,7 @@ public class UserAuthController {
 
     @RequestMapping(value = "/deleteUser", method = RequestMethod.POST)
     @ApiOperation(value = "Deletes current user account")
-    public void deleteUser(@RequestHeader("Authorization") String token, @RequestBody DeleteUserDTO deleteUserDTO) {
-        userAuthWebService.deleteUser(token, deleteUserDTO);
+    public void disableUser(@RequestHeader("Authorization") String token, @RequestBody DeleteUserDTO deleteUserDTO) {
+        userAuthWebService.disableUser(token, deleteUserDTO);
     }
 }

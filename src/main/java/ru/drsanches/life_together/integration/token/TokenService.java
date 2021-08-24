@@ -3,7 +3,6 @@ package ru.drsanches.life_together.integration.token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.drsanches.life_together.exception.auth.WrongTokenException;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.GregorianCalendar;
@@ -54,20 +53,16 @@ public class TokenService {
     }
 
     public Token refreshToken(String refreshToken) {
-        Optional<Token> tokenOptional = tokenRepository.findByRefreshToken(extractTokenId(refreshToken));
-        if (tokenOptional.isEmpty()) {
-            throw new WrongTokenException();
-        }
-        Token tokenObject = tokenOptional.get();
-        tokenRepository.deleteById(tokenObject.getAccessToken());
-        return createToken(tokenObject.getUserId());
+        String userId = getUserIdByRefreshToken(refreshToken);
+        removeAllTokens(userId);
+        return createToken(userId);
     }
 
     public void removeToken(String token) {
         tokenRepository.deleteById(extractTokenId(token));
     }
 
-    public String getUserId(String token) {
+    public String getUserIdByAccessToken(String token) {
         if (token == null || extractTokenId(token) == null) {
             throw new WrongTokenException();
         }
@@ -109,5 +104,20 @@ public class TokenService {
         token.setUserId(userId);
         tokenRepository.save(token);
         return token;
+    }
+
+    public void removeAllTokens(String userId) {
+        tokenRepository.deleteAll(tokenRepository.findByUserId(userId));
+    }
+
+    private String getUserIdByRefreshToken(String token) {
+        if (token == null || extractTokenId(token) == null) {
+            throw new WrongTokenException();
+        }
+        Optional<Token> tokenModel = tokenRepository.findByRefreshToken(extractTokenId(token));
+        if (tokenModel.isEmpty()) {
+            throw new WrongTokenException();
+        }
+        return tokenModel.get().getUserId();
     }
 }

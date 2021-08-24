@@ -28,7 +28,7 @@ public class UserProfileWebService {
     private UserInfoMapper userInfoMapper;
 
     public UserInfoDTO getCurrentProfile(String token) {
-        String userId = tokenService.getUserId(token);
+        String userId = tokenService.getUserIdByAccessToken(token);
         UserProfile userProfile = userProfileDomainService.getEnabledById(userId);
         return userInfoMapper.convert(userProfile);
     }
@@ -44,7 +44,7 @@ public class UserProfileWebService {
     }
 
     public void changeCurrentProfile(String token, ChangeUserProfileDTO changeUserProfileDTO) {
-        String userId = tokenService.getUserId(token);
+        String userId = tokenService.getUserIdByAccessToken(token);
         try {
             UserProfile userProfile = userProfileDomainService.getEnabledById(userId);
             userProfile.setFirstName(changeUserProfileDTO.getFirstName());

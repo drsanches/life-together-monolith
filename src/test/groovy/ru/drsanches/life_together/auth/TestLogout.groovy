@@ -15,6 +15,7 @@ class TestLogout extends Specification {
         def username = DataGenerator.createValidUsername()
         def password = DataGenerator.createValidPassword()
         RequestUtils.registerUser(username, password, null)
+        def oldToken = RequestUtils.getToken(username, password)
         def token = RequestUtils.getToken(username, password)
 
         when: "request is sent"
@@ -30,10 +31,14 @@ class TestLogout extends Specification {
         assert RequestUtils.getAuthInfo(newToken as String) != null
 
         and: "new token is different"
+        assert newToken != oldToken
         assert newToken != token
 
-        and: "old token is invalid"
+        and: "previous token is invalid"
         assert RequestUtils.getAuthInfo(token as String) == null
+
+        and: "old token is valid"
+        assert RequestUtils.getAuthInfo(oldToken as String) != null
     }
 
     def "logout with invalid token"() {

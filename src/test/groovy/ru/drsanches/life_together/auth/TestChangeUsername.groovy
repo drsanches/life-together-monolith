@@ -16,6 +16,7 @@ class TestChangeUsername extends Specification {
         def username = DataGenerator.createValidUsername()
         def password = DataGenerator.createValidPassword()
         RequestUtils.registerUser(username, password, null)
+        def oldToken = RequestUtils.getToken(username, password)
         def token = RequestUtils.getToken(username, password)
         def newUsername = DataGenerator.createValidUsername()
 
@@ -30,8 +31,11 @@ class TestChangeUsername extends Specification {
         then: "response is correct"
         assert response.status == 200
 
-        and: "old token is invalid"
+        and: "previous token is invalid"
         assert RequestUtils.getAuthInfo(token) == null
+
+        and: "old token is invalid"
+        assert RequestUtils.getAuthInfo(oldToken) == null
 
         and: "user auth was updated"
         assert RequestUtils.getAuthInfo(newUsername, password)['username'] == newUsername

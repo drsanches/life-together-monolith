@@ -35,7 +35,7 @@ public class FilterLogger extends GenericFilterBean {
 
         if (LOG_URI_PATTERN.matcher(httpRequest.getRequestURI()).matches()) {
             try {
-                LOG.info(MESSAGE_PATTERN, httpRequest.getRequestURL(), httpRequest.getRemoteAddr(), TOKEN_SERVICE.getUserId(token));
+                LOG.info(MESSAGE_PATTERN, httpRequest.getRequestURL(), httpRequest.getRemoteAddr(), TOKEN_SERVICE.getUserIdByAccessToken(token));
             } catch (AuthException e) {
                 LOG.info(MESSAGE_PATTERN, httpRequest.getRequestURL(), httpRequest.getRemoteAddr(), "unauthorized");
             }

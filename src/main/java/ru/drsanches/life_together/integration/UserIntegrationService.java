@@ -42,6 +42,7 @@ public class UserIntegrationService {
         } catch(DataIntegrityViolationException e) {
             throw new UserAlreadyExistsException(userAuth.getUsername(), e);
         }
+        LOG.info("UserAuth and UserProfile has been created: {}, {}", userAuth, userProfile);
     }
 
     /**
@@ -58,6 +59,7 @@ public class UserIntegrationService {
         }
         copy(userAuth, userProfile);
         save(userAuth, userProfile);
+        LOG.info("UserAuth and UserProfile has been updated: {}, {}", userAuth, userProfile);
     }
 
     /**
@@ -77,6 +79,5 @@ public class UserIntegrationService {
             userAuthRepository.save(userAuth);
             userProfileRepository.save(userProfile);
         });
-        LOG.info("UserAuth and UserProfile has been updated: {}, {}", userAuth, userProfile);
     }
 }

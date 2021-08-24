@@ -16,6 +16,7 @@ class TestRefreshToken extends Specification {
         def username = DataGenerator.createValidUsername()
         def password = DataGenerator.createValidPassword()
         RequestUtils.registerUser(username, password, null)
+        def oldToken = RequestUtils.getToken(username, password)
         def refreshToken = RequestUtils.getRefreshToken(username, password)
 
         when: "request is sent"
@@ -30,6 +31,9 @@ class TestRefreshToken extends Specification {
         and: "token is correct"
         def token = response.getData()["accessToken"]
         assert RequestUtils.getAuthInfo(token as String) != null
+
+        and: "old token is invalid"
+        assert RequestUtils.getAuthInfo(oldToken as String) == null
     }
 
     def "refresh token with invalid refreshToken"() {

@@ -54,7 +54,7 @@ public class DebtsService {
     private TransactionMapper transactionMapper;
 
     public void sendMoney(String token, SendMoneyDTO sendMoneyDTO) {
-        String fromUserId = tokenService.getUserId(token);
+        String fromUserId = tokenService.getUserIdByAccessToken(token);
         if (sendMoneyDTO.getMoney() == null || sendMoneyDTO.getMoney() <= 0) {
             throw new ApplicationException("Money must be positive: money=" + sendMoneyDTO.getMoney());
         }
@@ -85,14 +85,14 @@ public class DebtsService {
     }
 
     public AmountsDTO getDebts(String token) {
-        String userId = tokenService.getUserId(token);
+        String userId = tokenService.getUserIdByAccessToken(token);
         List<Transaction> incomingTransactions = transactionRepository.findByToUserId(userId);
         List<Transaction> outgoingTransactions = transactionRepository.findByFromUserId(userId);
         return amountsMapper.convert(incomingTransactions, outgoingTransactions);
     }
 
     public List<TransactionDTO> getHistory(String token, Integer from, Integer to) {
-        String userId = tokenService.getUserId(token);
+        String userId = tokenService.getUserIdByAccessToken(token);
         List<Transaction> transactions = transactionRepository.findByFromUserId(userId);
         transactions.addAll(transactionRepository.findByToUserId(userId));
         Stream<Transaction> sorted = transactions.stream()
@@ -103,7 +103,7 @@ public class DebtsService {
     }
 
     public void cancel(String token, String userId) {
-        String currentUserId = tokenService.getUserId(token);
+        String currentUserId = tokenService.getUserIdByAccessToken(token);
         if (!userProfileDomainService.anyExistsById(userId)) {
             throw new NoUserIdException(userId);
         }

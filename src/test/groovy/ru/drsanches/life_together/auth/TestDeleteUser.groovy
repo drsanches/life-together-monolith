@@ -33,6 +33,8 @@ class TestDeleteUser extends Specification {
         RequestUtils.sendFriendRequest(friendUsername, friendPassword, userId)
         RequestUtils.sendFriendRequest(username, password, outgoingId)
         RequestUtils.sendFriendRequest(incomingUsername, incomingPassword, userId)
+
+        def oldToken = RequestUtils.getToken(username, password)
         def token = RequestUtils.getToken(username, password)
 
         when: "request is sent"
@@ -54,6 +56,9 @@ class TestDeleteUser extends Specification {
         and: "token is invalid"
         assert RequestUtils.getAuthInfo(token) == null
         assert RequestUtils.getToken(username, password) == null
+
+        and: "old token is invalid"
+        assert RequestUtils.getAuthInfo(oldToken) == null
 
         and: "new user with old user credentials has different token"
         RequestUtils.registerUser(username, password, null)

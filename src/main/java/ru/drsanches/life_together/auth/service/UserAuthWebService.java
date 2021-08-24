@@ -75,13 +75,13 @@ public class UserAuthWebService {
     }
 
     public UserAuthInfoDTO info(String token) {
-        String userId = tokenService.getUserId(token);
+        String userId = tokenService.getUserIdByAccessToken(token);
         UserAuth current = userAuthDomainService.getEnabledById(userId);
         return userAuthInfoMapper.convert(current);
     }
 
     public void changeUsername(String token, ChangeUsernameDTO changeUsernameDTO) {
-        String userId = tokenService.getUserId(token);
+        String userId = tokenService.getUserIdByAccessToken(token);
         UserAuth current = userAuthDomainService.getEnabledById(userId);
         credentialsHelper.checkPassword(changeUsernameDTO.getPassword(), current.getPassword());
         String oldUsername = current.getUsername();
@@ -90,12 +90,12 @@ public class UserAuthWebService {
         }
         current.setUsername(changeUsernameDTO.getNewUsername());
         userIntegrationService.updateUser(current);
-        logout(token);
+        tokenService.removeAllTokens(userId);
         LOG.info("Username has been changed: {}. Old username: {}", current.toString(), oldUsername);
     }
 
     public void changePassword(String token, ChangePasswordDTO changePasswordDTO) {
-        String userId = tokenService.getUserId(token);
+        String userId = tokenService.getUserIdByAccessToken(token);
         UserAuth current = userAuthDomainService.getEnabledById(userId);
         credentialsHelper.checkPassword(changePasswordDTO.getOldPassword(), current.getPassword());
         if (changePasswordDTO.getOldPassword().equals(changePasswordDTO.getNewPassword())) {
@@ -103,12 +103,12 @@ public class UserAuthWebService {
         }
         current.setPassword(credentialsHelper.encodePassword(changePasswordDTO.getNewPassword()));
         userAuthDomainService.save(current);
-        logout(token);
+        tokenService.removeAllTokens(userId);
         LOG.info("Password has been changed for user: {}", current.toString());
     }
 
     public void changeEmail(String token, ChangeEmailDTO changeEmailDTO) {
-        String userId = tokenService.getUserId(token);
+        String userId = tokenService.getUserIdByAccessToken(token);
         UserAuth current = userAuthDomainService.getEnabledById(userId);
         credentialsHelper.checkPassword(changeEmailDTO.getPassword(), current.getPassword());
         if (changeEmailDTO.getNewEmail().equals(current.getEmail())) {
@@ -127,11 +127,11 @@ public class UserAuthWebService {
         tokenService.removeToken(token);
     }
 
-    public void deleteUser(String token, DeleteUserDTO deleteUserDTO) {
-        String userId = tokenService.getUserId(token);
+    public void disableUser(String token, DeleteUserDTO deleteUserDTO) {
+        String userId = tokenService.getUserIdByAccessToken(token);
         UserAuth current = userAuthDomainService.getEnabledById(userId);
         credentialsHelper.checkPassword(deleteUserDTO.getPassword(), current.getPassword());
-        logout(token);
+        tokenService.removeAllTokens(userId);
         current.setEnabled(false);
         current.setUsername(UUID.randomUUID().toString() + "_" + current.getUsername());
         userIntegrationService.updateUser(current);
