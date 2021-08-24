@@ -11,7 +11,7 @@ class TestRemoveFriendRequest extends Specification {
 
     String PATH = "/api/v1/friends/manage/"
 
-    def "success current user friend request deletion"() {
+    def "success outgoing friend request deletion"() {
         given: "two users and one side friend request"
         def username1 = DataGenerator.createValidUsername()
         def password1 = DataGenerator.createValidPassword()
@@ -44,7 +44,7 @@ class TestRemoveFriendRequest extends Specification {
         assert RequestUtils.getFriends(username2, password2) == new JSONArray()
     }
 
-    def "success another user friend request deletion"() {
+    def "success incoming friend request deletion"() {
         given: "two users and one side friend request"
         def username1 = DataGenerator.createValidUsername()
         def password1 = DataGenerator.createValidPassword()
@@ -111,7 +111,7 @@ class TestRemoveFriendRequest extends Specification {
         assert RequestUtils.getFriends(username2, password2) == new JSONArray()
     }
 
-    def "success deleted user friend request deletion"() {
+    def "success incoming friend request deletion from deleted user"() {
         given: "user with incoming friend request from deleted user"
         def username1 = DataGenerator.createValidUsername()
         def password1 = DataGenerator.createValidPassword()
@@ -141,7 +141,7 @@ class TestRemoveFriendRequest extends Specification {
         assert RequestUtils.getFriends(username1, password1) == new JSONArray()
     }
 
-    def "success deleted friend deletion"() {
+    def "success friend request deletion from deleted user"() {
         given: "user with deleted friend"
         def username1 = DataGenerator.createValidUsername()
         def password1 = DataGenerator.createValidPassword()
@@ -203,7 +203,7 @@ class TestRemoveFriendRequest extends Specification {
         assert RequestUtils.getFriends(username2, password2) == new JSONArray()
     }
 
-    def "delete request for nonexistent user"() {
+    def "delete request of nonexistent user"() {
         given: "user"
         def username1 = DataGenerator.createValidUsername()
         def password1 = DataGenerator.createValidPassword()
@@ -219,23 +219,6 @@ class TestRemoveFriendRequest extends Specification {
         then: "response is correct"
         HttpResponseException e = thrown(HttpResponseException)
         assert e.response.status == 404
-    }
-
-    def "delete current user request"() {
-        given: "user"
-        def username = DataGenerator.createValidUsername()
-        def password = DataGenerator.createValidPassword()
-        def userId = RequestUtils.registerUser(username, password, null)
-        def token = UUID.randomUUID().toString()
-
-        when: "request is sent"
-        RequestUtils.getRestClient().delete(
-                path: PATH + userId,
-                headers: ["Authorization": "Bearer $token"])
-
-        then: "response is correct"
-        HttpResponseException e = thrown(HttpResponseException)
-        assert e.response.status == 401
     }
 
     def "delete request with invalid token"() {

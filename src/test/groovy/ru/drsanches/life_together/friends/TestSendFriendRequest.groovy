@@ -125,13 +125,13 @@ class TestSendFriendRequest extends Specification {
         def userId1 = RequestUtils.registerUser(username1, password1, null)
         def userId2 = RequestUtils.registerUser(username2, password2, null)
 
-        RequestUtils.sendFriendRequest(username1, password1, userId2)
-
         def token1 = RequestUtils.getToken(username1, password1)
         def token2 = RequestUtils.getToken(username2, password2)
 
         RequestUtils.changeUserProfile(token1, firstName1, lastName1)
         RequestUtils.changeUserProfile(token2, firstName2, lastName2)
+
+        RequestUtils.sendFriendRequest(username1, password1, userId2)
 
         when: "request is sent"
         def response = RequestUtils.getRestClient().post(
