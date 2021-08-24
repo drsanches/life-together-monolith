@@ -22,7 +22,7 @@ import ru.drsanches.life_together.exception.ApplicationException;
 import ru.drsanches.life_together.integration.token.CredentialsHelper;
 import ru.drsanches.life_together.integration.token.Token;
 import ru.drsanches.life_together.integration.token.TokenService;
-import ru.drsanches.life_together.integration.ProfileIntegrationService;
+import ru.drsanches.life_together.integration.UserIntegrationService;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,7 +35,7 @@ public class UserAuthService {
     private UserAuthRepository userAuthRepository;
 
     @Autowired
-    private ProfileIntegrationService profileIntegrationService;
+    private UserIntegrationService userIntegrationService;
 
     @Autowired
     private TokenService tokenService;
@@ -58,7 +58,7 @@ public class UserAuthService {
         userAuth.setEmail(registrationDTO.getEmail());
         userAuth.setEnabled(true);
         userAuth.setRole(Role.USER);
-        profileIntegrationService.createUser(userAuth);
+        userIntegrationService.createUser(userAuth);
         LOG.info("New user has been created: {}", userAuth.toString());
         return userAuthInfoMapper.convert(userAuth);
     }
@@ -85,7 +85,7 @@ public class UserAuthService {
             throw new ApplicationException("New username is equal to old");
         }
         current.setUsername(changeUsernameDTO.getNewUsername());
-        userAuthRepository.save(current);
+        userIntegrationService.updateUser(current);
         logout(token);
         LOG.info("Username has been changed: {}. Old username: {}", current.toString(), oldUsername);
     }
@@ -130,7 +130,7 @@ public class UserAuthService {
         logout(token);
         current.setEnabled(false);
         current.setUsername(UUID.randomUUID().toString() + "_" + current.getUsername());
-        profileIntegrationService.disableUser(current);
+        userIntegrationService.updateUser(current);
         LOG.info("User has been disabled: {}", current.toString());
     }
 

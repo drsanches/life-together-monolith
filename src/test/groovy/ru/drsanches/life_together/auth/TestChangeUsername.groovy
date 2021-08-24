@@ -33,8 +33,11 @@ class TestChangeUsername extends Specification {
         and: "old token is invalid"
         assert RequestUtils.getAuthInfo(token) == null
 
-        and: "user was updated"
+        and: "user auth was updated"
         assert RequestUtils.getAuthInfo(newUsername, password)['username'] == newUsername
+
+        and: "user profile was updated"
+        assert RequestUtils.getUserProfile(newUsername, password)['username'] == newUsername
 
         and: "new token is different"
         assert RequestUtils.getToken(newUsername, password) != token
