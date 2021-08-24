@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.drsanches.life_together.app.data.profile.dto.UserInfoDTO;
 import ru.drsanches.life_together.app.service.FriendsService;
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/friends")
@@ -24,19 +24,19 @@ public class FriendsController {
 
     @RequestMapping(path = "", method = RequestMethod.GET)
     @ApiOperation(value = "Returns a list of friends information")
-    public Set<UserInfoDTO> getFriends(@RequestHeader("Authorization") String token) {
+    public List<UserInfoDTO> getFriends(@RequestHeader("Authorization") String token) {
         return friendsService.getFriends(token);
     }
 
     @RequestMapping(path = "/requests/incoming", method = RequestMethod.GET)
     @ApiOperation(value = "Returns a list of information about users from whom a friend request was received")
-    public Set<UserInfoDTO> getIncomingRequests(@RequestHeader("Authorization") String token) {
+    public List<UserInfoDTO> getIncomingRequests(@RequestHeader("Authorization") String token) {
         return friendsService.getIncomingRequests(token);
     }
 
     @RequestMapping(path = "/requests/outgoing", method = RequestMethod.GET)
     @ApiOperation(value = "Returns a list of information about users to whom a friend request was sent")
-    public Set<UserInfoDTO> getOutgoingRequests(@RequestHeader("Authorization") String token) {
+    public List<UserInfoDTO> getOutgoingRequests(@RequestHeader("Authorization") String token) {
         return friendsService.getOutgoingRequests(token);
     }
 

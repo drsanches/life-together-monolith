@@ -10,13 +10,13 @@ import ru.drsanches.life_together.app.data.debts.dto.TransactionDTO;
 import ru.drsanches.life_together.app.data.debts.mapper.AmountsMapper;
 import ru.drsanches.life_together.app.data.debts.mapper.TransactionMapper;
 import ru.drsanches.life_together.app.data.debts.model.Transaction;
+import ru.drsanches.life_together.app.service.domain.UserProfileDomainService;
 import ru.drsanches.life_together.exception.application.ApplicationException;
 import ru.drsanches.life_together.exception.application.NoUserIdException;
 import ru.drsanches.life_together.exception.application.WrongRecipientsException;
 import ru.drsanches.life_together.app.data.debts.repository.TransactionRepository;
 import ru.drsanches.life_together.app.service.utils.PaginationService;
 import ru.drsanches.life_together.app.service.utils.RecipientsValidator;
-import ru.drsanches.life_together.app.service.utils.UserInfoService;
 import ru.drsanches.life_together.integration.token.TokenService;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
@@ -36,7 +36,7 @@ public class DebtsService {
     private TransactionRepository transactionRepository;
 
     @Autowired
-    private UserInfoService userInfoService;
+    private UserProfileDomainService userProfileDomainService;
 
     @Autowired
     private RecipientsValidator recipientsValidator;
@@ -104,7 +104,7 @@ public class DebtsService {
 
     public void cancel(String token, String userId) {
         String currentUserId = tokenService.getUserId(token);
-        if (!userInfoService.userProfileExists(userId)) {
+        if (!userProfileDomainService.anyExistsById(userId)) {
             throw new NoUserIdException(userId);
         }
         if (currentUserId.equals(userId)) {

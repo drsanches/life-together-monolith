@@ -9,11 +9,13 @@ import org.springframework.stereotype.Service;
 import ru.drsanches.life_together.app.data.friends.model.FriendRequest;
 import ru.drsanches.life_together.app.data.friends.model.FriendRequestKey;
 import ru.drsanches.life_together.app.data.profile.dto.UserInfoDTO;
+import ru.drsanches.life_together.app.data.profile.mapper.UserInfoMapper;
+import ru.drsanches.life_together.app.service.domain.UserProfileDomainService;
 import ru.drsanches.life_together.exception.application.ApplicationException;
 import ru.drsanches.life_together.exception.application.NoUserIdException;
 import ru.drsanches.life_together.app.data.friends.repository.FriendRequestRepository;
-import ru.drsanches.life_together.app.service.utils.UserInfoService;
 import ru.drsanches.life_together.integration.token.TokenService;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,44 +28,53 @@ public class FriendsService {
     private FriendRequestRepository friendRequestRepository;
 
     @Autowired
-    private UserInfoService userInfoService;
+    private UserProfileDomainService userProfileDomainService;
+
+    @Autowired
+    private UserInfoMapper userInfoMapper;
 
     @Autowired
     private TokenService tokenService;
 
-    public Set<UserInfoDTO> getFriends(String token) {
+    public List<UserInfoDTO> getFriends(String token) {
         String userId = tokenService.getUserId(token);
         Set<String> outgoing = getOutgoingRequestIds(userId);
         Set<String> incoming = getIncomingRequestIds(userId);
         Set<String> friends = incoming.stream()
                 .filter(outgoing::contains)
                 .collect(Collectors.toSet());
-        return userInfoService.getUserInfoSet(friends);
+        return userProfileDomainService.getAllByIds(friends).stream()
+                .map(userInfoMapper::convert)
+                .collect(Collectors.toList());
     }
 
-    public Set<UserInfoDTO> getIncomingRequests(String token) {
+    public List<UserInfoDTO> getIncomingRequests(String token) {
         String userId = tokenService.getUserId(token);
         Set<String> outgoing = getOutgoingRequestIds(userId);
         Set<String> incoming = getIncomingRequestIds(userId);
         Set<String> friends = incoming.stream()
                 .filter(x -> !outgoing.contains(x))
                 .collect(Collectors.toSet());
-        return userInfoService.getUserInfoSet(friends);
+        return userProfileDomainService.getAllByIds(friends).stream()
+                .map(userInfoMapper::convert)
+                .collect(Collectors.toList());
     }
 
-    public Set<UserInfoDTO> getOutgoingRequests(String token) {
+    public List<UserInfoDTO> getOutgoingRequests(String token) {
         String userId = tokenService.getUserId(token);
         Set<String> outgoing = getOutgoingRequestIds(userId);
         Set<String> incoming = getIncomingRequestIds(userId);
         Set<String> friends = outgoing.stream()
                 .filter(x -> !incoming.contains(x))
                 .collect(Collectors.toSet());
-        return userInfoService.getUserInfoSet(friends);
+        return userProfileDomainService.getAllByIds(friends).stream()
+                .map(userInfoMapper::convert)
+                .collect(Collectors.toList());
     }
 
     public void sendRequest(String token, String toUserId) {
         String fromUserId = tokenService.getUserId(token);
-        if (!userInfoService.userProfileEnabled(toUserId)) {
+        if (!userProfileDomainService.enabledExistsById(toUserId)) {
             throw new NoUserIdException(toUserId);
         }
         if (fromUserId.equals(toUserId)) {
@@ -81,7 +92,7 @@ public class FriendsService {
 
     public void removeRequest(String token, String userId) {
         String currentUserId = tokenService.getUserId(token);
-        if (!userInfoService.userProfileExists(userId)) {
+        if (!userProfileDomainService.anyExistsById(userId)) {
             throw new NoUserIdException(userId);
         }
         if (currentUserId.equals(userId)) {

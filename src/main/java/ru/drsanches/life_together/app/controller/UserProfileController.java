@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import ru.drsanches.life_together.app.data.profile.dto.ChangeUserProfileDTO;
 import ru.drsanches.life_together.app.data.profile.dto.UserInfoDTO;
-import ru.drsanches.life_together.app.service.UserProfileService;
+import ru.drsanches.life_together.app.service.web.UserProfileWebService;
 
 @RestController
 @RequestMapping(value = "/api/v1/profile")
@@ -20,31 +20,31 @@ import ru.drsanches.life_together.app.service.UserProfileService;
 public class UserProfileController {
 
     @Autowired
-    private UserProfileService userProfileService;
+    private UserProfileWebService userProfileWebService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     @ApiOperation(value = "Returns current user profile information")
     public UserInfoDTO getCurrentProfile(@RequestHeader("Authorization") String token) {
-        return userProfileService.getCurrentProfile(token);
+        return userProfileWebService.getCurrentProfile(token);
     }
 
     @RequestMapping(value = "", method = RequestMethod.PUT)
     @ApiOperation(value = "Sets new profile data for current user")
     public void changeCurrentProfile(@RequestHeader("Authorization") String token, @RequestBody ChangeUserProfileDTO changeUserProfileDTO) {
-        userProfileService.changeCurrentProfile(token, changeUserProfileDTO);
+        userProfileWebService.changeCurrentProfile(token, changeUserProfileDTO);
     }
 
     @RequestMapping(value = "/search/{username}", method = RequestMethod.GET)
     @ApiOperation(value = "Returns another user profile information by username")
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
     public UserInfoDTO searchProfile(@PathVariable String username) {
-        return userProfileService.searchProfile(username);
+        return userProfileWebService.searchProfile(username);
     }
 
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
     @ApiOperation(value = "Returns another user profile information by id")
     @ApiImplicitParam(name = "Token", value = "Access token", paramType = "header", required = true)
     public UserInfoDTO getProfile(@PathVariable String userId) {
-        return userProfileService.getProfile(userId);
+        return userProfileWebService.getProfile(userId);
     }
 }

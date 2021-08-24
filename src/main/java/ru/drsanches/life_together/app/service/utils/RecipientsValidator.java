@@ -4,8 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.drsanches.life_together.app.data.friends.model.FriendRequest;
 import ru.drsanches.life_together.app.data.friends.repository.FriendRequestRepository;
-import ru.drsanches.life_together.app.data.profile.repository.UserProfileRepository;
-import java.util.HashSet;
+import ru.drsanches.life_together.app.data.profile.model.UserProfile;
+import ru.drsanches.life_together.app.service.domain.UserProfileDomainService;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 public class RecipientsValidator {
 
     @Autowired
-    private UserProfileRepository userProfileRepository;
+    private UserProfileDomainService userProfileDomainService;
 
     @Autowired
     private FriendRequestRepository friendRequestRepository;
@@ -21,12 +22,10 @@ public class RecipientsValidator {
     public Set<String> getWrongIds(String fromUserId, Set<String> toUserIds) {
         Set<String> toFriends = getFriendIds(fromUserId).stream()
                 .filter(toUserIds::contains).collect(Collectors.toSet());
-        Set<String> existingFriends = new HashSet<>();
-        userProfileRepository.findAllById(toFriends).forEach(userProfile -> {
-            if (userProfile.isEnabled()) {
-                existingFriends.add(userProfile.getId());
-            }
-        });
+        List<String> existingFriends = userProfileDomainService.getAllByIds(toFriends).stream()
+                .filter(UserProfile::isEnabled)
+                .map(UserProfile::getId)
+                .collect(Collectors.toList());
         return toUserIds.stream()
                 .filter(id -> !existingFriends.contains(id) && !id.equals(fromUserId))
                 .collect(Collectors.toSet());
