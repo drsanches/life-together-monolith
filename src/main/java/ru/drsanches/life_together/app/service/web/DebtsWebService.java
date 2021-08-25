@@ -10,13 +10,11 @@ import ru.drsanches.life_together.app.data.debts.dto.TransactionDTO;
 import ru.drsanches.life_together.app.data.debts.mapper.AmountsMapper;
 import ru.drsanches.life_together.app.data.debts.mapper.TransactionMapper;
 import ru.drsanches.life_together.app.data.debts.model.Transaction;
+import ru.drsanches.life_together.app.service.validator.CancelUserIdValidator;
+import ru.drsanches.life_together.app.service.validator.SendMoneyDtoValidator;
 import ru.drsanches.life_together.app.service.domain.DebtsDomainService;
-import ru.drsanches.life_together.app.service.domain.UserProfileDomainService;
 import ru.drsanches.life_together.exception.application.ApplicationException;
-import ru.drsanches.life_together.exception.application.NoUserIdException;
-import ru.drsanches.life_together.exception.application.WrongRecipientsException;
 import ru.drsanches.life_together.app.service.utils.PaginationService;
-import ru.drsanches.life_together.app.service.utils.RecipientsValidator;
 import ru.drsanches.life_together.integration.token.TokenService;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
@@ -34,10 +32,10 @@ public class DebtsWebService {
     private DebtsDomainService debtsDomainService;
 
     @Autowired
-    private UserProfileDomainService userProfileDomainService;
+    private SendMoneyDtoValidator sendMoneyDtoValidator;
 
     @Autowired
-    private RecipientsValidator recipientsValidator;
+    private CancelUserIdValidator cancelUserIdValidator;
 
     @Autowired
     private PaginationService<Transaction> paginationService;
@@ -53,16 +51,7 @@ public class DebtsWebService {
 
     public void sendMoney(String token, SendMoneyDTO sendMoneyDTO) {
         String fromUserId = tokenService.getUserIdByAccessToken(token);
-        if (sendMoneyDTO.getMoney() == null || sendMoneyDTO.getMoney() <= 0) {
-            throw new ApplicationException("Money must be positive: money=" + sendMoneyDTO.getMoney());
-        }
-        if (sendMoneyDTO.getToUserIds() == null || sendMoneyDTO.getToUserIds().isEmpty()) {
-            throw new ApplicationException("User id list is empty");
-        }
-        List<String> wrongIds = recipientsValidator.getWrongIds(fromUserId, sendMoneyDTO.getToUserIds());
-        if (!wrongIds.isEmpty()) {
-            throw new WrongRecipientsException(wrongIds);
-        }
+        sendMoneyDtoValidator.validate(fromUserId, sendMoneyDTO);
         int money = sendMoneyDTO.getMoney() / sendMoneyDTO.getToUserIds().size();
         List<Transaction> transactions = new LinkedList<>();
         sendMoneyDTO.getToUserIds().forEach(toUserId -> {
@@ -79,7 +68,6 @@ public class DebtsWebService {
             }
         });
         debtsDomainService.saveTransactions(transactions);
-        LOG.info("Transactions has been created: {}", transactions.toString());
     }
 
     public AmountsDTO getDebts(String token) {
@@ -99,39 +87,30 @@ public class DebtsWebService {
 
     public void cancel(String token, String userId) {
         String currentUserId = tokenService.getUserIdByAccessToken(token);
-        if (!userProfileDomainService.anyExistsById(userId)) {
-            throw new NoUserIdException(userId);
-        }
-        if (currentUserId.equals(userId)) {
-            throw new ApplicationException("You can't cancel debt for yourself");
-        }
-
-        AtomicReference<Integer> total = new AtomicReference<>(0);
-
-        List<Transaction> outgoingTransactions = debtsDomainService.getOutgoingTransactions(currentUserId, userId);
-        outgoingTransactions.forEach(transaction -> total.updateAndGet(v -> v + transaction.getAmount()));
-
-        List<Transaction> incomingTransactions = debtsDomainService.getIncomingTransactions(currentUserId, userId);
-        incomingTransactions.forEach(transaction -> total.updateAndGet(v -> v - transaction.getAmount()));
-
-        if (total.get() != 0) {
-            Transaction transaction = new Transaction();
-            transaction.setId(UUID.randomUUID().toString());
-            transaction.setAmount(Math.abs(total.get()));
-            transaction.setSystem(true);
-            transaction.setMessage("Debt has been canceled by user with id '" + currentUserId + "'");
-            transaction.setTimestamp(new GregorianCalendar());
-            if (total.get() > 0) {
-                transaction.setFromUserId(userId);
-                transaction.setToUserId(currentUserId);
-            } else {
-                transaction.setFromUserId(currentUserId);
-                transaction.setToUserId(userId);
-            }
-            debtsDomainService.saveTransaction(transaction);
-            LOG.info("Transaction for cancel has been created: {}", transaction.toString());
-        } else {
+        cancelUserIdValidator.validate(currentUserId, userId);
+        int total = calcTotalDebt(currentUserId, userId);
+        if (total == 0) {
             throw new ApplicationException("There is no debts for this user");
         }
+        Transaction transaction = new Transaction(
+                UUID.randomUUID().toString(),
+                total > 0 ? userId : currentUserId,
+                total > 0 ? currentUserId : userId,
+                Math.abs(total),
+                "Debt has been canceled by user with id '" + currentUserId + "'",
+                true,
+                new GregorianCalendar()
+        );
+        debtsDomainService.saveTransaction(transaction);
+        LOG.info("Transaction for cancel has been created: {}", transaction.toString());
+    }
+
+    private int calcTotalDebt(String currentUserId, String userId) {
+        AtomicReference<Integer> total = new AtomicReference<>(0);
+        List<Transaction> outgoingTransactions = debtsDomainService.getOutgoingTransactions(currentUserId, userId);
+        outgoingTransactions.forEach(transaction -> total.updateAndGet(v -> v + transaction.getAmount()));
+        List<Transaction> incomingTransactions = debtsDomainService.getIncomingTransactions(currentUserId, userId);
+        incomingTransactions.forEach(transaction -> total.updateAndGet(v -> v - transaction.getAmount()));
+        return total.get();
     }
 }

@@ -20,12 +20,12 @@ public class DebtsDomainService {
 
     public void saveTransaction(Transaction transaction) {
         transactionRepository.save(transaction);
-        LOG.info("New transaction has been added: {}", transaction);
+        LOG.info("New transaction has been created: {}", transaction);
     }
 
     public void saveTransactions(Collection<Transaction> transactions) {
         transactionRepository.saveAll(transactions);
-        LOG.info("New transactions have been added: {}", transactions);
+        LOG.info("New transactions have been created: {}", transactions);
     }
 
     public List<Transaction> getIncomingTransactions(String userId) {
