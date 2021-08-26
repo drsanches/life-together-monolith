@@ -4,10 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.drsanches.life_together.app.data.debts.dto.AmountDTO;
 import ru.drsanches.life_together.app.data.debts.dto.AmountsDTO;
 import ru.drsanches.life_together.app.data.debts.dto.SendMoneyDTO;
 import ru.drsanches.life_together.app.data.debts.dto.TransactionDTO;
-import ru.drsanches.life_together.app.data.debts.mapper.AmountsMapper;
 import ru.drsanches.life_together.app.data.debts.mapper.TransactionMapper;
 import ru.drsanches.life_together.app.data.debts.model.Transaction;
 import ru.drsanches.life_together.app.service.validator.CancelUserIdValidator;
@@ -16,9 +16,12 @@ import ru.drsanches.life_together.app.service.domain.DebtsDomainService;
 import ru.drsanches.life_together.exception.application.ApplicationException;
 import ru.drsanches.life_together.app.service.utils.PaginationService;
 import ru.drsanches.life_together.integration.token.TokenService;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -42,9 +45,6 @@ public class DebtsWebService {
 
     @Autowired
     private TokenService tokenService;
-
-    @Autowired
-    private AmountsMapper amountsMapper;
 
     @Autowired
     private TransactionMapper transactionMapper;
@@ -74,7 +74,17 @@ public class DebtsWebService {
         String userId = tokenService.getUserIdByAccessToken(token);
         List<Transaction> incomingTransactions = debtsDomainService.getIncomingTransactions(userId);
         List<Transaction> outgoingTransactions = debtsDomainService.getOutgoingTransactions(userId);
-        return amountsMapper.convert(incomingTransactions, outgoingTransactions);
+        Map<String, Integer> total = calcTotalDebts(incomingTransactions, outgoingTransactions);
+        List<AmountDTO> sent = new ArrayList<>();
+        List<AmountDTO> received = new ArrayList<>();
+        total.forEach((id, money) -> {
+            if (money > 0) {
+                sent.add(new AmountDTO(id, money));
+            } else if (money < 0) {
+                received.add(new AmountDTO(id, Math.abs(money)));
+            }
+        });
+        return new AmountsDTO(sent, received);
     }
 
     public List<TransactionDTO> getHistory(String token, Integer from, Integer to) {
@@ -103,6 +113,27 @@ public class DebtsWebService {
         );
         debtsDomainService.saveTransaction(transaction);
         LOG.info("Transaction for cancel has been created: {}", transaction.toString());
+    }
+
+    private Map<String, Integer> calcTotalDebts(List<Transaction> incomingTransactions, List<Transaction> outgoingTransactions) {
+        Map<String, Integer> total = new HashMap<>();
+        outgoingTransactions.forEach(transaction -> {
+            String toUserId = transaction.getToUserId();
+            if (total.containsKey(toUserId)) {
+                total.put(toUserId, total.get(toUserId) + transaction.getAmount());
+            } else {
+                total.put(toUserId, transaction.getAmount());
+            }
+        });
+        incomingTransactions.forEach(transaction -> {
+            String fromUserId = transaction.getFromUserId();
+            if (total.containsKey(fromUserId)) {
+                total.put(fromUserId, total.get(fromUserId) - transaction.getAmount());
+            } else {
+                total.put(fromUserId, -1 * transaction.getAmount());
+            }
+        });
+        return total;
     }
 
     private int calcTotalDebt(String currentUserId, String userId) {

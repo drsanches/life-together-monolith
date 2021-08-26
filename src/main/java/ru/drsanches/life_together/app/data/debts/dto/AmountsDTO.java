@@ -10,6 +10,11 @@ public class AmountsDTO {
 
     public AmountsDTO() {}
 
+    public AmountsDTO(List<AmountDTO> sent, List<AmountDTO> received) {
+        this.sent = sent;
+        this.received = received;
+    }
+
     public List<AmountDTO> getSent() {
         return sent;
     }
