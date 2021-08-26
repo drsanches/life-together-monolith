@@ -33,7 +33,8 @@ public class AdminFilter extends GenericFilterBean {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse  httpResponse = (HttpServletResponse) response;
         String uri = httpRequest.getRequestURI();
-        if (ADMIN_URI_PATTERN.matcher(uri).matches() && !Role.ADMIN.equals(TOKEN_SUPPLIER.get().getRole())) {
+        if (ADMIN_URI_PATTERN.matcher(uri).matches()
+                && (TOKEN_SUPPLIER.get() == null || !Role.ADMIN.equals(TOKEN_SUPPLIER.get().getRole()))) {
             LOG.info("User {} have no permissions for uri '{}'", TOKEN_SUPPLIER.get().getUserId(), uri);
             httpResponse.setStatus(HttpStatus.FORBIDDEN.value());
             httpResponse.getOutputStream().flush();
