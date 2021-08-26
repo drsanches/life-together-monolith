@@ -64,6 +64,7 @@ public class FriendsWebService {
             throw new ApplicationException("You can't send yourself a friend request");
         }
         friendsDomainService.saveFriendRequest(fromUserId, toUserId);
+        LOG.info("User with id '{}' send friend request to user '{}'", fromUserId, toUserId);
     }
 
     public void removeRequest(String token, String userId) {
@@ -76,5 +77,6 @@ public class FriendsWebService {
             return;
         }
         friendsDomainService.removeFriendRequest(currentUserId, userId);
+        LOG.info("User with id '{}' canceled friendship for user '{}'", currentUserId, userId);
     }
 }

@@ -68,6 +68,7 @@ public class DebtsWebService {
             }
         });
         debtsDomainService.saveTransactions(transactions);
+        LOG.info("User with id '{}' send {} money to users {}", fromUserId, money, sendMoneyDTO.getToUserIds());
     }
 
     public AmountsDTO getDebts(String token) {
@@ -112,7 +113,7 @@ public class DebtsWebService {
                 new GregorianCalendar()
         );
         debtsDomainService.saveTransaction(transaction);
-        LOG.info("Transaction for cancel has been created: {}", transaction.toString());
+        LOG.info("User with id '{}' canceled debts for user '{}'", currentUserId, userId);
     }
 
     private Map<String, Integer> calcTotalDebts(List<Transaction> incomingTransactions, List<Transaction> outgoingTransactions) {

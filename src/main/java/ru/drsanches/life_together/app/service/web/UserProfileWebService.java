@@ -50,7 +50,7 @@ public class UserProfileWebService {
             userProfile.setFirstName(changeUserProfileDTO.getFirstName());
             userProfile.setLastName(changeUserProfileDTO.getLastName());
             userProfileDomainService.save(userProfile);
-            LOG.info("User profile has been changed: {}", userProfile.toString());
+            LOG.info("User with id '{}' updated his profile", userId);
         } catch (NoUserIdException e) {
             throw new ServerError("No user profile for userId " + userId, e);
         }

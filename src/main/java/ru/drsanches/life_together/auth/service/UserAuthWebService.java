@@ -58,7 +58,7 @@ public class UserAuthWebService {
         userAuth.setEnabled(true);
         userAuth.setRole(Role.USER);
         userIntegrationService.createUser(userAuth);
-        LOG.info("New user has been created: {}", userAuth.toString());
+        LOG.info("New user with id '{}' has been created", userAuth.getId());
         return userAuthInfoMapper.convert(userAuth);
     }
 
@@ -91,7 +91,7 @@ public class UserAuthWebService {
         current.setUsername(changeUsernameDTO.getNewUsername());
         userIntegrationService.updateUser(current);
         tokenService.removeAllTokens(userId);
-        LOG.info("Username has been changed: {}. Old username: {}", current.toString(), oldUsername);
+        LOG.info("User with id '{}' changed username from '{}' to '{}'", current.getId(), oldUsername, current.getUsername());
     }
 
     public void changePassword(String token, ChangePasswordDTO changePasswordDTO) {
@@ -104,7 +104,7 @@ public class UserAuthWebService {
         current.setPassword(credentialsHelper.encodePassword(changePasswordDTO.getNewPassword()));
         userAuthDomainService.save(current);
         tokenService.removeAllTokens(userId);
-        LOG.info("Password has been changed for user: {}", current.toString());
+        LOG.info("User with id '{}' changed password", current.getId());
     }
 
     public void changeEmail(String token, ChangeEmailDTO changeEmailDTO) {
@@ -116,7 +116,7 @@ public class UserAuthWebService {
         }
         current.setEmail(changeEmailDTO.getNewEmail());
         userAuthDomainService.save(current);
-        LOG.info("Email has been changed: {}", current.toString());
+        LOG.info("User with id '{}' changed email", current.getId());
     }
 
     public TokenDTO refreshToken(String refreshToken) {
@@ -135,6 +135,6 @@ public class UserAuthWebService {
         current.setEnabled(false);
         current.setUsername(UUID.randomUUID().toString() + "_" + current.getUsername());
         userIntegrationService.updateUser(current);
-        LOG.info("User has been disabled: {}", current.toString());
+        LOG.info("User with id '{}' has been disabled", current.getId());
     }
 }
