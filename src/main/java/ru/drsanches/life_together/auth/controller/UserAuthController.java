@@ -1,7 +1,9 @@
 package ru.drsanches.life_together.auth.controller;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,43 +45,50 @@ public class UserAuthController {
 
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ApiOperation(value = "Returns current user private information")
-    public UserAuthInfoDTO info(@RequestHeader("Authorization") String token) {
-        return userAuthWebService.info(token);
+    @ApiImplicitParam(name = "Authorization", value = "Access token", paramType = "header", required = true)
+    public UserAuthInfoDTO info() {
+        return userAuthWebService.info();
     }
 
     @RequestMapping(value = "/changeUsername", method = RequestMethod.PUT)
     @ApiOperation(value = "Changes username")
-    public void changeUsername(@RequestHeader("Authorization") String token, @RequestBody ChangeUsernameDTO changeUsernameDTO) {
-        userAuthWebService.changeUsername(token, changeUsernameDTO);
+    @ApiImplicitParam(name = "Authorization", value = "Access token", paramType = "header", required = true)
+    public void changeUsername(@RequestBody ChangeUsernameDTO changeUsernameDTO) {
+        userAuthWebService.changeUsername(changeUsernameDTO);
     }
 
     @RequestMapping(value = "/changePassword", method = RequestMethod.PUT)
     @ApiOperation(value = "Changes password")
-    public void changePassword(@RequestHeader("Authorization") String token, @RequestBody ChangePasswordDTO changePasswordDTO) {
-        userAuthWebService.changePassword(token, changePasswordDTO);
+    @ApiImplicitParam(name = "Authorization", value = "Access token", paramType = "header", required = true)
+    public void changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
+        userAuthWebService.changePassword(changePasswordDTO);
     }
 
     @RequestMapping(value = "/changeEmail", method = RequestMethod.PUT)
     @ApiOperation(value = "Changes email")
-    public void changeEmail(@RequestHeader("Authorization") String token, @RequestBody ChangeEmailDTO changeEmailDTO) {
-        userAuthWebService.changeEmail(token, changeEmailDTO);
+    @ApiImplicitParam(name = "Authorization", value = "Access token", paramType = "header", required = true)
+    public void changeEmail(@RequestBody ChangeEmailDTO changeEmailDTO) {
+        userAuthWebService.changeEmail(changeEmailDTO);
     }
 
     @RequestMapping(value = "/refreshToken", method = RequestMethod.GET)
     @ApiOperation(value = "Returns new authorization token")
-    public TokenDTO refreshToken(@RequestHeader("Authorization") String refreshToken) {
+    public TokenDTO refreshToken(@RequestHeader("Authorization")
+                                 @ApiParam(value = "Refresh token", required = true) String refreshToken) {
         return userAuthWebService.refreshToken(refreshToken);
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     @ApiOperation(value = "Logs out of the current user, old tokens become invalid")
-    public void logout(@RequestHeader("Authorization") String token) {
-        userAuthWebService.logout(token);
+    @ApiImplicitParam(name = "Authorization", value = "Access token", paramType = "header", required = true)
+    public void logout() {
+        userAuthWebService.logout();
     }
 
     @RequestMapping(value = "/deleteUser", method = RequestMethod.POST)
     @ApiOperation(value = "Deletes current user account")
-    public void disableUser(@RequestHeader("Authorization") String token, @RequestBody DeleteUserDTO deleteUserDTO) {
-        userAuthWebService.disableUser(token, deleteUserDTO);
+    @ApiImplicitParam(name = "Authorization", value = "Access token", paramType = "header", required = true)
+    public void disableUser(@RequestBody DeleteUserDTO deleteUserDTO) {
+        userAuthWebService.disableUser(deleteUserDTO);
     }
 }

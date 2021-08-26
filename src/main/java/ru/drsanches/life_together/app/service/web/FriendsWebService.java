@@ -31,7 +31,7 @@ public class FriendsWebService {
     @Autowired
     private TokenSupplier tokenSupplier;
 
-    public List<UserInfoDTO> getFriends(String token) {
+    public List<UserInfoDTO> getFriends() {
         String userId = tokenSupplier.get().getUserId();
         List<String> friends = friendsDomainService.getFriendsIdList(userId);
         return userProfileDomainService.getAllByIds(friends).stream()
@@ -39,7 +39,7 @@ public class FriendsWebService {
                 .collect(Collectors.toList());
     }
 
-    public List<UserInfoDTO> getIncomingRequests(String token) {
+    public List<UserInfoDTO> getIncomingRequests() {
         String userId = tokenSupplier.get().getUserId();
         List<String> incoming = friendsDomainService.getIncomingRequestIdList(userId);
         return userProfileDomainService.getAllByIds(incoming).stream()
@@ -47,7 +47,7 @@ public class FriendsWebService {
                 .collect(Collectors.toList());
     }
 
-    public List<UserInfoDTO> getOutgoingRequests(String token) {
+    public List<UserInfoDTO> getOutgoingRequests() {
         String userId = tokenSupplier.get().getUserId();
         List<String> outgoing = friendsDomainService.getOutgoingRequestIdList(userId);
         return userProfileDomainService.getAllByIds(outgoing).stream()
@@ -55,7 +55,7 @@ public class FriendsWebService {
                 .collect(Collectors.toList());
     }
 
-    public void sendRequest(String token, String toUserId) {
+    public void sendRequest(String toUserId) {
         String fromUserId = tokenSupplier.get().getUserId();
         if (!userProfileDomainService.enabledExistsById(toUserId)) {
             throw new NoUserIdException(toUserId);
@@ -67,7 +67,7 @@ public class FriendsWebService {
         LOG.info("User with id '{}' send friend request to user '{}'", fromUserId, toUserId);
     }
 
-    public void removeRequest(String token, String userId) {
+    public void removeRequest(String userId) {
         String currentUserId = tokenSupplier.get().getUserId();
         if (!userProfileDomainService.anyExistsById(userId)) {
             throw new NoUserIdException(userId);

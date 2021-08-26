@@ -49,7 +49,7 @@ public class DebtsWebService {
     @Autowired
     private TransactionMapper transactionMapper;
 
-    public void sendMoney(String token, SendMoneyDTO sendMoneyDTO) {
+    public void sendMoney(SendMoneyDTO sendMoneyDTO) {
         String fromUserId = tokenSupplier.get().getUserId();
         sendMoneyDtoValidator.validate(fromUserId, sendMoneyDTO);
         int money = sendMoneyDTO.getMoney() / sendMoneyDTO.getToUserIds().size();
@@ -71,7 +71,7 @@ public class DebtsWebService {
         LOG.info("User with id '{}' send {} money to users {}", fromUserId, money, sendMoneyDTO.getToUserIds());
     }
 
-    public AmountsDTO getDebts(String token) {
+    public AmountsDTO getDebts() {
         String userId = tokenSupplier.get().getUserId();
         List<Transaction> incomingTransactions = debtsDomainService.getIncomingTransactions(userId);
         List<Transaction> outgoingTransactions = debtsDomainService.getOutgoingTransactions(userId);
@@ -88,7 +88,7 @@ public class DebtsWebService {
         return new AmountsDTO(sent, received);
     }
 
-    public List<TransactionDTO> getHistory(String token, Integer from, Integer to) {
+    public List<TransactionDTO> getHistory(Integer from, Integer to) {
         String userId = tokenSupplier.get().getUserId();
         List<Transaction> transactions = debtsDomainService.getAllTransactions(userId);
         return paginationService.pagination(transactions.stream(), from, to)
@@ -96,7 +96,7 @@ public class DebtsWebService {
                 .collect(Collectors.toList());
     }
 
-    public void cancel(String token, String userId) {
+    public void cancel(String userId) {
         String currentUserId = tokenSupplier.get().getUserId();
         cancelUserIdValidator.validate(currentUserId, userId);
         int total = calcTotalDebt(currentUserId, userId);

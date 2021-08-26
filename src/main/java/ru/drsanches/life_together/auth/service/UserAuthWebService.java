@@ -16,6 +16,7 @@ import ru.drsanches.life_together.common.token.data.Role;
 import ru.drsanches.life_together.auth.data.mapper.UserAuthInfoMapper;
 import ru.drsanches.life_together.auth.data.model.UserAuth;
 import ru.drsanches.life_together.exception.application.NoUsernameException;
+import ru.drsanches.life_together.exception.auth.WrongPasswordException;
 import ru.drsanches.life_together.exception.auth.WrongUsernamePasswordException;
 import ru.drsanches.life_together.exception.application.ApplicationException;
 import ru.drsanches.life_together.common.integration.UserIntegrationService;
@@ -68,23 +69,24 @@ public class UserAuthWebService {
 
     public TokenDTO login(LoginDTO loginDTO) {
         loginDTO.setUsername(loginDTO.getUsername().toLowerCase());
-        String userId;
+        UserAuth userAuth;
         try {
-            userId = userAuthDomainService.getEnabledByUsername(loginDTO.getUsername()).getId();
-        } catch (NoUsernameException e) {
+            userAuth = userAuthDomainService.getEnabledByUsername(loginDTO.getUsername());
+            credentialsHelper.checkPassword(loginDTO.getPassword(), userAuth.getPassword());
+        } catch (NoUsernameException | WrongPasswordException e) {
             throw new WrongUsernamePasswordException(e);
         }
-        Token token = tokenService.createToken(userId, loginDTO.getUsername(), loginDTO.getPassword());
+        Token token = tokenService.createToken(userAuth.getId(), userAuth.getRole());
         return tokenMapper.convert(token);
     }
 
-    public UserAuthInfoDTO info(String token) {
+    public UserAuthInfoDTO info() {
         String userId = tokenSupplier.get().getUserId();
         UserAuth current = userAuthDomainService.getEnabledById(userId);
         return userAuthInfoMapper.convert(current);
     }
 
-    public void changeUsername(String token, ChangeUsernameDTO changeUsernameDTO) {
+    public void changeUsername(ChangeUsernameDTO changeUsernameDTO) {
         String userId = tokenSupplier.get().getUserId();
         UserAuth current = userAuthDomainService.getEnabledById(userId);
         credentialsHelper.checkPassword(changeUsernameDTO.getPassword(), current.getPassword());
@@ -98,7 +100,7 @@ public class UserAuthWebService {
         LOG.info("User with id '{}' changed username from '{}' to '{}'", current.getId(), oldUsername, current.getUsername());
     }
 
-    public void changePassword(String token, ChangePasswordDTO changePasswordDTO) {
+    public void changePassword(ChangePasswordDTO changePasswordDTO) {
         String userId = tokenSupplier.get().getUserId();
         UserAuth current = userAuthDomainService.getEnabledById(userId);
         credentialsHelper.checkPassword(changePasswordDTO.getOldPassword(), current.getPassword());
@@ -111,7 +113,7 @@ public class UserAuthWebService {
         LOG.info("User with id '{}' changed password", current.getId());
     }
 
-    public void changeEmail(String token, ChangeEmailDTO changeEmailDTO) {
+    public void changeEmail(ChangeEmailDTO changeEmailDTO) {
         String userId = tokenSupplier.get().getUserId();
         UserAuth current = userAuthDomainService.getEnabledById(userId);
         credentialsHelper.checkPassword(changeEmailDTO.getPassword(), current.getPassword());
@@ -127,11 +129,11 @@ public class UserAuthWebService {
         return tokenMapper.convert(tokenService.refreshToken(refreshToken));
     }
 
-    public void logout(String token) {
-        tokenService.removeToken(token);
+    public void logout() {
+        tokenService.removeCurrentToken();
     }
 
-    public void disableUser(String token, DeleteUserDTO deleteUserDTO) {
+    public void disableUser(DeleteUserDTO deleteUserDTO) {
         String userId = tokenSupplier.get().getUserId();
         UserAuth current = userAuthDomainService.getEnabledById(userId);
         credentialsHelper.checkPassword(deleteUserDTO.getPassword(), current.getPassword());

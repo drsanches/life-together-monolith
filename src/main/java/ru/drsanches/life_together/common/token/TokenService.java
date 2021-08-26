@@ -2,11 +2,7 @@ package ru.drsanches.life_together.common.token;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.drsanches.life_together.auth.data.model.UserAuth;
-import ru.drsanches.life_together.auth.service.UserAuthDomainService;
-import ru.drsanches.life_together.exception.application.NoUsernameException;
 import ru.drsanches.life_together.exception.auth.WrongTokenException;
-import ru.drsanches.life_together.exception.auth.WrongUsernamePasswordException;
 import ru.drsanches.life_together.common.token.data.Role;
 import ru.drsanches.life_together.common.token.data.Token;
 import ru.drsanches.life_together.common.token.data.TokenRepository;
@@ -33,12 +29,19 @@ public class TokenService {
     @Autowired
     private CredentialsHelper credentialsHelper;
 
-    @Autowired
-    private UserAuthDomainService userAuthDomainService;
-
-    public Token createToken(String userId, String username, String password) {
-        UserAuth userAuth = checkUser(username, password);
-        return createToken(userId, userAuth.getRole());
+    public Token createToken(String userId, Role role) {
+        Token token = new Token();
+        token.setAccessToken(UUID.randomUUID().toString());
+        token.setRefreshToken(UUID.randomUUID().toString());
+        token.setTokenType(TOKEN_TYPE);
+        GregorianCalendar expiresAt = new GregorianCalendar();
+        expiresAt.add(CALENDAR_FIELD, CALENDAR_VALUE);
+        token.setExpiresAt(expiresAt);
+        token.setUserId(userId);
+        token.setRole(role);
+        tokenRepository.save(token);
+        tokenSupplier.set(token);
+        return token;
     }
 
     public void validate(String accessToken) {
@@ -62,38 +65,14 @@ public class TokenService {
         return createToken(token.getUserId(), token.getRole());
     }
 
-    public void removeToken(String token) {
-        tokenRepository.deleteById(extractTokenId(token));
+    public void removeCurrentToken() {
+        tokenRepository.deleteById(tokenSupplier.get().getAccessToken());
+        tokenSupplier.set(null);
     }
 
     public void removeAllTokens(String userId) {
         tokenRepository.deleteAll(tokenRepository.findByUserId(userId));
-    }
-
-    public UserAuth checkUser(String username, String password) {
-        UserAuth userAuth;
-        try {
-            userAuth = userAuthDomainService.getEnabledByUsername(username);
-            credentialsHelper.checkPassword(password, userAuth.getPassword());
-        } catch (NoUsernameException e) {
-            throw new WrongUsernamePasswordException(e);
-        }
-        return userAuth;
-    }
-
-    private Token createToken(String userId, Role role) {
-        Token token = new Token();
-        token.setAccessToken(UUID.randomUUID().toString());
-        token.setRefreshToken(UUID.randomUUID().toString());
-        token.setTokenType(TOKEN_TYPE);
-        GregorianCalendar expiresAt = new GregorianCalendar();
-        expiresAt.add(CALENDAR_FIELD, CALENDAR_VALUE);
-        token.setExpiresAt(expiresAt);
-        token.setUserId(userId);
-        token.setRole(role);
-        tokenRepository.save(token);
-        tokenSupplier.set(token);
-        return token;
+        tokenSupplier.set(null);
     }
 
     private Token getTokenByRefreshToken(String refreshToken) {
@@ -108,6 +87,9 @@ public class TokenService {
     }
 
     private String extractTokenId(String token) {
+        if (token == null) {
+            return null;
+        }
         if (token.contains(TOKEN_TYPE + " ")) {
             return token.substring(TOKEN_TYPE.length() + 1);
         } else if (token.contains(TOKEN_TYPE + "%20")) {

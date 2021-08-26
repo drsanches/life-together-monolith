@@ -15,7 +15,7 @@ public class TokenDTO {
     private String tokenType;
 
     @ApiModelProperty(required = true)
-    private GregorianCalendar expiresAt;
+    private GregorianCalendar expiresAt; //TODO: Change to String
 
     public TokenDTO() {}
 

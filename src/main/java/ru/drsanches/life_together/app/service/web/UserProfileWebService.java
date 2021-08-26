@@ -27,7 +27,7 @@ public class UserProfileWebService {
     @Autowired
     private UserInfoMapper userInfoMapper;
 
-    public UserInfoDTO getCurrentProfile(String token) {
+    public UserInfoDTO getCurrentProfile() {
         String userId = tokenSupplier.get().getUserId();
         UserProfile userProfile = userProfileDomainService.getEnabledById(userId);
         return userInfoMapper.convert(userProfile);
@@ -43,7 +43,7 @@ public class UserProfileWebService {
         return userInfoMapper.convert(userProfile);
     }
 
-    public void changeCurrentProfile(String token, ChangeUserProfileDTO changeUserProfileDTO) {
+    public void changeCurrentProfile(ChangeUserProfileDTO changeUserProfileDTO) {
         String userId = tokenSupplier.get().getUserId();
         try {
             UserProfile userProfile = userProfileDomainService.getEnabledById(userId);
