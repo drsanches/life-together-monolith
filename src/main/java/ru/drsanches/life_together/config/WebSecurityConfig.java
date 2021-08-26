@@ -7,10 +7,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import ru.drsanches.life_together.config.filter.AdminFilter;
-import ru.drsanches.life_together.config.filter.FilterLogger;
+import ru.drsanches.life_together.config.filter.LogFilter;
 import ru.drsanches.life_together.config.filter.TokenFilter;
-import ru.drsanches.life_together.integration.UserPermissionService;
-import ru.drsanches.life_together.integration.token.TokenService;
+import ru.drsanches.life_together.common.token.TokenService;
+import ru.drsanches.life_together.common.token.TokenSupplier;
 import java.util.regex.Pattern;
 
 @Configuration
@@ -31,13 +31,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private TokenService tokenService;
 
     @Autowired
-    private UserPermissionService userPermissionService;
+    private TokenSupplier tokenSupplier;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.addFilterAfter(new FilterLogger(tokenService, LOG_URI_PATTERN), BasicAuthenticationFilter.class);
-        http.addFilterAfter(new TokenFilter(tokenService, EXCLUDE_URI_PATTERN), FilterLogger.class);
-        http.addFilterAfter(new AdminFilter(tokenService, userPermissionService, ADMIN_URI_PATTERN), TokenFilter.class);
+        http.addFilterAfter(new TokenFilter(tokenService, EXCLUDE_URI_PATTERN), BasicAuthenticationFilter.class);
+        http.addFilterAfter(new AdminFilter(tokenSupplier, ADMIN_URI_PATTERN), TokenFilter.class);
+        http.addFilterAfter(new LogFilter(tokenSupplier, LOG_URI_PATTERN), AdminFilter.class);
         http.csrf().disable()
                 .headers().frameOptions().disable()
                 .addHeaderWriter(new StaticHeadersWriter("X-FRAME-OPTIONS", "SAMEORIGIN"))

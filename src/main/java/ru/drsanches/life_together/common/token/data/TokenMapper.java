@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.integration.token.data;
+package ru.drsanches.life_together.common.token.data;
 
 import org.springframework.stereotype.Component;
 import ru.drsanches.life_together.auth.data.dto.TokenDTO;

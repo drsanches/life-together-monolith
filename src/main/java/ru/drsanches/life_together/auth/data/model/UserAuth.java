@@ -3,7 +3,7 @@ package ru.drsanches.life_together.auth.data.model;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.drsanches.life_together.auth.data.enumeration.Role;
+import ru.drsanches.life_together.common.token.data.Role;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;

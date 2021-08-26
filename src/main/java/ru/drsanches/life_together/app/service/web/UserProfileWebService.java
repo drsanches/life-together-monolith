@@ -11,7 +11,7 @@ import ru.drsanches.life_together.app.data.profile.model.UserProfile;
 import ru.drsanches.life_together.app.service.domain.UserProfileDomainService;
 import ru.drsanches.life_together.exception.application.NoUserIdException;
 import ru.drsanches.life_together.exception.server.ServerError;
-import ru.drsanches.life_together.integration.token.TokenService;
+import ru.drsanches.life_together.common.token.TokenSupplier;
 
 @Service
 public class UserProfileWebService {
@@ -22,13 +22,13 @@ public class UserProfileWebService {
     private UserProfileDomainService userProfileDomainService;
 
     @Autowired
-    private TokenService tokenService;
+    private TokenSupplier tokenSupplier;
 
     @Autowired
     private UserInfoMapper userInfoMapper;
 
     public UserInfoDTO getCurrentProfile(String token) {
-        String userId = tokenService.getUserIdByAccessToken(token);
+        String userId = tokenSupplier.get().getUserId();
         UserProfile userProfile = userProfileDomainService.getEnabledById(userId);
         return userInfoMapper.convert(userProfile);
     }
@@ -44,7 +44,7 @@ public class UserProfileWebService {
     }
 
     public void changeCurrentProfile(String token, ChangeUserProfileDTO changeUserProfileDTO) {
-        String userId = tokenService.getUserIdByAccessToken(token);
+        String userId = tokenSupplier.get().getUserId();
         try {
             UserProfile userProfile = userProfileDomainService.getEnabledById(userId);
             userProfile.setFirstName(changeUserProfileDTO.getFirstName());

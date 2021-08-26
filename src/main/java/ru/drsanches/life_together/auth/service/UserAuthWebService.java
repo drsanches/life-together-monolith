@@ -12,17 +12,18 @@ import ru.drsanches.life_together.auth.data.dto.LoginDTO;
 import ru.drsanches.life_together.auth.data.dto.RegistrationDTO;
 import ru.drsanches.life_together.auth.data.dto.TokenDTO;
 import ru.drsanches.life_together.auth.data.dto.UserAuthInfoDTO;
-import ru.drsanches.life_together.auth.data.enumeration.Role;
+import ru.drsanches.life_together.common.token.data.Role;
 import ru.drsanches.life_together.auth.data.mapper.UserAuthInfoMapper;
 import ru.drsanches.life_together.auth.data.model.UserAuth;
 import ru.drsanches.life_together.exception.application.NoUsernameException;
 import ru.drsanches.life_together.exception.auth.WrongUsernamePasswordException;
 import ru.drsanches.life_together.exception.application.ApplicationException;
-import ru.drsanches.life_together.integration.UserIntegrationService;
-import ru.drsanches.life_together.integration.token.CredentialsHelper;
-import ru.drsanches.life_together.integration.token.TokenService;
-import ru.drsanches.life_together.integration.token.data.Token;
-import ru.drsanches.life_together.integration.token.data.TokenMapper;
+import ru.drsanches.life_together.common.integration.UserIntegrationService;
+import ru.drsanches.life_together.common.utils.CredentialsHelper;
+import ru.drsanches.life_together.common.token.TokenService;
+import ru.drsanches.life_together.common.token.TokenSupplier;
+import ru.drsanches.life_together.common.token.data.Token;
+import ru.drsanches.life_together.common.token.data.TokenMapper;
 import java.util.UUID;
 
 @Service
@@ -38,6 +39,9 @@ public class UserAuthWebService {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private TokenSupplier tokenSupplier;
 
     @Autowired
     private CredentialsHelper credentialsHelper;
@@ -75,13 +79,13 @@ public class UserAuthWebService {
     }
 
     public UserAuthInfoDTO info(String token) {
-        String userId = tokenService.getUserIdByAccessToken(token);
+        String userId = tokenSupplier.get().getUserId();
         UserAuth current = userAuthDomainService.getEnabledById(userId);
         return userAuthInfoMapper.convert(current);
     }
 
     public void changeUsername(String token, ChangeUsernameDTO changeUsernameDTO) {
-        String userId = tokenService.getUserIdByAccessToken(token);
+        String userId = tokenSupplier.get().getUserId();
         UserAuth current = userAuthDomainService.getEnabledById(userId);
         credentialsHelper.checkPassword(changeUsernameDTO.getPassword(), current.getPassword());
         String oldUsername = current.getUsername();
@@ -95,7 +99,7 @@ public class UserAuthWebService {
     }
 
     public void changePassword(String token, ChangePasswordDTO changePasswordDTO) {
-        String userId = tokenService.getUserIdByAccessToken(token);
+        String userId = tokenSupplier.get().getUserId();
         UserAuth current = userAuthDomainService.getEnabledById(userId);
         credentialsHelper.checkPassword(changePasswordDTO.getOldPassword(), current.getPassword());
         if (changePasswordDTO.getOldPassword().equals(changePasswordDTO.getNewPassword())) {
@@ -108,7 +112,7 @@ public class UserAuthWebService {
     }
 
     public void changeEmail(String token, ChangeEmailDTO changeEmailDTO) {
-        String userId = tokenService.getUserIdByAccessToken(token);
+        String userId = tokenSupplier.get().getUserId();
         UserAuth current = userAuthDomainService.getEnabledById(userId);
         credentialsHelper.checkPassword(changeEmailDTO.getPassword(), current.getPassword());
         if (changeEmailDTO.getNewEmail().equals(current.getEmail())) {
@@ -128,7 +132,7 @@ public class UserAuthWebService {
     }
 
     public void disableUser(String token, DeleteUserDTO deleteUserDTO) {
-        String userId = tokenService.getUserIdByAccessToken(token);
+        String userId = tokenSupplier.get().getUserId();
         UserAuth current = userAuthDomainService.getEnabledById(userId);
         credentialsHelper.checkPassword(deleteUserDTO.getPassword(), current.getPassword());
         tokenService.removeAllTokens(userId);

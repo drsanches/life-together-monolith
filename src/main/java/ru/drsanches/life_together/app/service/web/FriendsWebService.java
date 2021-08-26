@@ -10,7 +10,7 @@ import ru.drsanches.life_together.app.service.domain.FriendsDomainService;
 import ru.drsanches.life_together.app.service.domain.UserProfileDomainService;
 import ru.drsanches.life_together.exception.application.ApplicationException;
 import ru.drsanches.life_together.exception.application.NoUserIdException;
-import ru.drsanches.life_together.integration.token.TokenService;
+import ru.drsanches.life_together.common.token.TokenSupplier;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,10 +29,10 @@ public class FriendsWebService {
     private UserInfoMapper userInfoMapper;
 
     @Autowired
-    private TokenService tokenService;
+    private TokenSupplier tokenSupplier;
 
     public List<UserInfoDTO> getFriends(String token) {
-        String userId = tokenService.getUserIdByAccessToken(token);
+        String userId = tokenSupplier.get().getUserId();
         List<String> friends = friendsDomainService.getFriendsIdList(userId);
         return userProfileDomainService.getAllByIds(friends).stream()
                 .map(userInfoMapper::convert)
@@ -40,7 +40,7 @@ public class FriendsWebService {
     }
 
     public List<UserInfoDTO> getIncomingRequests(String token) {
-        String userId = tokenService.getUserIdByAccessToken(token);
+        String userId = tokenSupplier.get().getUserId();
         List<String> incoming = friendsDomainService.getIncomingRequestIdList(userId);
         return userProfileDomainService.getAllByIds(incoming).stream()
                 .map(userInfoMapper::convert)
@@ -48,7 +48,7 @@ public class FriendsWebService {
     }
 
     public List<UserInfoDTO> getOutgoingRequests(String token) {
-        String userId = tokenService.getUserIdByAccessToken(token);
+        String userId = tokenSupplier.get().getUserId();
         List<String> outgoing = friendsDomainService.getOutgoingRequestIdList(userId);
         return userProfileDomainService.getAllByIds(outgoing).stream()
                 .map(userInfoMapper::convert)
@@ -56,7 +56,7 @@ public class FriendsWebService {
     }
 
     public void sendRequest(String token, String toUserId) {
-        String fromUserId = tokenService.getUserIdByAccessToken(token);
+        String fromUserId = tokenSupplier.get().getUserId();
         if (!userProfileDomainService.enabledExistsById(toUserId)) {
             throw new NoUserIdException(toUserId);
         }
@@ -68,7 +68,7 @@ public class FriendsWebService {
     }
 
     public void removeRequest(String token, String userId) {
-        String currentUserId = tokenService.getUserIdByAccessToken(token);
+        String currentUserId = tokenSupplier.get().getUserId();
         if (!userProfileDomainService.anyExistsById(userId)) {
             throw new NoUserIdException(userId);
         }

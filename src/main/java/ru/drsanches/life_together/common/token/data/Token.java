@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.integration.token.data;
+package ru.drsanches.life_together.common.token.data;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,15 +26,10 @@ public class Token {
     @Column(nullable = false)
     private String userId;
 
-    public Token() {}
+    @Column(nullable = false)
+    private Role role;
 
-    public Token(String accessToken, String refreshToken, String tokenType, GregorianCalendar expiresAt, String userId) {
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
-        this.tokenType = tokenType;
-        this.expiresAt = expiresAt;
-        this.userId = userId;
-    }
+    public Token() {}
 
     public String getAccessToken() {
         return accessToken;
@@ -54,6 +49,10 @@ public class Token {
 
     public String getUserId() {
         return userId;
+    }
+
+    public Role getRole() {
+        return role;
     }
 
     public void setAccessToken(String accessToken) {
@@ -76,11 +75,16 @@ public class Token {
         this.userId = userId;
     }
 
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     @Override
     public String toString() {
         return "Token{" +
                 "tokenType='" + tokenType + '\'' +
                 ", userId='" + userId + '\'' +
+                ", role=" + role +
                 '}';
     }
 }

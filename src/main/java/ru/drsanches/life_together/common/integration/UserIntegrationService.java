@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.integration;
+package ru.drsanches.life_together.common.integration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -15,7 +15,7 @@ import ru.drsanches.life_together.app.service.validator.SendMoneyDtoValidator;
 import ru.drsanches.life_together.app.service.domain.DebtsDomainService;
 import ru.drsanches.life_together.exception.application.ApplicationException;
 import ru.drsanches.life_together.app.service.utils.PaginationService;
-import ru.drsanches.life_together.integration.token.TokenService;
+import ru.drsanches.life_together.common.token.TokenSupplier;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -44,13 +44,13 @@ public class DebtsWebService {
     private PaginationService<Transaction> paginationService;
 
     @Autowired
-    private TokenService tokenService;
+    private TokenSupplier tokenSupplier;
 
     @Autowired
     private TransactionMapper transactionMapper;
 
     public void sendMoney(String token, SendMoneyDTO sendMoneyDTO) {
-        String fromUserId = tokenService.getUserIdByAccessToken(token);
+        String fromUserId = tokenSupplier.get().getUserId();
         sendMoneyDtoValidator.validate(fromUserId, sendMoneyDTO);
         int money = sendMoneyDTO.getMoney() / sendMoneyDTO.getToUserIds().size();
         List<Transaction> transactions = new LinkedList<>();
@@ -72,7 +72,7 @@ public class DebtsWebService {
     }
 
     public AmountsDTO getDebts(String token) {
-        String userId = tokenService.getUserIdByAccessToken(token);
+        String userId = tokenSupplier.get().getUserId();
         List<Transaction> incomingTransactions = debtsDomainService.getIncomingTransactions(userId);
         List<Transaction> outgoingTransactions = debtsDomainService.getOutgoingTransactions(userId);
         Map<String, Integer> total = calcTotalDebts(incomingTransactions, outgoingTransactions);
@@ -89,7 +89,7 @@ public class DebtsWebService {
     }
 
     public List<TransactionDTO> getHistory(String token, Integer from, Integer to) {
-        String userId = tokenService.getUserIdByAccessToken(token);
+        String userId = tokenSupplier.get().getUserId();
         List<Transaction> transactions = debtsDomainService.getAllTransactions(userId);
         return paginationService.pagination(transactions.stream(), from, to)
                 .map(transaction -> transactionMapper.convert(transaction, userId))
@@ -97,7 +97,7 @@ public class DebtsWebService {
     }
 
     public void cancel(String token, String userId) {
-        String currentUserId = tokenService.getUserIdByAccessToken(token);
+        String currentUserId = tokenSupplier.get().getUserId();
         cancelUserIdValidator.validate(currentUserId, userId);
         int total = calcTotalDebt(currentUserId, userId);
         if (total == 0) {
