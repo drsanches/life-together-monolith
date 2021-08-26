@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.integration.token;
+package ru.drsanches.life_together.integration.token.data;
 
 import org.springframework.data.repository.CrudRepository;
 import java.util.List;

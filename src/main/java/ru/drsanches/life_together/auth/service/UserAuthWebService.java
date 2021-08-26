@@ -17,12 +17,12 @@ import ru.drsanches.life_together.auth.data.mapper.UserAuthInfoMapper;
 import ru.drsanches.life_together.auth.data.model.UserAuth;
 import ru.drsanches.life_together.exception.application.NoUsernameException;
 import ru.drsanches.life_together.exception.auth.WrongUsernamePasswordException;
-import ru.drsanches.life_together.integration.token.TokenMapper;
 import ru.drsanches.life_together.exception.application.ApplicationException;
-import ru.drsanches.life_together.integration.token.CredentialsHelper;
-import ru.drsanches.life_together.integration.token.Token;
-import ru.drsanches.life_together.integration.token.TokenService;
 import ru.drsanches.life_together.integration.UserIntegrationService;
+import ru.drsanches.life_together.integration.token.CredentialsHelper;
+import ru.drsanches.life_together.integration.token.TokenService;
+import ru.drsanches.life_together.integration.token.data.Token;
+import ru.drsanches.life_together.integration.token.data.TokenMapper;
 import java.util.UUID;
 
 @Service

@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.integration.token;
+package ru.drsanches.life_together.integration.token.data;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

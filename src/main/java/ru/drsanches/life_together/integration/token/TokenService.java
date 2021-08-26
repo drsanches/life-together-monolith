@@ -3,6 +3,8 @@ package ru.drsanches.life_together.integration.token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.drsanches.life_together.exception.auth.WrongTokenException;
+import ru.drsanches.life_together.integration.token.data.Token;
+import ru.drsanches.life_together.integration.token.data.TokenRepository;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.GregorianCalendar;
