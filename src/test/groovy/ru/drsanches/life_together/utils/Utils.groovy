@@ -20,11 +20,10 @@ class Utils {
         return null
     }
 
-    static boolean checkTimestamp(Date timestampBefore, String timestamp, Date timeAfter) {
-        String tmp = timestamp.replace("T", " ")
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSX")
-        Date date = df.parse(tmp)
-        return date.after(timestampBefore) && date.before(timeAfter)
+    static boolean checkTimestamp(Date dateBefore, String timestamp, Date dateAfter) {
+        DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS z")
+        Date date = df.parse(timestamp)
+        return dateBefore.before(date) && dateAfter.after(date)
     }
 
     static Integer getAmount(JSONArray amounts, String userId) {

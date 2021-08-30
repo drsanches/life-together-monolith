@@ -1,10 +1,10 @@
 package ru.drsanches.life_together.app.data.debts.model;
 
+import ru.drsanches.life_together.common.utils.GregorianCalendarConvertor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.time.format.DateTimeFormatter;
 import java.util.GregorianCalendar;
 
 @Entity
@@ -110,7 +110,7 @@ public class Transaction {
                 ", amount=" + amount +
                 ", message='" + message + '\'' +
                 ", isSystem=" + isSystem +
-                ", timestamp=" + timestamp.toZonedDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss.SSS z")) +
+                ", timestamp=" + new GregorianCalendarConvertor().convert(timestamp) +
                 '}';
     }
 }

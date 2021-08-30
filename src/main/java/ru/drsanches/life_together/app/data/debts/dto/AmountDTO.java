@@ -1,9 +1,13 @@
 package ru.drsanches.life_together.app.data.debts.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class AmountDTO {
 
+    @ApiModelProperty(required = true)
     private String userId;
 
+    @ApiModelProperty(required = true)
     private Integer amount;
 
     public AmountDTO() {}

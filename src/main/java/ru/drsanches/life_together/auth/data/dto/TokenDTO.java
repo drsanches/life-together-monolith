@@ -1,7 +1,7 @@
 package ru.drsanches.life_together.auth.data.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import java.util.GregorianCalendar;
+import ru.drsanches.life_together.common.utils.GregorianCalendarConvertor;
 
 public class TokenDTO {
 
@@ -14,8 +14,8 @@ public class TokenDTO {
     @ApiModelProperty(required = true)
     private String tokenType;
 
-    @ApiModelProperty(required = true)
-    private GregorianCalendar expiresAt; //TODO: Change to String
+    @ApiModelProperty(notes = GregorianCalendarConvertor.PATTERN, required = true)
+    private String expiresAt;
 
     public TokenDTO() {}
 
@@ -31,7 +31,7 @@ public class TokenDTO {
         return tokenType;
     }
 
-    public GregorianCalendar getExpiresAt() {
+    public String getExpiresAt() {
         return expiresAt;
     }
 
@@ -47,7 +47,7 @@ public class TokenDTO {
         this.tokenType = tokenType;
     }
 
-    public void setExpiresAt(GregorianCalendar expiresAt) {
+    public void setExpiresAt(String expiresAt) {
         this.expiresAt = expiresAt;
     }
 

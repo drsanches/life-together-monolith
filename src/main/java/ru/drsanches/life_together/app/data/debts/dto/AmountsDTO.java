@@ -1,11 +1,14 @@
 package ru.drsanches.life_together.app.data.debts.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 
 public class AmountsDTO {
 
+    @ApiModelProperty
     private List<AmountDTO> sent;
 
+    @ApiModelProperty
     private List<AmountDTO> received;
 
     public AmountsDTO() {}

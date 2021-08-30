@@ -1,22 +1,28 @@
 package ru.drsanches.life_together.app.data.debts.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import ru.drsanches.life_together.app.data.debts.enumeration.TransactionType;
-import java.time.format.DateTimeFormatter;
-import java.util.GregorianCalendar;
+import ru.drsanches.life_together.common.utils.GregorianCalendarConvertor;
 
 public class TransactionDTO {
 
+    @ApiModelProperty(required = true)
     private String id;
 
+    @ApiModelProperty(required = true)
     private String userId;
 
+    @ApiModelProperty(required = true)
     private TransactionType type;
 
+    @ApiModelProperty(required = true)
     private Integer amount;
 
+    @ApiModelProperty
     private String message;
 
-    private GregorianCalendar timestamp;
+    @ApiModelProperty(required = true, notes = GregorianCalendarConvertor.PATTERN)
+    private String timestamp;
 
     public TransactionDTO() {}
 
@@ -40,7 +46,7 @@ public class TransactionDTO {
         return message;
     }
 
-    public GregorianCalendar getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 
@@ -64,7 +70,7 @@ public class TransactionDTO {
         this.message = message;
     }
 
-    public void setTimestamp(GregorianCalendar timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -76,7 +82,7 @@ public class TransactionDTO {
                 ", type=" + type +
                 ", amount=" + amount +
                 ", message='" + message + '\'' +
-                ", timestamp=" + timestamp.toZonedDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss.SSS z")) +
+                ", timestamp=" + timestamp +
                 '}';
     }
 }
