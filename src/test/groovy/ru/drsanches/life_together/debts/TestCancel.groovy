@@ -12,7 +12,7 @@ import spock.lang.Specification
 
 class TestCancel extends Specification {
 
-    String PATH = "/api/v1/debts/cancel/"
+    String PATH = "/api/v1/debts/cancel"
 
     String messageFormat = "Debt has been canceled by user with id '%s'"
 
@@ -36,9 +36,10 @@ class TestCancel extends Specification {
 
         when: "request is sent"
         def dateBefore = new Date()
-        def response = RequestUtils.getRestClient().get(
-                path: PATH + userId2,
+        def response = RequestUtils.getRestClient().post(
+                path: PATH,
                 headers: ["Authorization": "Bearer $token1"],
+                body:  [userId: userId2],
                 requestContentType : ContentType.JSON) as HttpResponseDecorator
         def dateAfter = new Date()
 
@@ -79,9 +80,10 @@ class TestCancel extends Specification {
 
         when: "request is sent"
         def dateBefore = new Date()
-        def response = RequestUtils.getRestClient().get(
-                path: PATH + userId2,
+        def response = RequestUtils.getRestClient().post(
+                path: PATH,
                 headers: ["Authorization": "Bearer $token1"],
+                body:  [userId: userId2],
                 requestContentType : ContentType.JSON) as HttpResponseDecorator
         def dateAfter = new Date()
 
@@ -122,9 +124,10 @@ class TestCancel extends Specification {
 
         when: "request is sent"
         def dateBefore = new Date()
-        def response = RequestUtils.getRestClient().get(
-                path: PATH + userId2,
+        def response = RequestUtils.getRestClient().post(
+                path: PATH,
                 headers: ["Authorization": "Bearer $token1"],
+                body:  [userId: userId2],
                 requestContentType : ContentType.JSON) as HttpResponseDecorator
         def dateAfter = new Date()
 
@@ -166,9 +169,10 @@ class TestCancel extends Specification {
 
         when: "request is sent"
         def dateBefore = new Date()
-        def response = RequestUtils.getRestClient().get(
-                path: PATH + userId2,
+        def response = RequestUtils.getRestClient().post(
+                path: PATH,
                 headers: ["Authorization": "Bearer $token1"],
+                body:  [userId: userId2],
                 requestContentType : ContentType.JSON) as HttpResponseDecorator
         def dateAfter = new Date()
 
@@ -209,9 +213,10 @@ class TestCancel extends Specification {
 
         when: "request is sent"
         def dateBefore = new Date()
-        def response = RequestUtils.getRestClient().get(
-                path: PATH + userId2,
+        def response = RequestUtils.getRestClient().post(
+                path: PATH,
                 headers: ["Authorization": "Bearer $token1"],
+                body:  [userId: userId2],
                 requestContentType : ContentType.JSON) as HttpResponseDecorator
         def dateAfter = new Date()
 
@@ -253,9 +258,10 @@ class TestCancel extends Specification {
 
         when: "request is sent"
         def dateBefore = new Date()
-        def response = RequestUtils.getRestClient().get(
-                path: PATH + userId2,
+        def response = RequestUtils.getRestClient().post(
+                path: PATH,
                 headers: ["Authorization": "Bearer $token1"],
+                body:  [userId: userId2],
                 requestContentType : ContentType.JSON) as HttpResponseDecorator
         def dateAfter = new Date()
 
@@ -288,9 +294,10 @@ class TestCancel extends Specification {
         def token1 = RequestUtils.getToken(username1, password1)
 
         when: "request is sent"
-        RequestUtils.getRestClient().get(
-                path: PATH + userId2,
+        RequestUtils.getRestClient().post(
+                path: PATH,
                 headers: ["Authorization": "Bearer $token1"],
+                body:  [userId: userId2],
                 requestContentType : ContentType.JSON)
 
         then: "response is correct"
@@ -307,14 +314,15 @@ class TestCancel extends Specification {
         def token1 = RequestUtils.getToken(username1, password1)
 
         when: "request is sent"
-        RequestUtils.getRestClient().get(
-                path: PATH + userId2,
+        RequestUtils.getRestClient().post(
+                path: PATH,
                 headers: ["Authorization": "Bearer $token1"],
+                body:  [userId: userId2],
                 requestContentType : ContentType.JSON) as HttpResponseDecorator
 
         then: "response is correct"
         def e = thrown(HttpResponseException)
-        assert e.response.status == 404
+        assert e.response.status == 400
     }
 
     def "cancel debt to yourself"() {
@@ -325,9 +333,10 @@ class TestCancel extends Specification {
         def token1 = RequestUtils.getToken(username1, password1)
 
         when: "request is sent"
-        RequestUtils.getRestClient().get(
-                path: PATH + userId1,
+        RequestUtils.getRestClient().post(
+                path: PATH,
                 headers: ["Authorization": "Bearer $token1"],
+                body:  [userId: userId1],
                 requestContentType : ContentType.JSON)
 
         then: "response is correct"
@@ -348,9 +357,10 @@ class TestCancel extends Specification {
         def token1 = UUID.randomUUID().toString()
 
         when: "request is sent"
-        RequestUtils.getRestClient().get(
-                path: PATH + userId2,
+        RequestUtils.getRestClient().post(
+                path: PATH,
                 headers: ["Authorization": "Bearer $token1"],
+                body:  [userId: userId2],
                 requestContentType : ContentType.JSON)
 
         then: "response is correct"

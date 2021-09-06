@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.drsanches.life_together.app.data.debts.dto.AmountsDTO;
+import ru.drsanches.life_together.app.data.debts.dto.CancelDTO;
 import ru.drsanches.life_together.app.data.debts.dto.SendMoneyDTO;
 import ru.drsanches.life_together.app.data.debts.dto.TransactionDTO;
 import ru.drsanches.life_together.app.service.web.DebtsWebService;
@@ -52,10 +52,10 @@ public class DebtsController {
         return debtsWebService.getHistory(from, to);
     }
 
-    @RequestMapping(path = "/cancel/{userId}", method = RequestMethod.GET)
+    @RequestMapping(path = "/cancel", method = RequestMethod.POST)
     @ApiOperation(value = "Cancels all debts from/to other user")
     @ApiImplicitParam(name = "Authorization", value = "Access token", paramType = "header", required = true)
-    public void cancel(@PathVariable String userId) {
-        debtsWebService.cancel(userId);
+    public void cancel(@RequestBody CancelDTO cancelDTO) {
+        debtsWebService.cancel(cancelDTO);
     }
 }

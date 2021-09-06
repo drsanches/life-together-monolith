@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.drsanches.life_together.app.data.debts.dto.AmountDTO;
 import ru.drsanches.life_together.app.data.debts.dto.AmountsDTO;
+import ru.drsanches.life_together.app.data.debts.dto.CancelDTO;
 import ru.drsanches.life_together.app.data.debts.dto.SendMoneyDTO;
 import ru.drsanches.life_together.app.data.debts.dto.TransactionDTO;
 import ru.drsanches.life_together.app.data.debts.mapper.TransactionMapper;
 import ru.drsanches.life_together.app.data.debts.model.Transaction;
-import ru.drsanches.life_together.app.service.validator.CancelUserIdValidator;
 import ru.drsanches.life_together.app.service.domain.DebtsDomainService;
 import ru.drsanches.life_together.exception.application.ApplicationException;
 import ru.drsanches.life_together.app.service.utils.PaginationService;
@@ -35,9 +35,6 @@ public class DebtsWebService {
 
     @Autowired
     private DebtsDomainService debtsDomainService;
-
-    @Autowired
-    private CancelUserIdValidator cancelUserIdValidator;
 
     @Autowired
     private PaginationService<Transaction> paginationService;
@@ -94,24 +91,23 @@ public class DebtsWebService {
                 .collect(Collectors.toList());
     }
 
-    public void cancel(String userId) {
+    public void cancel(@Valid CancelDTO cancelDTO) {
         String currentUserId = tokenSupplier.get().getUserId();
-        cancelUserIdValidator.validate(currentUserId, userId);
-        int total = calcTotalDebt(currentUserId, userId);
+        int total = calcTotalDebt(currentUserId, cancelDTO.getUserId());
         if (total == 0) {
             throw new ApplicationException("There is no debts for this user");
         }
         Transaction transaction = new Transaction(
                 UUID.randomUUID().toString(),
-                total > 0 ? userId : currentUserId,
-                total > 0 ? currentUserId : userId,
+                total > 0 ? cancelDTO.getUserId() : currentUserId,
+                total > 0 ? currentUserId : cancelDTO.getUserId(),
                 Math.abs(total),
                 "Debt has been canceled by user with id '" + currentUserId + "'",
                 true,
                 new GregorianCalendar()
         );
         debtsDomainService.saveTransaction(transaction);
-        LOG.info("User with id '{}' canceled debts for user '{}'", currentUserId, userId);
+        LOG.info("User with id '{}' canceled debts for user '{}'", currentUserId, cancelDTO.getUserId());
     }
 
     private Map<String, Integer> calcTotalDebts(List<Transaction> incomingTransactions, List<Transaction> outgoingTransactions) {
