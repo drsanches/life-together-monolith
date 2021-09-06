@@ -11,6 +11,8 @@ import ru.drsanches.life_together.exception.application.NoUserIdException;
 import ru.drsanches.life_together.exception.application.NoUsernameException;
 import ru.drsanches.life_together.exception.auth.AuthException;
 import ru.drsanches.life_together.exception.server.ServerError;
+import javax.validation.ConstraintViolationException;
+import java.util.UUID;
 
 @ControllerAdvice
 public class CustomExceptionHandler {
@@ -21,6 +23,13 @@ public class CustomExceptionHandler {
     public ResponseEntity<String> handleApplicationException(ApplicationException e) {
         LOG.warn(e.getMessage(), e);
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
+        String message = "{\"uuid\":\"" + UUID.randomUUID().toString() + "\",\"message\":\"" + e.getMessage() + "\"}";
+        LOG.warn(message, e);
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AuthException.class)

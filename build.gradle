@@ -19,6 +19,8 @@ dependencies {
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.3.4.RELEASE'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.3.4.RELEASE'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.3.4.RELEASE'
+    implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final' //Validation
+    implementation group: 'org.hibernate', name: 'hibernate-validator', version: '5.2.4.Final' //Validation
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.16'
     implementation 'org.glassfish.jaxb:jaxb-runtime' //For DB
     implementation group: 'com.h2database', name: 'h2', version: '1.4.200' //For H2-console

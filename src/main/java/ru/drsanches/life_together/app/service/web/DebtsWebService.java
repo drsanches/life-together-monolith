@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import ru.drsanches.life_together.app.data.debts.dto.AmountDTO;
 import ru.drsanches.life_together.app.data.debts.dto.AmountsDTO;
 import ru.drsanches.life_together.app.data.debts.dto.SendMoneyDTO;
@@ -11,11 +12,11 @@ import ru.drsanches.life_together.app.data.debts.dto.TransactionDTO;
 import ru.drsanches.life_together.app.data.debts.mapper.TransactionMapper;
 import ru.drsanches.life_together.app.data.debts.model.Transaction;
 import ru.drsanches.life_together.app.service.validator.CancelUserIdValidator;
-import ru.drsanches.life_together.app.service.validator.SendMoneyDtoValidator;
 import ru.drsanches.life_together.app.service.domain.DebtsDomainService;
 import ru.drsanches.life_together.exception.application.ApplicationException;
 import ru.drsanches.life_together.app.service.utils.PaginationService;
 import ru.drsanches.life_together.common.token.TokenSupplier;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -27,15 +28,13 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
+@Validated
 public class DebtsWebService {
 
     private final Logger LOG = LoggerFactory.getLogger(DebtsWebService.class);
 
     @Autowired
     private DebtsDomainService debtsDomainService;
-
-    @Autowired
-    private SendMoneyDtoValidator sendMoneyDtoValidator;
 
     @Autowired
     private CancelUserIdValidator cancelUserIdValidator;
@@ -49,9 +48,8 @@ public class DebtsWebService {
     @Autowired
     private TransactionMapper transactionMapper;
 
-    public void sendMoney(SendMoneyDTO sendMoneyDTO) {
+    public void sendMoney(@Valid SendMoneyDTO sendMoneyDTO) {
         String fromUserId = tokenSupplier.get().getUserId();
-        sendMoneyDtoValidator.validate(fromUserId, sendMoneyDTO);
         int money = sendMoneyDTO.getMoney() / sendMoneyDTO.getToUserIds().size();
         List<Transaction> transactions = new LinkedList<>();
         sendMoneyDTO.getToUserIds().forEach(toUserId -> {
