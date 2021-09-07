@@ -1,4 +1,4 @@
-import {sendData} from "/ui/js/utils/common.js";
+import {sendData, followLink} from "/ui/js/utils/common.js";
 
 export var moneySendPanel = {
     data() {
@@ -23,8 +23,8 @@ export var moneySendPanel = {
                 message: this.message,
                 money: value
             }
-            sendData("/debts/send", "POST", body, true, function(data) {
-                alert("Money have been sent");
+            sendData("/debts/send", "POST", body, false, function() {
+                followLink("/ui/debts.html");
             });
         }
     },

@@ -21,7 +21,10 @@ export var friendCard = {
     },
     methods: {
         removeRequest: function() {
-            sendData("/friends/manage/" + this.id, "DELETE", null, false, function() {
+            var body = {
+                userId: this.id
+            }
+            sendData("/friends/manage/delete", "POST", body, false, function() {
                 followLink("/ui/friends.html");
             });
         }

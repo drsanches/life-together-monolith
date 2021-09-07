@@ -21,7 +21,10 @@ export var otherUserCard = {
     },
     methods: {
         sendRequest: function() {
-            sendData("/friends/manage/" + this.id, "POST", null, false, function() {
+            var body = {
+                userId: this.id
+            }
+            sendData("/friends/manage/add", "POST", body, false, function() {
                 followLink("/ui/friends.html");
             });
         }
