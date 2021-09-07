@@ -1,8 +1,8 @@
 package ru.drsanches.life_together.app.data.debts.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import ru.drsanches.life_together.app.service.validator.EnabledIdList;
-import ru.drsanches.life_together.app.service.validator.FriendIdList;
+import ru.drsanches.life_together.app.service.validation.annotation.EnabledIdList;
+import ru.drsanches.life_together.app.service.validation.annotation.FriendIdList;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

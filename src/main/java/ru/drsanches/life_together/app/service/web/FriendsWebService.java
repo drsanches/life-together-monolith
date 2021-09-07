@@ -4,17 +4,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+import ru.drsanches.life_together.app.data.friends.dto.SendRequestDTO;
 import ru.drsanches.life_together.app.data.profile.dto.UserInfoDTO;
 import ru.drsanches.life_together.app.data.profile.mapper.UserInfoMapper;
 import ru.drsanches.life_together.app.service.domain.FriendsDomainService;
 import ru.drsanches.life_together.app.service.domain.UserProfileDomainService;
-import ru.drsanches.life_together.exception.application.ApplicationException;
 import ru.drsanches.life_together.exception.application.NoUserIdException;
 import ru.drsanches.life_together.common.token.TokenSupplier;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Validated
 public class FriendsWebService {
 
     private final Logger LOG = LoggerFactory.getLogger(FriendsWebService.class);
@@ -55,16 +58,10 @@ public class FriendsWebService {
                 .collect(Collectors.toList());
     }
 
-    public void sendRequest(String toUserId) {
+    public void sendRequest(@Valid SendRequestDTO sendRequestDTO) {
         String fromUserId = tokenSupplier.get().getUserId();
-        if (!userProfileDomainService.enabledExistsById(toUserId)) {
-            throw new NoUserIdException(toUserId);
-        }
-        if (fromUserId.equals(toUserId)) {
-            throw new ApplicationException("You can't send yourself a friend request");
-        }
-        friendsDomainService.saveFriendRequest(fromUserId, toUserId);
-        LOG.info("User with id '{}' send friend request to user '{}'", fromUserId, toUserId);
+        friendsDomainService.saveFriendRequest(fromUserId, sendRequestDTO.getUserId());
+        LOG.info("User with id '{}' send friend request to user '{}'", fromUserId, sendRequestDTO.getUserId());
     }
 
     public void removeRequest(String userId) {

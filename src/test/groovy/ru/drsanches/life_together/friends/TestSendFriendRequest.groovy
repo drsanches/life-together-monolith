@@ -1,5 +1,6 @@
 package ru.drsanches.life_together.friends
 
+import groovyx.net.http.ContentType
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.HttpResponseException
 import net.sf.json.JSONArray
@@ -9,7 +10,7 @@ import spock.lang.Specification
 
 class TestSendFriendRequest extends Specification {
 
-    String PATH = "/api/v1/friends/manage/"
+    String PATH = "/api/v1/friends/manage"
 
     def "success one side friend request sending"() {
         given: "two users"
@@ -33,8 +34,10 @@ class TestSendFriendRequest extends Specification {
 
         when: "request is sent"
         def response = RequestUtils.getRestClient().post(
-                path: PATH + userId2,
-                headers: ["Authorization": "Bearer $token1"]) as HttpResponseDecorator
+                path: PATH,
+                headers: ["Authorization": "Bearer $token1"],
+                body: ["userId": userId2],
+                requestContentType : ContentType.JSON) as HttpResponseDecorator
 
         then: "response is correct"
         assert response.status == 201
@@ -84,8 +87,10 @@ class TestSendFriendRequest extends Specification {
 
         when: "request is sent"
         def response = RequestUtils.getRestClient().post(
-                path: PATH + userId2,
-                headers: ["Authorization": "Bearer $token1"]) as HttpResponseDecorator
+                path: PATH,
+                headers: ["Authorization": "Bearer $token1"],
+                body: ["userId": userId2],
+                requestContentType : ContentType.JSON) as HttpResponseDecorator
 
         then: "response is correct"
         assert response.status == 201
@@ -135,8 +140,10 @@ class TestSendFriendRequest extends Specification {
 
         when: "request is sent"
         def response = RequestUtils.getRestClient().post(
-                path: PATH + userId2,
-                headers: ["Authorization": "Bearer $token1"]) as HttpResponseDecorator
+                path: PATH,
+                headers: ["Authorization": "Bearer $token1"],
+                body: ["userId": userId2],
+                requestContentType : ContentType.JSON) as HttpResponseDecorator
 
         then: "response is correct"
         assert response.status == 201
@@ -178,12 +185,14 @@ class TestSendFriendRequest extends Specification {
 
         when: "request is sent"
         RequestUtils.getRestClient().post(
-                path: PATH + userId2,
-                headers: ["Authorization": "Bearer $token"])
+                path: PATH,
+                headers: ["Authorization": "Bearer $token"],
+                body: ["userId": userId2],
+                requestContentType : ContentType.JSON)
 
         then: "response is correct"
         HttpResponseException e = thrown(HttpResponseException)
-        assert e.response.status == 404
+        assert e.response.status == 400
     }
 
     def "send friend request to nonexistent user"() {
@@ -196,12 +205,14 @@ class TestSendFriendRequest extends Specification {
 
         when: "request is sent"
         RequestUtils.getRestClient().post(
-                path: PATH + nonexistentId,
-                headers: ["Authorization": "Bearer $token"])
+                path: PATH,
+                headers: ["Authorization": "Bearer $token"],
+                body: ["userId": nonexistentId],
+                requestContentType : ContentType.JSON)
 
         then: "response is correct"
         HttpResponseException e = thrown(HttpResponseException)
-        assert e.response.status == 404
+        assert e.response.status == 400
     }
 
     def "send friend request to current user"() {
@@ -213,8 +224,10 @@ class TestSendFriendRequest extends Specification {
 
         when: "request is sent"
         RequestUtils.getRestClient().post(
-                path: PATH + userId,
-                headers: ["Authorization": "Bearer $token"])
+                path: PATH,
+                headers: ["Authorization": "Bearer $token"],
+                body: ["userId": userId],
+                requestContentType : ContentType.JSON)
 
         then: "response is correct"
         HttpResponseException e = thrown(HttpResponseException)
@@ -235,8 +248,10 @@ class TestSendFriendRequest extends Specification {
 
         when: "request is sent"
         RequestUtils.getRestClient().post(
-                path: PATH + userId2,
-                headers: ["Authorization": "Bearer $token1"])
+                path: PATH,
+                headers: ["Authorization": "Bearer $token1"],
+                body: ["userId": userId2],
+                requestContentType : ContentType.JSON)
 
         then: "response is correct"
         HttpResponseException e = thrown(HttpResponseException)

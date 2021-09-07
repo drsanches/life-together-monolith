@@ -1,9 +1,10 @@
-package ru.drsanches.life_together.app.service.validator;
+package ru.drsanches.life_together.app.service.validation.validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.drsanches.life_together.app.data.profile.model.UserProfile;
 import ru.drsanches.life_together.app.service.domain.UserProfileDomainService;
+import ru.drsanches.life_together.app.service.validation.annotation.EnabledIdList;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Set;

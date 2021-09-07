@@ -1,4 +1,6 @@
-package ru.drsanches.life_together.app.service.validator;
+package ru.drsanches.life_together.app.service.validation.annotation;
+
+import ru.drsanches.life_together.app.service.validation.validator.EnabledIdValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -9,8 +11,8 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = ExistsIdValidator.class)
-public @interface ExistsId {
+@Constraint(validatedBy = EnabledIdValidator.class)
+public @interface EnabledId {
 
     String message() default "the user does not exist";
 

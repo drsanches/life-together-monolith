@@ -1,14 +1,14 @@
-package ru.drsanches.life_together.app.data.debts.dto;
+package ru.drsanches.life_together.app.data.friends.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import ru.drsanches.life_together.app.service.validation.annotation.ExistsId;
+import ru.drsanches.life_together.app.service.validation.annotation.EnabledId;
 import ru.drsanches.life_together.app.service.validation.annotation.NotCurrentId;
 
-public class CancelDTO {
+public class SendRequestDTO {
 
-    @ApiModelProperty(required = true)
-    @ExistsId
+    @EnabledId
     @NotCurrentId
+    @ApiModelProperty(required = true)
     private String userId;
 
     public String getUserId() {
@@ -17,7 +17,7 @@ public class CancelDTO {
 
     @Override
     public String toString() {
-        return "CancelDTO{" +
+        return "SendRequestDTO{" +
                 "userId='" + userId + '\'' +
                 '}';
     }

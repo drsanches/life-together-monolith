@@ -1,4 +1,6 @@
-package ru.drsanches.life_together.app.service.validator;
+package ru.drsanches.life_together.app.service.validation.annotation;
+
+import ru.drsanches.life_together.app.service.validation.validator.EnabledIdListValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -9,14 +11,12 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = FriendIdListValidator.class)
-public @interface FriendIdList {
+@Constraint(validatedBy = EnabledIdListValidator.class)
+public @interface EnabledIdList {
 
-    String message() default "some users are not friends";
+    String message() default "some user ids do not exist or users have been deleted";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-
-    boolean mayContainCurrent() default false;
 }

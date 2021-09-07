@@ -91,8 +91,9 @@ class RequestUtils {
     static void sendFriendRequest(String username, String password, String userId) {
         String token = getToken(username, password)
         getRestClient().post(
-                path: "/api/v1/friends/manage/$userId",
+                path: "/api/v1/friends/manage",
                 headers: ["Authorization": "Bearer $token"],
+                body: ["userId": userId],
                 requestContentType: ContentType.JSON)
     }
 

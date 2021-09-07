@@ -1,5 +1,6 @@
-package ru.drsanches.life_together.app.service.validator;
+package ru.drsanches.life_together.app.service.validation.annotation;
 
+import ru.drsanches.life_together.app.service.validation.validator.ExistsIdValidator;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.ElementType;
@@ -9,10 +10,10 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = NotCurrentIdValidator.class)
-public @interface NotCurrentId {
+@Constraint(validatedBy = ExistsIdValidator.class)
+public @interface ExistsId {
 
-    String message() default "the user can not be current";
+    String message() default "the user does not exist";
 
     Class<?>[] groups() default {};
 
