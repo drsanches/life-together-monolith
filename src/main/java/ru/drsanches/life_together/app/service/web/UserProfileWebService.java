@@ -9,8 +9,6 @@ import ru.drsanches.life_together.app.data.profile.dto.UserInfoDTO;
 import ru.drsanches.life_together.app.data.profile.mapper.UserInfoMapper;
 import ru.drsanches.life_together.app.data.profile.model.UserProfile;
 import ru.drsanches.life_together.app.service.domain.UserProfileDomainService;
-import ru.drsanches.life_together.exception.application.NoUserIdException;
-import ru.drsanches.life_together.exception.server.ServerError;
 import ru.drsanches.life_together.common.token.TokenSupplier;
 
 @Service
@@ -45,14 +43,10 @@ public class UserProfileWebService {
 
     public void changeCurrentProfile(ChangeUserProfileDTO changeUserProfileDTO) {
         String userId = tokenSupplier.get().getUserId();
-        try {
-            UserProfile userProfile = userProfileDomainService.getEnabledById(userId);
-            userProfile.setFirstName(changeUserProfileDTO.getFirstName());
-            userProfile.setLastName(changeUserProfileDTO.getLastName());
-            userProfileDomainService.save(userProfile);
-            LOG.info("User with id '{}' updated his profile", userId);
-        } catch (NoUserIdException e) {
-            throw new ServerError("No user profile for userId " + userId, e);
-        }
+        UserProfile userProfile = userProfileDomainService.getEnabledById(userId);
+        userProfile.setFirstName(changeUserProfileDTO.getFirstName());
+        userProfile.setLastName(changeUserProfileDTO.getLastName());
+        userProfileDomainService.save(userProfile);
+        LOG.info("User with id '{}' updated his profile", userId);
     }
 }

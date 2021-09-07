@@ -12,7 +12,6 @@ import ru.drsanches.life_together.exception.application.NoUsernameException;
 import ru.drsanches.life_together.exception.auth.AuthException;
 import ru.drsanches.life_together.exception.server.ServerError;
 import javax.validation.ConstraintViolationException;
-import java.util.UUID;
 
 @ControllerAdvice
 public class CustomExceptionHandler {
@@ -27,9 +26,7 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
-        String message = "{\"uuid\":\"" + UUID.randomUUID().toString() + "\",\"message\":\"" + e.getMessage() + "\"}";
-        LOG.warn(message, e);
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        return handleApplicationException(new ApplicationException(e.getMessage(), e));
     }
 
     @ExceptionHandler(AuthException.class)
@@ -44,9 +41,14 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ServerError.class)
-    public ResponseEntity<String> handleServerException(ServerError e) {
+    @ExceptionHandler({ServerError.class})
+    public ResponseEntity<String> handleServerError(ServerError e) {
         LOG.error(e.getInfo(), e);
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler({RuntimeException.class})
+    public ResponseEntity<String> handleRuntimeException(RuntimeException e) {
+        return handleServerError(new ServerError(e.getMessage(), e));
     }
 }

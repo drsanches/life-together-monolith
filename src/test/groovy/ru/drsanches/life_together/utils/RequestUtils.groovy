@@ -99,7 +99,7 @@ class RequestUtils {
 
     static void deleteFriendRequest(String username, String password, String userId) {
         String token = getToken(username, password)
-        getRestClient().delete(
+        getRestClient().post(
                 path: "/api/v1/friends/manage/delete",
                 headers: ["Authorization": "Bearer $token"],
                 body: ["userId": userId],
