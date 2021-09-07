@@ -91,7 +91,7 @@ class RequestUtils {
     static void sendFriendRequest(String username, String password, String userId) {
         String token = getToken(username, password)
         getRestClient().post(
-                path: "/api/v1/friends/manage",
+                path: "/api/v1/friends/manage/add",
                 headers: ["Authorization": "Bearer $token"],
                 body: ["userId": userId],
                 requestContentType: ContentType.JSON)
@@ -100,9 +100,10 @@ class RequestUtils {
     static void deleteFriendRequest(String username, String password, String userId) {
         String token = getToken(username, password)
         getRestClient().delete(
-                path: "/api/v1/friends/manage/$userId",
+                path: "/api/v1/friends/manage/delete",
                 headers: ["Authorization": "Bearer $token"],
-                requestContentType: ContentType.JSON)
+                body: ["userId": userId],
+                requestContentType : ContentType.JSON)
     }
 
     static JSONArray getIncomingRequests(String username, String password) {
