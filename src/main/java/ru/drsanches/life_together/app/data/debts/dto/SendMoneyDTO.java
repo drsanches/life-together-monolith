@@ -1,17 +1,16 @@
 package ru.drsanches.life_together.app.data.debts.dto;
 
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.NotEmpty;
 import ru.drsanches.life_together.app.service.validation.annotation.EnabledIdList;
 import ru.drsanches.life_together.app.service.validation.annotation.FriendIdList;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.Set;
 
 public class SendMoneyDTO {
 
-    @Size(min = 1, message = "can not be empty")
-    @NotNull
+    @NotEmpty
     @FriendIdList(mayContainCurrent = true)
     @EnabledIdList
     @ApiModelProperty(required = true)

@@ -15,6 +15,6 @@ public class NotCurrentIdValidator implements ConstraintValidator<NotCurrentId, 
 
     @Override
     public boolean isValid(String userId, ConstraintValidatorContext context) {
-        return tokenSupplier.get() == null || !tokenSupplier.get().getUserId().equals(userId);
+        return userId == null || tokenSupplier.get() == null || !tokenSupplier.get().getUserId().equals(userId);
     }
 }

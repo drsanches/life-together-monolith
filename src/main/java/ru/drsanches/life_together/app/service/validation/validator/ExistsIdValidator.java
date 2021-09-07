@@ -15,6 +15,6 @@ public class ExistsIdValidator implements ConstraintValidator<ExistsId, String> 
 
     @Override
     public boolean isValid(String userId, ConstraintValidatorContext context) {
-        return userProfileDomainService.anyExistsById(userId);
+        return userId == null || userProfileDomainService.anyExistsById(userId);
     }
 }

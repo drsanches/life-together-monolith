@@ -344,6 +344,28 @@ class TestCancel extends Specification {
         assert e.response.status == 400
     }
 
+    def "cancel debt without userId"() {
+        given: "user"
+        def username1 = DataGenerator.createValidUsername()
+        def password1 = DataGenerator.createValidPassword()
+        RequestUtils.registerUser(username1, password1, null)
+        def token1 = RequestUtils.getToken(username1, password1)
+
+        when: "request is sent"
+        RequestUtils.getRestClient().post(
+                path: PATH,
+                headers: ["Authorization": "Bearer $token1"],
+                body:  [userId: empty],
+                requestContentType : ContentType.JSON)
+
+        then: "response is correct"
+        def e = thrown(HttpResponseException)
+        assert e.response.status == 400
+
+        where:
+        empty << [null, ""]
+    }
+
     def "invalid token debt cancel"() {
         given: "user with invalid token"
         def username1 = DataGenerator.createValidUsername()
