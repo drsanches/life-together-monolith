@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import ru.drsanches.life_together.auth.data.dto.ChangeEmailDTO;
 import ru.drsanches.life_together.auth.data.dto.ChangePasswordDTO;
 import ru.drsanches.life_together.auth.data.dto.ChangeUsernameDTO;
@@ -25,9 +26,11 @@ import ru.drsanches.life_together.common.token.TokenService;
 import ru.drsanches.life_together.common.token.TokenSupplier;
 import ru.drsanches.life_together.common.token.data.Token;
 import ru.drsanches.life_together.common.token.data.TokenMapper;
+import javax.validation.Valid;
 import java.util.UUID;
 
 @Service
+@Validated
 public class UserAuthWebService {
 
     private final Logger LOG = LoggerFactory.getLogger(UserAuthWebService.class);
@@ -53,7 +56,7 @@ public class UserAuthWebService {
     @Autowired
     private UserAuthInfoMapper userAuthInfoMapper;
 
-    public UserAuthInfoDTO registration(RegistrationDTO registrationDTO) {
+    public UserAuthInfoDTO registration(@Valid RegistrationDTO registrationDTO) {
         registrationDTO.setUsername(registrationDTO.getUsername().toLowerCase());
         UserAuth userAuth = new UserAuth();
         userAuth.setId(UUID.randomUUID().toString());
@@ -67,7 +70,7 @@ public class UserAuthWebService {
         return userAuthInfoMapper.convert(userAuth);
     }
 
-    public TokenDTO login(LoginDTO loginDTO) {
+    public TokenDTO login(@Valid LoginDTO loginDTO) {
         loginDTO.setUsername(loginDTO.getUsername().toLowerCase());
         UserAuth userAuth;
         try {
@@ -86,7 +89,7 @@ public class UserAuthWebService {
         return userAuthInfoMapper.convert(current);
     }
 
-    public void changeUsername(ChangeUsernameDTO changeUsernameDTO) {
+    public void changeUsername(@Valid ChangeUsernameDTO changeUsernameDTO) {
         String userId = tokenSupplier.get().getUserId();
         UserAuth current = userAuthDomainService.getEnabledById(userId);
         credentialsHelper.checkPassword(changeUsernameDTO.getPassword(), current.getPassword());
@@ -100,7 +103,7 @@ public class UserAuthWebService {
         LOG.info("User with id '{}' changed username from '{}' to '{}'", current.getId(), oldUsername, current.getUsername());
     }
 
-    public void changePassword(ChangePasswordDTO changePasswordDTO) {
+    public void changePassword(@Valid ChangePasswordDTO changePasswordDTO) {
         String userId = tokenSupplier.get().getUserId();
         UserAuth current = userAuthDomainService.getEnabledById(userId);
         credentialsHelper.checkPassword(changePasswordDTO.getOldPassword(), current.getPassword());
@@ -113,11 +116,11 @@ public class UserAuthWebService {
         LOG.info("User with id '{}' changed password", current.getId());
     }
 
-    public void changeEmail(ChangeEmailDTO changeEmailDTO) {
+    public void changeEmail(@Valid ChangeEmailDTO changeEmailDTO) {
         String userId = tokenSupplier.get().getUserId();
         UserAuth current = userAuthDomainService.getEnabledById(userId);
         credentialsHelper.checkPassword(changeEmailDTO.getPassword(), current.getPassword());
-        if (changeEmailDTO.getNewEmail().equals(current.getEmail())) {
+        if (current.getEmail().equals(changeEmailDTO.getNewEmail())) {
             throw new ApplicationException("New email is equal to old");
         }
         current.setEmail(changeEmailDTO.getNewEmail());
@@ -133,7 +136,7 @@ public class UserAuthWebService {
         tokenService.removeCurrentToken();
     }
 
-    public void disableUser(DeleteUserDTO deleteUserDTO) {
+    public void disableUser(@Valid DeleteUserDTO deleteUserDTO) {
         String userId = tokenSupplier.get().getUserId();
         UserAuth current = userAuthDomainService.getEnabledById(userId);
         credentialsHelper.checkPassword(deleteUserDTO.getPassword(), current.getPassword());

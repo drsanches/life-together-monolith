@@ -96,6 +96,31 @@ class TestDeleteUser extends Specification {
         assert incoming.get(0)["lastName"] == JSONNull.getInstance()
     }
 
+    def "user deleting without password"() {
+        given: "registered user, token"
+        def username = DataGenerator.createValidUsername()
+        def password = DataGenerator.createValidPassword()
+        RequestUtils.registerUser(username, password, null)
+        def token = RequestUtils.getToken(username, password)
+
+        when: "request is sent"
+        RequestUtils.getRestClient().post(
+                path: PATH,
+                headers: ["Authorization": "Bearer $token"],
+                body:  [password: empty],
+                requestContentType : ContentType.JSON)
+
+        then: "response is correct"
+        HttpResponseException e = thrown(HttpResponseException)
+        assert e.response.status == 400
+
+        and: "user was not deleted"
+        assert RequestUtils.getAuthInfo(token) != null
+
+        where:
+        empty << [null, ""]
+    }
+
     def "user deleting with invalid password"() {
         given: "registered user, token and invalid password"
         def username = DataGenerator.createValidUsername()

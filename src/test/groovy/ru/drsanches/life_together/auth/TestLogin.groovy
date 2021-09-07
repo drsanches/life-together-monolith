@@ -20,8 +20,8 @@ class TestLogin extends Specification {
         when: "request is sent"
         def response = RequestUtils.getRestClient().post(
                 path: PATH,
-                body: ["username": username,
-                       "password": password],
+                body: [username: username,
+                       password: password],
                 requestContentType : ContentType.JSON) as HttpResponseDecorator
 
         then: "response is correct"
@@ -43,8 +43,8 @@ class TestLogin extends Specification {
         when: "request is sent"
         def response = RequestUtils.getRestClient().post(
                 path: PATH,
-                body: ["username": username2,
-                       "password": password],
+                body: [username: username2,
+                       password: password],
                 requestContentType : ContentType.JSON) as HttpResponseDecorator
 
         then: "response is correct"
@@ -66,8 +66,8 @@ class TestLogin extends Specification {
         when: "request is sent"
         def response = RequestUtils.getRestClient().post(
                 path: PATH,
-                body: ["username": username,
-                       "password": password],
+                body: [username: username,
+                       password: password],
                 requestContentType : ContentType.JSON) as HttpResponseDecorator
 
         then: "response is correct"
@@ -81,6 +81,46 @@ class TestLogin extends Specification {
         assert RequestUtils.getAuthInfo(token1 as String) != null
     }
 
+    def "login without username"() {
+        given: "user"
+        def password = DataGenerator.createValidPassword()
+        RequestUtils.registerUser(DataGenerator.createValidUsername(), password, null)
+
+        when: "request is sent"
+        RequestUtils.getRestClient().post(
+                path: PATH,
+                body: [username: username,
+                       password: password],
+                requestContentType : ContentType.JSON)
+
+        then: "response is correct"
+        HttpResponseException e = thrown(HttpResponseException)
+        assert e.response.status == 400
+
+        where:
+        username << [null, ""]
+    }
+
+    def "login without password"() {
+        given: "user"
+        def username = DataGenerator.createValidUsername()
+        RequestUtils.registerUser(username, DataGenerator.createValidPassword(), null)
+
+        when: "request is sent"
+        RequestUtils.getRestClient().post(
+                path: PATH,
+                body: [username: username,
+                       password: password],
+                requestContentType : ContentType.JSON)
+
+        then: "response is correct"
+        HttpResponseException e = thrown(HttpResponseException)
+        assert e.response.status == 400
+
+        where:
+        password << [null, ""]
+    }
+
     def "login with invalid password"() {
         given: "user"
         def username = DataGenerator.createValidUsername()
@@ -91,8 +131,8 @@ class TestLogin extends Specification {
         when: "request is sent"
         RequestUtils.getRestClient().post(
                 path: PATH,
-                body: ["username": username,
-                       "password": invalidPassword],
+                body: [username: username,
+                       password: invalidPassword],
                 requestContentType : ContentType.JSON)
 
         then: "response is correct"

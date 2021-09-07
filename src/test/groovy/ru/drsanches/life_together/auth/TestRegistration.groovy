@@ -44,6 +44,44 @@ class TestRegistration extends Specification {
         assert userProfile['lastName'] == JSONNull.getInstance()
     }
 
+    def "registration without username"() {
+        given: "password"
+        def password = DataGenerator.createValidPassword()
+
+        when: "request is sent"
+        RequestUtils.getRestClient().post(
+                path: PATH,
+                body: [username: username,
+                       password: password],
+                requestContentType : ContentType.JSON)
+
+        then: "response is correct"
+        HttpResponseException e = thrown(HttpResponseException)
+        assert e.response.status == 400
+
+        where:
+        username << [null, ""]
+    }
+
+    def "registration without password"() {
+        given: "username"
+        def username = DataGenerator.createValidUsername()
+
+        when: "request is sent"
+        RequestUtils.getRestClient().post(
+                path: PATH,
+                body: [username: username,
+                       password: password],
+                requestContentType : ContentType.JSON)
+
+        then: "response is correct"
+        HttpResponseException e = thrown(HttpResponseException)
+        assert e.response.status == 400
+
+        where:
+        password << [null, ""]
+    }
+
     def "already existing user registration"() {
         given: "registered user"
         def username = DataGenerator.createValidUsername()

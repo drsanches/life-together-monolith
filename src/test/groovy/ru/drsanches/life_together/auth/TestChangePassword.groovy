@@ -86,6 +86,53 @@ class TestChangePassword extends Specification {
         assert e.response.status == 401
     }
 
+    def "password change without odlPassword"() {
+        given: "registered user"
+        def username = DataGenerator.createValidUsername()
+        def password = DataGenerator.createValidPassword()
+        def newPassword = DataGenerator.createValidPassword()
+        RequestUtils.registerUser(username, password, null)
+        def token = RequestUtils.getToken(username, password)
+
+        when: "request is sent"
+        RequestUtils.getRestClient().put(
+                path: PATH,
+                headers: ["Authorization": "Bearer $token"],
+                body:  [oldPassword: empty,
+                        newPassword: newPassword],
+                requestContentType : ContentType.JSON)
+
+        then: "response is correct"
+        HttpResponseException e = thrown(HttpResponseException)
+        assert e.response.status == 400
+
+        where:
+        empty << [null, ""]
+    }
+
+    def "password change without newPassword"() {
+        given: "registered user"
+        def username = DataGenerator.createValidUsername()
+        def password = DataGenerator.createValidPassword()
+        RequestUtils.registerUser(username, password, null)
+        def token = RequestUtils.getToken(username, password)
+
+        when: "request is sent"
+        RequestUtils.getRestClient().put(
+                path: PATH,
+                headers: ["Authorization": "Bearer $token"],
+                body:  [oldPassword: password,
+                        newPassword: empty],
+                requestContentType : ContentType.JSON)
+
+        then: "response is correct"
+        HttpResponseException e = thrown(HttpResponseException)
+        assert e.response.status == 400
+
+        where:
+        empty << [null, ""]
+    }
+
     def "password change with invalid token"() {
         given: "registered user, old and new password and invalid token"
         def username = DataGenerator.createValidUsername()

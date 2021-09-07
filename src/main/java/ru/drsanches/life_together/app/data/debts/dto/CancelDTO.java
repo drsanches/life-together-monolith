@@ -6,9 +6,9 @@ import ru.drsanches.life_together.app.service.validation.annotation.NotCurrentId
 
 public class CancelDTO {
 
-    @ApiModelProperty(required = true)
     @ExistsId
     @NotCurrentId
+    @ApiModelProperty(required = true)
     private String userId;
 
     public String getUserId() {
