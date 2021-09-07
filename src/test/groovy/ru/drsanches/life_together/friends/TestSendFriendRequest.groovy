@@ -12,6 +12,9 @@ class TestSendFriendRequest extends Specification {
 
     String PATH = "/api/v1/friends/manage"
 
+    /**
+     * user1 -req-> user2
+     */
     def "success one side friend request sending"() {
         given: "two users"
         def username1 = DataGenerator.createValidUsername()
@@ -63,6 +66,10 @@ class TestSendFriendRequest extends Specification {
         assert incomingRequests.get(0)["lastName"] == lastName1
     }
 
+    /**
+     * user2 -req-> user1
+     * user1 -req-> user2
+     */
     def "success two side friend request sending"() {
         given: "two users"
         def username1 = DataGenerator.createValidUsername()
@@ -116,7 +123,11 @@ class TestSendFriendRequest extends Specification {
         assert friends2.get(0)["lastName"] == lastName1
     }
 
-    def "second time friend request sending"() {
+    /**
+     * user1 -req-> user2
+     * user1 -req-> user2
+     */
+    def "success second time friend request sending to user"() {
         given: "two users with one side friend request"
         def username1 = DataGenerator.createValidUsername()
         def password1 = DataGenerator.createValidPassword()
@@ -169,6 +180,63 @@ class TestSendFriendRequest extends Specification {
         assert incomingRequests.get(0)["lastName"] == lastName1
     }
 
+    /**
+     * user -req-> friend
+     */
+    def "success friend request sending to friend"() {
+        given: "two users with one side friend request"
+        def username1 = DataGenerator.createValidUsername()
+        def password1 = DataGenerator.createValidPassword()
+        def firstName1 = DataGenerator.createValidFirstName()
+        def lastName1 = DataGenerator.createValidLastName()
+        def username2 = DataGenerator.createValidUsername()
+        def password2 = DataGenerator.createValidPassword()
+        def firstName2 = DataGenerator.createValidFirstName()
+        def lastName2 = DataGenerator.createValidLastName()
+
+        def userId1 = RequestUtils.registerUser(username1, password1, null)
+        def userId2 = RequestUtils.registerUser(username2, password2, null)
+
+        def token1 = RequestUtils.getToken(username1, password1)
+        def token2 = RequestUtils.getToken(username2, password2)
+
+        RequestUtils.changeUserProfile(token1, firstName1, lastName1)
+        RequestUtils.changeUserProfile(token2, firstName2, lastName2)
+
+        RequestUtils.sendFriendRequest(username2, password2, userId1)
+        RequestUtils.sendFriendRequest(username1, password1, userId2)
+
+        when: "request is sent"
+        def response = RequestUtils.getRestClient().post(
+                path: PATH,
+                headers: ["Authorization": "Bearer $token1"],
+                body: ["userId": userId2],
+                requestContentType : ContentType.JSON) as HttpResponseDecorator
+
+        then: "response is correct"
+        assert response.status == 201
+
+        and: "the first user relationship has not changed"
+        assert RequestUtils.getIncomingRequests(username1, password1) == new JSONArray()
+        assert RequestUtils.getOutgoingRequests(username1, password1) == new JSONArray()
+        def friends1 = RequestUtils.getFriends(username1, password1)
+        assert friends1.size() == 1
+        assert friends1.get(0)["id"] == userId2
+        assert friends1.get(0)["username"] == username2
+        assert friends1.get(0)["firstName"] == firstName2
+        assert friends1.get(0)["lastName"] == lastName2
+
+        and: "the second user relationship has not changed"
+        assert RequestUtils.getIncomingRequests(username2, password2) == new JSONArray()
+        assert RequestUtils.getOutgoingRequests(username2, password2) == new JSONArray()
+        def friends2 = RequestUtils.getFriends(username2, password2)
+        assert friends2.size() == 1
+        assert friends2.get(0)["id"] == userId1
+        assert friends2.get(0)["username"] == username1
+        assert friends2.get(0)["firstName"] == firstName1
+        assert friends2.get(0)["lastName"] == lastName1
+    }
+
     def "send friend request to deleted user"() {
         given: "user and deleted user"
         def username1 = DataGenerator.createValidUsername()
@@ -178,6 +246,35 @@ class TestSendFriendRequest extends Specification {
 
         RequestUtils.registerUser(username1, password1, null)
         def userId2 = RequestUtils.registerUser(username2, password2, null)
+
+        def token = RequestUtils.getToken(username1, password1)
+
+        RequestUtils.deleteUser(username2, password2)
+
+        when: "request is sent"
+        RequestUtils.getRestClient().post(
+                path: PATH,
+                headers: ["Authorization": "Bearer $token"],
+                body: ["userId": userId2],
+                requestContentType : ContentType.JSON)
+
+        then: "response is correct"
+        HttpResponseException e = thrown(HttpResponseException)
+        assert e.response.status == 400
+    }
+
+    def "send friend request to deleted friend"() {
+        given: "user and deleted user"
+        def username1 = DataGenerator.createValidUsername()
+        def password1 = DataGenerator.createValidPassword()
+        def username2 = DataGenerator.createValidUsername()
+        def password2 = DataGenerator.createValidPassword()
+
+        def userId1 = RequestUtils.registerUser(username1, password1, null)
+        def userId2 = RequestUtils.registerUser(username2, password2, null)
+
+        RequestUtils.sendFriendRequest(username2, password2, userId1)
+        RequestUtils.sendFriendRequest(username1, password1, userId2)
 
         def token = RequestUtils.getToken(username1, password1)
 
