@@ -39,10 +39,10 @@ public class TokenFilter extends GenericFilterBean {
             try {
                 TOKEN_SERVICE.validate(token);
             } catch (AuthException e) {
-                LOG.info("Wrong token for uri '{}'", uri);
+                LOG.info("Wrong token for uri '{}'", uri, e);
                 httpResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
                 httpResponse.getOutputStream().flush();
-                httpResponse.getOutputStream().println("Wrong token");
+                httpResponse.getOutputStream().println(e.getMessage());
                 return;
             }
         }
