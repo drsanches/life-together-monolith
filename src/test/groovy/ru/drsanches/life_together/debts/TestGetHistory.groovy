@@ -4,7 +4,7 @@ import groovyx.net.http.ContentType
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.HttpResponseException
 import net.sf.json.JSONArray
-import ru.drsanches.life_together.app.data.debts.enumeration.TransactionType
+import ru.drsanches.life_together.app.data.debts.dto.TransactionDTOType
 import ru.drsanches.life_together.utils.DataGenerator
 import ru.drsanches.life_together.utils.RequestUtils
 import ru.drsanches.life_together.utils.Utils
@@ -58,10 +58,10 @@ class TestGetHistory extends Specification {
         assert response.status == 200
         def transactions = response.getData() as JSONArray
         assert transactions.size() == 4
-        def transaction1 = Utils.findTransaction(transactions, otherId, TransactionType.OUTGOING, money, message1)
-        def transaction2 = Utils.findTransaction(transactions, deletedId, TransactionType.OUTGOING, money, message1)
-        def transaction3 = Utils.findTransaction(transactions, otherId, TransactionType.INCOMING, money, message2)
-        def transaction4 = Utils.findTransaction(transactions, deletedId, TransactionType.INCOMING, money * 2, message3)
+        def transaction1 = Utils.findTransaction(transactions, otherId, TransactionDTOType.OUTGOING, money, message1)
+        def transaction2 = Utils.findTransaction(transactions, deletedId, TransactionDTOType.OUTGOING, money, message1)
+        def transaction3 = Utils.findTransaction(transactions, otherId, TransactionDTOType.INCOMING, money, message2)
+        def transaction4 = Utils.findTransaction(transactions, deletedId, TransactionDTOType.INCOMING, money * 2, message3)
         assert transaction1 != null
         assert transaction2 != null
         assert transaction3 != null

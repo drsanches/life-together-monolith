@@ -13,14 +13,22 @@ public class CancelDTO {
     @ApiModelProperty(required = true)
     private String userId;
 
+    @ApiModelProperty()
+    private String message;
+
     public String getUserId() {
         return userId;
+    }
+
+    public String getMessage() {
+        return message;
     }
 
     @Override
     public String toString() {
         return "CancelDTO{" +
                 "userId='" + userId + '\'' +
+                ", message='" + message + '\'' +
                 '}';
     }
 }

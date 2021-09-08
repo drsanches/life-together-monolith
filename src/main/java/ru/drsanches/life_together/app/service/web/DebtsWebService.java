@@ -12,6 +12,7 @@ import ru.drsanches.life_together.app.data.debts.dto.SendMoneyDTO;
 import ru.drsanches.life_together.app.data.debts.dto.TransactionDTO;
 import ru.drsanches.life_together.app.data.debts.mapper.TransactionMapper;
 import ru.drsanches.life_together.app.data.debts.model.Transaction;
+import ru.drsanches.life_together.app.data.debts.model.TransactionType;
 import ru.drsanches.life_together.app.service.domain.DebtsDomainService;
 import ru.drsanches.life_together.exception.application.ApplicationException;
 import ru.drsanches.life_together.app.service.utils.PaginationService;
@@ -57,7 +58,7 @@ public class DebtsWebService {
                         toUserId,
                         money,
                         sendMoneyDTO.getMessage(),
-                        false,
+                        TransactionType.TRANSACTION,
                         new GregorianCalendar()
                 ));
             }
@@ -87,7 +88,7 @@ public class DebtsWebService {
         String userId = tokenSupplier.get().getUserId();
         List<Transaction> transactions = debtsDomainService.getAllTransactions(userId);
         return paginationService.pagination(transactions.stream(), from, to)
-                .map(transaction -> transactionMapper.convert(transaction, userId))
+                .map(transaction -> transactionMapper.convert(transaction))
                 .collect(Collectors.toList());
     }
 
@@ -102,8 +103,8 @@ public class DebtsWebService {
                 total > 0 ? cancelDTO.getUserId() : currentUserId,
                 total > 0 ? currentUserId : cancelDTO.getUserId(),
                 Math.abs(total),
-                "Debt has been canceled by user with id '" + currentUserId + "'",
-                true,
+                cancelDTO.getMessage(),
+                total > 0 ? TransactionType.CANCELED_BY_RECIPIENT: TransactionType.CANCELED_BY_SENDER,
                 new GregorianCalendar()
         );
         debtsDomainService.saveTransaction(transaction);

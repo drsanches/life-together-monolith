@@ -1,6 +1,5 @@
 package ru.drsanches.life_together.common.token.data;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.drsanches.life_together.common.utils.GregorianCalendarConvertor;
 import ru.drsanches.life_together.auth.data.dto.TokenDTO;
@@ -8,15 +7,12 @@ import ru.drsanches.life_together.auth.data.dto.TokenDTO;
 @Component
 public class TokenMapper {
 
-    @Autowired
-    private GregorianCalendarConvertor gregorianCalendarConvertor;
-
     public TokenDTO convert(Token token) {
         TokenDTO tokenDTO = new TokenDTO();
         tokenDTO.setAccessToken(token.getAccessToken());
         tokenDTO.setRefreshToken(token.getRefreshToken());
         tokenDTO.setTokenType(token.getTokenType());
-        tokenDTO.setExpiresAt(gregorianCalendarConvertor.convert(token.getExpiresAt()));
+        tokenDTO.setExpiresAt(GregorianCalendarConvertor.convert(token.getExpiresAt()));
         return tokenDTO;
     }
 }

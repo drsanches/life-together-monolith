@@ -1,7 +1,6 @@
 package ru.drsanches.life_together.app.data.debts.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import ru.drsanches.life_together.app.data.debts.enumeration.TransactionType;
 import ru.drsanches.life_together.common.utils.GregorianCalendarConvertor;
 
 public class TransactionDTO {
@@ -13,7 +12,7 @@ public class TransactionDTO {
     private String userId;
 
     @ApiModelProperty(required = true)
-    private TransactionType type;
+    private TransactionDTOType type;
 
     @ApiModelProperty(required = true)
     private Integer amount;
@@ -34,7 +33,7 @@ public class TransactionDTO {
         return userId;
     }
 
-    public TransactionType getType() {
+    public TransactionDTOType getType() {
         return type;
     }
 
@@ -58,7 +57,7 @@ public class TransactionDTO {
         this.userId = userId;
     }
 
-    public void setType(TransactionType type) {
+    public void setType(TransactionDTOType type) {
         this.type = type;
     }
 

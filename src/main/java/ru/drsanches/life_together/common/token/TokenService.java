@@ -6,7 +6,6 @@ import ru.drsanches.life_together.exception.auth.WrongTokenException;
 import ru.drsanches.life_together.common.token.data.Role;
 import ru.drsanches.life_together.common.token.data.Token;
 import ru.drsanches.life_together.common.token.data.TokenRepository;
-import ru.drsanches.life_together.common.utils.CredentialsHelper;
 import java.util.GregorianCalendar;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,9 +24,6 @@ public class TokenService {
 
     @Autowired
     private TokenSupplier tokenSupplier;
-
-    @Autowired
-    private CredentialsHelper credentialsHelper;
 
     public Token createToken(String userId, Role role) {
         Token token = new Token();

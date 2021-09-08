@@ -2,13 +2,13 @@ package ru.drsanches.life_together.utils
 
 import net.sf.json.JSONArray
 import net.sf.json.JSONObject
-import ru.drsanches.life_together.app.data.debts.enumeration.TransactionType
+import ru.drsanches.life_together.app.data.debts.dto.TransactionDTOType
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
 class Utils {
 
-    static JSONObject findTransaction(JSONArray history, String userId, TransactionType type, int money, String message) {
+    static JSONObject findTransaction(JSONArray history, String userId, TransactionDTOType type, int money, String message) {
         for (JSONObject transaction: (history as List<JSONObject>)) {
             if (transaction["userId"] == userId
                     && transaction["type"] == type.name()

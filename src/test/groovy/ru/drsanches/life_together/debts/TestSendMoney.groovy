@@ -4,7 +4,7 @@ import groovyx.net.http.ContentType
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.HttpResponseException
 import net.sf.json.JSONArray
-import ru.drsanches.life_together.app.data.debts.enumeration.TransactionType
+import ru.drsanches.life_together.app.data.debts.dto.TransactionDTOType
 import ru.drsanches.life_together.utils.DataGenerator
 import ru.drsanches.life_together.utils.RequestUtils
 import ru.drsanches.life_together.utils.Utils
@@ -58,8 +58,8 @@ class TestSendMoney extends Specification {
         def history2 = RequestUtils.getHistory(username2, password2)
         assert history1.size() == 1
         assert history2.size() == 1
-        def transaction1 = Utils.findTransaction(history1, userId2, TransactionType.OUTGOING, money, message)
-        def transaction2 = Utils.findTransaction(history2, userId1, TransactionType.INCOMING, money, message)
+        def transaction1 = Utils.findTransaction(history1, userId2, TransactionDTOType.OUTGOING, money, message)
+        def transaction2 = Utils.findTransaction(history2, userId1, TransactionDTOType.INCOMING, money, message)
         assert transaction1 != null
         assert transaction2 != null
         assert Utils.checkTimestamp(dateBefore, transaction1["timestamp"] as String, dateAfter)
@@ -110,8 +110,8 @@ class TestSendMoney extends Specification {
         def history2 = RequestUtils.getHistory(username2, password2)
         assert history1.size() == 1
         assert history2.size() == 1
-        def transaction1 = Utils.findTransaction(history1, userId2, TransactionType.OUTGOING, money / 2 as int, message)
-        def transaction2 = Utils.findTransaction(history2, userId1, TransactionType.INCOMING, money / 2 as int, message)
+        def transaction1 = Utils.findTransaction(history1, userId2, TransactionDTOType.OUTGOING, money / 2 as int, message)
+        def transaction2 = Utils.findTransaction(history2, userId1, TransactionDTOType.INCOMING, money / 2 as int, message)
         assert transaction1 != null
         assert transaction2 != null
         assert Utils.checkTimestamp(dateBefore, transaction1["timestamp"] as String, dateAfter)
@@ -162,8 +162,8 @@ class TestSendMoney extends Specification {
         def history2 = RequestUtils.getHistory(username2, password2)
         assert history1.size() == 1
         assert history2.size() == 1
-        def transaction1 = Utils.findTransaction(history1, userId2, TransactionType.OUTGOING, money, message)
-        def transaction2 = Utils.findTransaction(history2, userId1, TransactionType.INCOMING, money, message)
+        def transaction1 = Utils.findTransaction(history1, userId2, TransactionDTOType.OUTGOING, money, message)
+        def transaction2 = Utils.findTransaction(history2, userId1, TransactionDTOType.INCOMING, money, message)
         assert transaction1 != null
         assert transaction2 != null
         assert Utils.checkTimestamp(dateBefore, transaction1["timestamp"] as String, dateAfter)

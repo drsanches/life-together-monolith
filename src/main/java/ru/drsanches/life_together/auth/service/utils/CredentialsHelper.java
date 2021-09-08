@@ -1,4 +1,4 @@
-package ru.drsanches.life_together.common.utils;
+package ru.drsanches.life_together.auth.service.utils;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;

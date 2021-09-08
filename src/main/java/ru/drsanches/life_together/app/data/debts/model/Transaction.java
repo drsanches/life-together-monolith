@@ -28,20 +28,20 @@ public class Transaction {
     private String message;
 
     @Column(nullable = false)
-    private boolean isSystem;
+    private TransactionType type;
 
     @Column(nullable = false)
     private GregorianCalendar timestamp;
 
     public Transaction() {}
 
-    public Transaction(String id, String fromUserId, String toUserId, Integer amount, String message, boolean isSystem, GregorianCalendar timestamp) {
+    public Transaction(String id, String fromUserId, String toUserId, Integer amount, String message, TransactionType type, GregorianCalendar timestamp) {
         this.id = id;
         this.fromUserId = fromUserId;
         this.toUserId = toUserId;
         this.amount = amount;
         this.message = message;
-        this.isSystem = isSystem;
+        this.type = type;
         this.timestamp = timestamp;
     }
 
@@ -65,8 +65,8 @@ public class Transaction {
         return message;
     }
 
-    public boolean isSystem() {
-        return isSystem;
+    public TransactionType getType() {
+        return type;
     }
 
     public GregorianCalendar getTimestamp() {
@@ -93,8 +93,8 @@ public class Transaction {
         this.message = message;
     }
 
-    public void setSystem(boolean system) {
-        isSystem = system;
+    public void setType(TransactionType type) {
+        this.type = type;
     }
 
     public void setTimestamp(GregorianCalendar timestamp) {
@@ -109,8 +109,8 @@ public class Transaction {
                 ", toUserId='" + toUserId + '\'' +
                 ", amount=" + amount +
                 ", message='" + message + '\'' +
-                ", isSystem=" + isSystem +
-                ", timestamp=" + new GregorianCalendarConvertor().convert(timestamp) +
+                ", type=" + type +
+                ", timestamp=" + GregorianCalendarConvertor.convert(timestamp) +
                 '}';
     }
 }
