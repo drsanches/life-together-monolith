@@ -1,6 +1,5 @@
 package ru.drsanches.life_together.app.controller;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import ru.drsanches.life_together.app.service.web.UserProfileWebService;
 
 @RestController
 @RequestMapping(value = "/api/v1/profile")
-@Api(description = "viewing and editing public user profiles")
 public class UserProfileController {
 
     @Autowired

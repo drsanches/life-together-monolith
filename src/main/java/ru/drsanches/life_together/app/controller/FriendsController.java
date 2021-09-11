@@ -1,6 +1,5 @@
 package ru.drsanches.life_together.app.controller;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/friends")
-@Api(description = "friend requests and friends list operations")
 public class FriendsController {
 
     @Autowired

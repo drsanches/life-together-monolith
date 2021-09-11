@@ -1,6 +1,5 @@
 package ru.drsanches.life_together.app.controller;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -21,7 +20,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/debts")
-@Api(description = "all debts operations")
 public class DebtsController {
 
     @Autowired
