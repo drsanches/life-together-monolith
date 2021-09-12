@@ -256,8 +256,8 @@ class RequestUtils {
         }
     }
 
-    static void uploadAvatar(String token, String filename) {
-        HttpEntity entity = Utils.createMultipart(filename)
+    static void uploadTestAvatar(String token) {
+        HttpEntity entity = Utils.createTestImageMultipart()
         HttpPost httpPost = new HttpPost("$SERVER_URL:$PORT/api/v1/image/avatar")
         httpPost.addHeader("Authorization", "Bearer $token")
         httpPost.setEntity(entity)

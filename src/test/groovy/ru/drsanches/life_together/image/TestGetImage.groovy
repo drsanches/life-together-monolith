@@ -29,7 +29,7 @@ class TestGetImage extends Specification {
 
         then: "response is correct"
         assert response.status == 200
-        assert Utils.checkImage(response.data as ByteArrayInputStream, "default.jpg")
+        assert Utils.checkDefaultImage(response.data)
     }
 
     def "successful avatar getting"() {
@@ -42,7 +42,7 @@ class TestGetImage extends Specification {
         RequestUtils.registerUser(username2, password2, null)
         def token1 = RequestUtils.getToken(username1, password1)
         def token2 = RequestUtils.getToken(username2, password2)
-        RequestUtils.uploadAvatar(token2, "test1.jpg")
+        RequestUtils.uploadTestAvatar(token2)
         def imagePath = RequestUtils.getUserProfile(username2, password2)["imagePath"]
 
         when: "request is sent"
@@ -53,7 +53,7 @@ class TestGetImage extends Specification {
 
         then: "response is correct"
         assert response.status == 200
-        assert Utils.checkImage(response.data as ByteArrayInputStream, "test1.jpg")
+        assert Utils.checkTestImage(response.data)
     }
 
     def "successful deleted avatar getting"() {
@@ -66,7 +66,7 @@ class TestGetImage extends Specification {
         RequestUtils.registerUser(username2, password2, null)
         def token1 = RequestUtils.getToken(username1, password1)
         def token2 = RequestUtils.getToken(username2, password2)
-        RequestUtils.uploadAvatar(token2, "test1.jpg")
+        RequestUtils.uploadTestAvatar(token2)
         def imagePath = RequestUtils.getUserProfile(username2, password2)["imagePath"]
         RequestUtils.deleteAvatar(token2)
 
@@ -78,7 +78,7 @@ class TestGetImage extends Specification {
 
         then: "response is correct"
         assert response.status == 200
-        assert Utils.checkImage(response.data as ByteArrayInputStream, "test1.jpg")
+        assert Utils.checkTestImage(response.data)
     }
 
     def "get avatar with invalid token"() {

@@ -20,7 +20,7 @@ class TestUploadAvatar extends Specification {
         def password = DataGenerator.createValidPassword()
         RequestUtils.registerUser(username, password, null)
         def token = RequestUtils.getToken(username, password)
-        def entity = Utils.createMultipart("test1.jpg")
+        def entity = Utils.createTestImageMultipart()
 
         when: "request is sent"
         def httpPost = new HttpPost("$RequestUtils.SERVER_URL:$RequestUtils.PORT$PATH")
@@ -38,7 +38,7 @@ class TestUploadAvatar extends Specification {
         and: "new image is correct"
         def image = RequestUtils.getImage(username, password, imagePath)
         assert image != null
-        assert Utils.checkImage(image, "test1.jpg")
+        assert Utils.checkTestImage(image)
     }
 
     def "upload avatar with text multipart"() {
@@ -92,7 +92,7 @@ class TestUploadAvatar extends Specification {
         def password = DataGenerator.createValidPassword()
         RequestUtils.registerUser(username, password, null)
         def token = UUID.randomUUID().toString()
-        def entity = Utils.createMultipart("test1.jpg")
+        def entity = Utils.createTestImageMultipart()
 
         when: "request is sent"
         def httpPost = new HttpPost("$RequestUtils.SERVER_URL:$RequestUtils.PORT$PATH")

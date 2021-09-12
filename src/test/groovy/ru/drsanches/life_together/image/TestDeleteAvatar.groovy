@@ -29,7 +29,7 @@ class TestDeleteAvatar extends Specification {
 
         and: "image does not change"
         def imageData = RequestUtils.getImage(username, password, Utils.getDefaultImagePath())
-        assert Utils.checkImage(imageData, "default.jpg")
+        assert Utils.checkDefaultImage(imageData)
     }
 
     def "successful avatar deletion"() {
@@ -38,7 +38,7 @@ class TestDeleteAvatar extends Specification {
         def password = DataGenerator.createValidPassword()
         RequestUtils.registerUser(username, password, null)
         def token = RequestUtils.getToken(username, password)
-        RequestUtils.uploadAvatar(token, "test1.jpg")
+        RequestUtils.uploadTestAvatar(token)
         def imagePath = RequestUtils.getUserProfile(username, password)["imagePath"] as String
 
         when: "request is sent"
@@ -52,11 +52,11 @@ class TestDeleteAvatar extends Specification {
 
         and: "image is correct"
         def imageData = RequestUtils.getImage(username, password, Utils.getDefaultImagePath())
-        assert Utils.checkImage(imageData, "default.jpg")
+        assert Utils.checkDefaultImage(imageData)
 
         and: "the old image is available"
         def oldImageData = RequestUtils.getImage(username, password, imagePath)
-        assert Utils.checkImage(oldImageData, "test1.jpg")
+        assert Utils.checkTestImage(oldImageData)
     }
 
     def "delete avatar with invalid token"() {
