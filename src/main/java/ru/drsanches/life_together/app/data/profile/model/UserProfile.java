@@ -25,14 +25,18 @@ public class UserProfile {
     @Column
     private String lastName;
 
+    @Column
+    private String imageId;
+
     public UserProfile() {}
 
-    public UserProfile(String id, String username, boolean enabled, String firstName, String lastName) {
+    public UserProfile(String id, String username, boolean enabled, String firstName, String lastName, String imageId) {
         this.id = id;
         this.username = username;
         this.enabled = enabled;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.imageId = imageId;
     }
 
     public String getId() {
@@ -55,6 +59,10 @@ public class UserProfile {
         return lastName;
     }
 
+    public String getImageId() {
+        return imageId;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -75,6 +83,10 @@ public class UserProfile {
         this.lastName = lastName;
     }
 
+    public void setImageId(String imageId) {
+        this.imageId = imageId;
+    }
+
     @Override
     public String toString() {
         return "UserProfile{" +
@@ -83,6 +95,7 @@ public class UserProfile {
                 ", enabled=" + enabled +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
+                ", imageId='" + imageId + '\'' +
                 '}';
     }
 }

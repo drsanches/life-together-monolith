@@ -6,6 +6,7 @@ import groovyx.net.http.HttpResponseException
 import net.sf.json.JSONNull
 import ru.drsanches.life_together.utils.DataGenerator
 import ru.drsanches.life_together.utils.RequestUtils
+import ru.drsanches.life_together.utils.Utils
 import spock.lang.Specification
 
 class TestRegistration extends Specification {
@@ -42,6 +43,7 @@ class TestRegistration extends Specification {
         assert userProfile['username'] == username
         assert userProfile['firstName'] == JSONNull.getInstance()
         assert userProfile['lastName'] == JSONNull.getInstance()
+        assert userProfile['imagePath'] == Utils.getDefaultImagePath()
     }
 
     def "registration without username"() {

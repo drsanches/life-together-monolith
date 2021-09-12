@@ -5,6 +5,7 @@ import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.HttpResponseException
 import ru.drsanches.life_together.utils.DataGenerator
 import ru.drsanches.life_together.utils.RequestUtils
+import ru.drsanches.life_together.utils.Utils
 import spock.lang.Specification
 
 class TestGetCurrentProfile extends Specification {
@@ -33,6 +34,7 @@ class TestGetCurrentProfile extends Specification {
         assert response.getData()["username"] == username
         assert response.getData()["firstName"] == firstName
         assert response.getData()["lastName"] == lastName
+        assert response.getData()["imagePath"] == Utils.getDefaultImagePath()
     }
 
     def "get current user profile with invalid token"() {

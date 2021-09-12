@@ -5,6 +5,7 @@ import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.HttpResponseException
 import ru.drsanches.life_together.utils.DataGenerator
 import ru.drsanches.life_together.utils.RequestUtils
+import ru.drsanches.life_together.utils.Utils
 import spock.lang.Specification
 
 class TestSearchProfile extends Specification {
@@ -40,6 +41,7 @@ class TestSearchProfile extends Specification {
         assert response.getData()["username"] == username2
         assert response.getData()["firstName"] == firstName2
         assert response.getData()["lastName"] == lastName2
+        assert response.getData()["imagePath"] == Utils.getDefaultImagePath()
     }
 
     def "search deleted user profile"() {

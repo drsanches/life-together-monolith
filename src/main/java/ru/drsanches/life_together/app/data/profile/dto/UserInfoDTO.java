@@ -16,6 +16,9 @@ public class UserInfoDTO {
     @ApiModelProperty(notes = "null for deleted user")
     private String lastName;
 
+    @ApiModelProperty(notes = "null for deleted user")
+    private String imagePath;
+
     public UserInfoDTO() {}
 
     public String getId() {
@@ -34,6 +37,10 @@ public class UserInfoDTO {
         return lastName;
     }
 
+    public String getImagePath() {
+        return imagePath;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -50,6 +57,10 @@ public class UserInfoDTO {
         this.lastName = lastName;
     }
 
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
     @Override
     public String toString() {
         return "UserInfoDTO{" +
@@ -57,6 +68,7 @@ public class UserInfoDTO {
                 ", username='" + username + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
+                ", imagePath='" + imagePath + '\'' +
                 '}';
     }
 }

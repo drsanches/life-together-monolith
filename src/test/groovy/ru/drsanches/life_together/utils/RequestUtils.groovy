@@ -5,6 +5,10 @@ import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.RESTClient
 import net.sf.json.JSONArray
 import net.sf.json.JSONObject
+import org.apache.http.HttpEntity
+import org.apache.http.client.methods.CloseableHttpResponse
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.impl.client.HttpClients
 
 class RequestUtils {
 
@@ -234,5 +238,39 @@ class RequestUtils {
             e.printStackTrace()
             return null
         }
+    }
+
+    static byte[] getImage(String username, String password, String path) {
+        String token = getToken(username, password)
+        if (token == null) {
+            return null
+        }
+        try {
+            HttpResponseDecorator response = getRestClient().get(
+                    path: path,
+                    headers: ["Authorization": "Bearer $token"]) as HttpResponseDecorator
+            return response.status == 200 ? (response.getData() as ByteArrayInputStream).getBytes() as byte[] : null
+        } catch(Exception e) {
+            e.printStackTrace()
+            return null
+        }
+    }
+
+    static void uploadAvatar(String token, String filename) {
+        HttpEntity entity = Utils.createMultipart(filename)
+        HttpPost httpPost = new HttpPost("$SERVER_URL:$PORT/api/v1/image/avatar")
+        httpPost.addHeader("Authorization", "Bearer $token")
+        httpPost.setEntity(entity)
+        CloseableHttpResponse response = HttpClients.createDefault().execute(httpPost)
+        int status = response.getStatusLine().getStatusCode()
+        if (status != 201) {
+            throw new RuntimeException("Avatar upload error, response status $status")
+        }
+    }
+
+    static void deleteAvatar(String token) {
+        getRestClient().delete(
+                path: "/api/v1/image/avatar",
+                headers: ["Authorization": "Bearer $token"])
     }
 }

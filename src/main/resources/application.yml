@@ -2,6 +2,11 @@ server:
   port: ${PORT}
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
   h2: # http://localhost:8080/h2-console/
     console:
       enabled: true

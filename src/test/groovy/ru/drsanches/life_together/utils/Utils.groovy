@@ -2,6 +2,9 @@ package ru.drsanches.life_together.utils
 
 import net.sf.json.JSONArray
 import net.sf.json.JSONObject
+import org.apache.http.HttpEntity
+import org.apache.http.entity.ContentType
+import org.apache.http.entity.mime.MultipartEntityBuilder
 import ru.drsanches.life_together.app.data.debts.dto.TransactionDTOType
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -33,5 +36,26 @@ class Utils {
             }
         }
         return null
+    }
+
+    static HttpEntity createMultipart(String filename) {
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create()
+        File file = new File(filename)
+        builder.addBinaryBody("file", new FileInputStream(file), ContentType.APPLICATION_OCTET_STREAM, file.getName())
+        return builder.build()
+    }
+
+    static boolean checkImage(byte[] data, String filename) {
+        File file = new File(filename)
+        return data == file.getBytes()
+    }
+
+    static boolean checkImage(ByteArrayInputStream dataStream, String filename) {
+        File file = new File(filename)
+        return dataStream.getBytes() == file.getBytes()
+    }
+
+    static String getDefaultImagePath() {
+        return "/api/v1/image/default"
     }
 }

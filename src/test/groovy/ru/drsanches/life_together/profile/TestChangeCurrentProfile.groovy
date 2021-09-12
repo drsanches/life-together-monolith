@@ -6,6 +6,7 @@ import groovyx.net.http.HttpResponseException
 import net.sf.json.JSONObject
 import ru.drsanches.life_together.utils.DataGenerator
 import ru.drsanches.life_together.utils.RequestUtils
+import ru.drsanches.life_together.utils.Utils
 import spock.lang.Specification
 
 class TestChangeCurrentProfile extends Specification {
@@ -38,6 +39,7 @@ class TestChangeCurrentProfile extends Specification {
         userProfile['username'] == username
         userProfile['firstName'] == firstName
         userProfile['lastName'] == lastName
+        userProfile['imagePath'] == Utils.getDefaultImagePath()
     }
 
     def "user profile change with invalid token"() {
