@@ -19,9 +19,11 @@ export var moneySendPanel = {
                 return;
             }
             var body = {
-                toUserIds: [this.selectedFriend.id],
-                message: this.message,
-                money: value
+                transactions: [{
+                    toUserId: this.selectedFriend.id,
+                    message: this.message,
+                    money: value
+                }]
             }
             sendData("/debts/send", "POST", body, false, function() {
                 followLink("/ui/debts.html");

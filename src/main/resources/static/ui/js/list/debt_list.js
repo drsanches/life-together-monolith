@@ -19,12 +19,16 @@ export var debtList = {
             var i;
             for (i = 0; i < this.debts.length; i++) {
                 var key = this.debts[i].userId;
-                if (this.users.hasOwnProperty(key)) {
+                var user = this.users[key];
+                if (user) {
+                    if (user.username == null) {
+                        user.username = "DELETED";
+                    }
                     result.push({
                         userId: this.debts[i].userId,
-                        username: this.users[key].username,
-                        firstName: this.users[key].firstName,
-                        lastName: this.users[key].lastName,
+                        username: user.username,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
                         amount: this.debts[i].amount
                     });
                 } else {
