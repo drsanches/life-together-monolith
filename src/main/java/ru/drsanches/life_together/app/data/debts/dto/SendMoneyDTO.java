@@ -1,47 +1,23 @@
 package ru.drsanches.life_together.app.data.debts.dto;
 
-import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
-import ru.drsanches.life_together.app.service.validation.annotation.EnabledIdList;
-import ru.drsanches.life_together.app.service.validation.annotation.FriendIdList;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import java.util.Set;
+import ru.drsanches.life_together.app.service.validation.annotation.ValidateCollection;
+import java.util.List;
 
 public class SendMoneyDTO {
 
     @NotEmpty
-    @FriendIdList(mayContainCurrent = true)
-    @EnabledIdList
-    @ApiModelProperty(required = true)
-    private Set<String> toUserIds;
+    @ValidateCollection(message = "transactions contains invalid objects")
+    private List<SendTransactionDTO> transactions;
 
-    @Min(value = 1, message = "must be positive")
-    @NotNull
-    @ApiModelProperty(required = true)
-    private Integer money;
-
-    @ApiModelProperty
-    private String message;
-
-    public Set<String> getToUserIds() {
-        return toUserIds;
-    }
-
-    public Integer getMoney() {
-        return money;
-    }
-
-    public String getMessage() {
-        return message;
+    public List<SendTransactionDTO> getTransactions() {
+        return transactions;
     }
 
     @Override
     public String toString() {
         return "SendMoneyDTO{" +
-                "toUsernames=" + toUserIds +
-                ", money=" + money +
-                ", message='" + message + '\'' +
+                "transactions=" + transactions +
                 '}';
     }
 }

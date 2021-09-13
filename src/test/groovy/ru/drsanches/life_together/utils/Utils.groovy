@@ -1,6 +1,7 @@
 package ru.drsanches.life_together.utils
 
 import net.sf.json.JSONArray
+import net.sf.json.JSONNull
 import net.sf.json.JSONObject
 import org.apache.http.HttpEntity
 import org.apache.http.entity.ContentType
@@ -12,11 +13,12 @@ import java.text.SimpleDateFormat
 class Utils {
 
     static JSONObject findTransaction(JSONArray history, String userId, TransactionDTOType type, int money, String message) {
+        def messageResponse = message == null ? JSONNull.getInstance() : message
         for (JSONObject transaction: (history as List<JSONObject>)) {
             if (transaction["userId"] == userId
                     && transaction["type"] == type.name()
                     && transaction["amount"] == money
-                    && transaction["message"] == message) {
+                    && transaction["message"] == messageResponse) {
                 return transaction
             }
         }

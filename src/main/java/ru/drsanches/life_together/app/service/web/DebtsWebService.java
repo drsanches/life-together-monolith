@@ -48,23 +48,20 @@ public class DebtsWebService {
 
     public void sendMoney(@Valid SendMoneyDTO sendMoneyDTO) {
         String fromUserId = tokenSupplier.get().getUserId();
-        int money = sendMoneyDTO.getMoney() / sendMoneyDTO.getToUserIds().size();
         List<Transaction> transactions = new LinkedList<>();
-        sendMoneyDTO.getToUserIds().forEach(toUserId -> {
-            if (!fromUserId.equals(toUserId)) {
-                transactions.add(new Transaction(
-                        UUID.randomUUID().toString(),
-                        fromUserId,
-                        toUserId,
-                        money,
-                        sendMoneyDTO.getMessage(),
-                        TransactionType.TRANSACTION,
-                        new GregorianCalendar()
-                ));
-            }
-        });
+        sendMoneyDTO.getTransactions().forEach(sendTransactionDTO ->
+            transactions.add(new Transaction(
+                    UUID.randomUUID().toString(),
+                    fromUserId,
+                    sendTransactionDTO.getToUserId(),
+                    sendTransactionDTO.getMoney(),
+                    sendTransactionDTO.getMessage(),
+                    TransactionType.TRANSACTION,
+                    new GregorianCalendar()
+            ))
+        );
         debtsDomainService.saveTransactions(transactions);
-        LOG.info("User with id '{}' send {} money to users {}", fromUserId, money, sendMoneyDTO.getToUserIds());
+        LOG.info("User with id '{}' send money to users: {}", fromUserId, sendMoneyDTO.getTransactions());
     }
 
     public AmountsDTO getDebts() {
