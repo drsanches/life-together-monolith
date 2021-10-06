@@ -11,32 +11,33 @@ import ru.drsanches.life_together.config.filter.LogFilter;
 import ru.drsanches.life_together.config.filter.TokenFilter;
 import ru.drsanches.life_together.common.token.TokenService;
 import ru.drsanches.life_together.common.token.TokenSupplier;
-import springfox.documentation.builders.PathSelectors;
 import java.util.function.Predicate;
+import static java.util.function.Predicate.not;
+import static springfox.documentation.builders.PathSelectors.regex;
 
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final Predicate<String> PUBLIC_URI = ((Predicate<String>)
-            PathSelectors.regex("/api/v1/auth/registration.*")::apply)
-            .or(PathSelectors.regex("/api/v1/auth/login.*")::apply)
-            .or(PathSelectors.regex("/api/v1/auth/refreshToken.*")::apply)
-            .or(PathSelectors.regex("/actuator/health.*")::apply)
-            .or(PathSelectors.regex("/ui.*")::apply)
-            .or(PathSelectors.regex("/favicon.ico")::apply);
+            regex("/api/v1/auth/registration.*")::apply)
+            .or(regex("/api/v1/auth/login.*")::apply)
+            .or(regex("/api/v1/auth/refreshToken.*")::apply)
+            .or(regex("/actuator/health.*")::apply)
+            .or(regex("/ui.*")::apply)
+            .or(regex("/favicon.ico")::apply);
 
     private final Predicate<String> ADMIN_URI = ((Predicate<String>)
-            PathSelectors.regex("/h2-console.*")::apply)
-            .or(PathSelectors.regex("/swagger-ui.html.*")::apply)
+            regex("/h2-console.*")::apply)
+            .or(regex("/swagger-ui.html.*")::apply)
             .or(((Predicate<String>)
-                    PathSelectors.regex("/actuator.*")::apply)
-                    .and(Predicate.not(PathSelectors.regex("/actuator/health.*")::apply)));
+                    regex("/actuator.*")::apply)
+                    .and(not(regex("/actuator/health.*")::apply)));
 
     private final Predicate<String> LOG_URI = ((Predicate<String>)
-            PathSelectors.regex("/api.*")::apply)
-            .or(PathSelectors.regex("/h2-console.*")::apply)
-            .or(PathSelectors.regex("/swagger-ui.html.*")::apply)
-            .or(PathSelectors.regex("/actuator.*")::apply);
+            regex("/api.*")::apply)
+            .or(regex("/h2-console.*")::apply)
+            .or(regex("/swagger-ui.html.*")::apply)
+            .or(regex("/actuator.*")::apply);
 
     @Autowired
     private TokenService tokenService;
