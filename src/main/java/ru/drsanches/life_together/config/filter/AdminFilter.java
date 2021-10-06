@@ -13,7 +13,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.regex.Pattern;
+import java.util.function.Predicate;
 
 public class AdminFilter extends GenericFilterBean {
 
@@ -21,11 +21,11 @@ public class AdminFilter extends GenericFilterBean {
 
     private final TokenSupplier TOKEN_SUPPLIER;
 
-    private final Pattern ADMIN_URI_PATTERN;
+    private final Predicate<String> ADMIN_URI;
 
-    public AdminFilter(TokenSupplier tokenSupplier, Pattern adminUriPattern) {
+    public AdminFilter(TokenSupplier tokenSupplier, Predicate<String> adminUri) {
         this.TOKEN_SUPPLIER = tokenSupplier;
-        this.ADMIN_URI_PATTERN = adminUriPattern;
+        this.ADMIN_URI = adminUri;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class AdminFilter extends GenericFilterBean {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse  httpResponse = (HttpServletResponse) response;
         String uri = httpRequest.getRequestURI();
-        if (ADMIN_URI_PATTERN.matcher(uri).matches()
+        if (ADMIN_URI.test(uri)
                 && (TOKEN_SUPPLIER.get() == null || !Role.ADMIN.equals(TOKEN_SUPPLIER.get().getRole()))) {
             LOG.info("User {} have no permissions for uri '{}'", TOKEN_SUPPLIER.get().getUserId(), uri);
             httpResponse.setStatus(HttpStatus.FORBIDDEN.value());

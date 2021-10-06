@@ -14,7 +14,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.regex.Pattern;
+import java.util.function.Predicate;
 
 public class TokenFilter extends GenericFilterBean {
 
@@ -22,11 +22,11 @@ public class TokenFilter extends GenericFilterBean {
 
     private final TokenService TOKEN_SERVICE;
 
-    private final Pattern EXCLUDE_URI_PATTERN;
+    private final Predicate<String> EXCLUDE_URI;
 
-    public TokenFilter(TokenService tokenService, Pattern excludeUriPattern) {
+    public TokenFilter(TokenService tokenService, Predicate<String> excludeUri) {
         this.TOKEN_SERVICE = tokenService;
-        this.EXCLUDE_URI_PATTERN = excludeUriPattern;
+        this.EXCLUDE_URI = excludeUri;
     }
 
     @Override
@@ -35,10 +35,10 @@ public class TokenFilter extends GenericFilterBean {
         HttpServletResponse  httpResponse = (HttpServletResponse) response;
         String token = getAccessTokenFromRequest(httpRequest);
         String uri = httpRequest.getRequestURI();
-        if (!EXCLUDE_URI_PATTERN.matcher(uri).matches()) {
-            try {
-                TOKEN_SERVICE.validate(token);
-            } catch (AuthException e) {
+        try {
+            TOKEN_SERVICE.validate(token);
+        } catch (AuthException e) {
+            if (!EXCLUDE_URI.test(uri)) {
                 LOG.info("Wrong token for uri '{}'", uri, e);
                 httpResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
                 httpResponse.getOutputStream().flush();

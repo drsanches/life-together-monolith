@@ -10,7 +10,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.regex.Pattern;
+import java.util.function.Predicate;
 
 public class LogFilter extends GenericFilterBean {
 
@@ -20,17 +20,17 @@ public class LogFilter extends GenericFilterBean {
 
     private final TokenSupplier TOKEN_SUPPLIER;
 
-    private final Pattern LOG_URI_PATTERN;
+    private final Predicate<String> LOG_URI;
 
-    public LogFilter(TokenSupplier tokenSupplier, Pattern logUriPattern) {
+    public LogFilter(TokenSupplier tokenSupplier, Predicate<String> logUri) {
         this.TOKEN_SUPPLIER = tokenSupplier;
-        this.LOG_URI_PATTERN = logUriPattern;
+        this.LOG_URI = logUri;
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        if (LOG_URI_PATTERN.matcher(httpRequest.getRequestURI()).matches()) {
+        if (LOG_URI.test(httpRequest.getRequestURI())) {
             if (TOKEN_SUPPLIER.get() != null) {
                 LOG.info(MESSAGE_PATTERN, httpRequest.getRequestURL(), httpRequest.getRemoteAddr(), TOKEN_SUPPLIER.get().getUserId());
             } else {

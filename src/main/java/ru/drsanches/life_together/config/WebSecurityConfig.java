@@ -11,18 +11,32 @@ import ru.drsanches.life_together.config.filter.LogFilter;
 import ru.drsanches.life_together.config.filter.TokenFilter;
 import ru.drsanches.life_together.common.token.TokenService;
 import ru.drsanches.life_together.common.token.TokenSupplier;
-import java.util.regex.Pattern;
+import springfox.documentation.builders.PathSelectors;
+import java.util.function.Predicate;
 
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    //TODO: Refactor
-    private final Pattern EXCLUDE_URI_PATTERN = Pattern.compile("/api/v1/auth/registration.*|/api/v1/auth/login.*" +
-            "|/api/v1/auth/refreshToken.*|/ui.*|/favicon.ico");
+    private final Predicate<String> PUBLIC_URI = ((Predicate<String>)
+            PathSelectors.regex("/api/v1/auth/registration.*")::apply)
+            .or(PathSelectors.regex("/api/v1/auth/login.*")::apply)
+            .or(PathSelectors.regex("/api/v1/auth/refreshToken.*")::apply)
+            .or(PathSelectors.regex("/actuator/health.*")::apply)
+            .or(PathSelectors.regex("/ui.*")::apply)
+            .or(PathSelectors.regex("/favicon.ico")::apply);
 
-    private final Pattern ADMIN_URI_PATTERN = Pattern.compile("/h2-console.*|/swagger-ui.html.*");
+    private final Predicate<String> ADMIN_URI = ((Predicate<String>)
+            PathSelectors.regex("/h2-console.*")::apply)
+            .or(PathSelectors.regex("/swagger-ui.html.*")::apply)
+            .or(((Predicate<String>)
+                    PathSelectors.regex("/actuator.*")::apply)
+                    .and(Predicate.not(PathSelectors.regex("/actuator/health.*")::apply)));
 
-    private final Pattern LOG_URI_PATTERN = Pattern.compile("/api.*|/h2-console.*|/swagger-ui.html.*");
+    private final Predicate<String> LOG_URI = ((Predicate<String>)
+            PathSelectors.regex("/api.*")::apply)
+            .or(PathSelectors.regex("/h2-console.*")::apply)
+            .or(PathSelectors.regex("/swagger-ui.html.*")::apply)
+            .or(PathSelectors.regex("/actuator.*")::apply);
 
     @Autowired
     private TokenService tokenService;
@@ -32,9 +46,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.addFilterAfter(new TokenFilter(tokenService, EXCLUDE_URI_PATTERN), BasicAuthenticationFilter.class);
-        http.addFilterAfter(new AdminFilter(tokenSupplier, ADMIN_URI_PATTERN), TokenFilter.class);
-        http.addFilterAfter(new LogFilter(tokenSupplier, LOG_URI_PATTERN), AdminFilter.class);
+        http.addFilterAfter(new TokenFilter(tokenService, PUBLIC_URI), BasicAuthenticationFilter.class);
+        http.addFilterAfter(new AdminFilter(tokenSupplier, ADMIN_URI), TokenFilter.class);
+        http.addFilterAfter(new LogFilter(tokenSupplier, LOG_URI), AdminFilter.class);
         http.csrf().disable()
                 .headers().frameOptions().disable()
                 .addHeaderWriter(new StaticHeadersWriter("X-FRAME-OPTIONS", "SAMEORIGIN"))
