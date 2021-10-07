@@ -1,7 +1,7 @@
 server:
   port: ${PORT}
 
-management:
+management: # http://localhost:8080/actuator
   endpoints:
     web:
       exposure:
@@ -13,7 +13,7 @@ spring:
       max-file-size: 5MB
       max-request-size: 5MB
 
-  h2: # http://localhost:8080/h2-console/
+  h2: # http://localhost:8080/h2-console
     console:
       enabled: true
       settings:
