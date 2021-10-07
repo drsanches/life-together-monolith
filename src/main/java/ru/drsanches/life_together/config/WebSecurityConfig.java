@@ -13,31 +13,28 @@ import ru.drsanches.life_together.common.token.TokenService;
 import ru.drsanches.life_together.common.token.TokenSupplier;
 import java.util.function.Predicate;
 import static java.util.function.Predicate.not;
-import static springfox.documentation.builders.PathSelectors.regex;
 
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final Predicate<String> PUBLIC_URI = ((Predicate<String>)
-            regex("/api/v1/auth/registration.*")::apply)
-            .or(regex("/api/v1/auth/login.*")::apply)
-            .or(regex("/api/v1/auth/refreshToken.*")::apply)
-            .or(regex("/actuator/health.*")::apply)
-            .or(regex("/ui.*")::apply)
-            .or(regex("/favicon.ico")::apply);
+            x -> x.matches("/api/v1/auth/registration.*"))
+            .or(x -> x.matches("/api/v1/auth/login.*"))
+            .or(x -> x.matches("/api/v1/auth/refreshToken.*"))
+            .or(x -> x.matches("/actuator/health.*"))
+            .or(x -> x.matches("/ui.*"))
+            .or(x -> x.matches("/favicon.ico"));
 
     private final Predicate<String> ADMIN_URI = ((Predicate<String>)
-            regex("/h2-console.*")::apply)
-            .or(regex("/swagger-ui.html.*")::apply)
-            .or(((Predicate<String>)
-                    regex("/actuator.*")::apply)
-                    .and(not(regex("/actuator/health.*")::apply)));
+            x -> x.matches("/h2-console.*"))
+            .or(x -> x.matches("/swagger-ui.html.*"))
+            .or(((Predicate<String>) x -> x.matches("/actuator.*")).and(not(x -> x.matches("/actuator/health.*"))));
 
     private final Predicate<String> LOG_URI = ((Predicate<String>)
-            regex("/api.*")::apply)
-            .or(regex("/h2-console.*")::apply)
-            .or(regex("/swagger-ui.html.*")::apply)
-            .or(regex("/actuator.*")::apply);
+            x -> x.matches("/api.*"))
+            .or(x -> x.matches("/h2-console.*"))
+            .or(x -> x.matches("/swagger-ui.html.*"))
+            .or(x -> x.matches("/actuator.*"));
 
     @Autowired
     private TokenService tokenService;

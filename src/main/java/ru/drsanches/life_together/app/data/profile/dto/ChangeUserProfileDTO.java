@@ -1,13 +1,13 @@
 package ru.drsanches.life_together.app.data.profile.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class ChangeUserProfileDTO {
 
-    @ApiModelProperty
+    @Schema
     private String firstName;
 
-    @ApiModelProperty
+    @Schema
     private String lastName;
 
     public String getFirstName() {

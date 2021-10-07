@@ -1,26 +1,26 @@
 package ru.drsanches.life_together.app.data.debts.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import ru.drsanches.life_together.common.utils.GregorianCalendarConvertor;
 
 public class TransactionDTO {
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     private String id;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     private String userId;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     private TransactionDTOType type;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     private Integer amount;
 
-    @ApiModelProperty
+    @Schema
     private String message;
 
-    @ApiModelProperty(required = true, notes = GregorianCalendarConvertor.PATTERN)
+    @Schema(required = true, description = GregorianCalendarConvertor.PATTERN)
     private String timestamp;
 
     public TransactionDTO() {}

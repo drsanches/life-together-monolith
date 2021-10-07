@@ -1,22 +1,22 @@
 package ru.drsanches.life_together.app.data.profile.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class UserInfoDTO {
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     private String id;
 
-    @ApiModelProperty(notes = "null for deleted user")
+    @Schema(description = "null for deleted user")
     private String username;
 
-    @ApiModelProperty(notes = "null for deleted user")
+    @Schema(description = "null for deleted user")
     private String firstName;
 
-    @ApiModelProperty(notes = "null for deleted user")
+    @Schema(description = "null for deleted user")
     private String lastName;
 
-    @ApiModelProperty(notes = "null for deleted user")
+    @Schema(description = "null for deleted user")
     private String imagePath;
 
     public UserInfoDTO() {}

@@ -1,7 +1,8 @@
 package ru.drsanches.life_together.app.controller;
 
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,37 +24,37 @@ public class FriendsController {
     private FriendsWebService friendsWebService;
 
     @RequestMapping(path = "", method = RequestMethod.GET)
-    @ApiOperation(value = "Returns a list of friends information")
-    @ApiImplicitParam(name = "Authorization", value = "Access token", paramType = "header", required = true)
+    @Operation(summary = "Returns a list of friends information")
+    @Parameter(name = "Authorization", description = "Access token", in = ParameterIn.HEADER, required = true)
     public List<UserInfoDTO> getFriends() {
         return friendsWebService.getFriends();
     }
 
     @RequestMapping(path = "/requests/incoming", method = RequestMethod.GET)
-    @ApiOperation(value = "Returns a list of information about users from whom a friend request was received")
-    @ApiImplicitParam(name = "Authorization", value = "Access token", paramType = "header", required = true)
+    @Operation(summary = "Returns a list of information about users from whom a friend request was received")
+    @Parameter(name = "Authorization", description = "Access token", in = ParameterIn.HEADER, required = true)
     public List<UserInfoDTO> getIncomingRequests() {
         return friendsWebService.getIncomingRequests();
     }
 
     @RequestMapping(path = "/requests/outgoing", method = RequestMethod.GET)
-    @ApiOperation(value = "Returns a list of information about users to whom a friend request was sent")
-    @ApiImplicitParam(name = "Authorization", value = "Access token", paramType = "header", required = true)
+    @Operation(summary = "Returns a list of information about users to whom a friend request was sent")
+    @Parameter(name = "Authorization", description = "Access token", in = ParameterIn.HEADER, required = true)
     public List<UserInfoDTO> getOutgoingRequests() {
         return friendsWebService.getOutgoingRequests();
     }
 
     @RequestMapping(path = "/manage/add", method = RequestMethod.POST)
-    @ApiOperation(value = "Sends a friend request or confirms of another user's request")
-    @ApiImplicitParam(name = "Authorization", value = "Access token", paramType = "header", required = true)
+    @Operation(summary = "Sends a friend request or confirms of another user's request")
+    @Parameter(name = "Authorization", description = "Access token", in = ParameterIn.HEADER, required = true)
     @ResponseStatus(HttpStatus.CREATED)
     public void sendRequest(@RequestBody SendRequestDTO sendRequestDTO) {
         friendsWebService.sendRequest(sendRequestDTO);
     }
 
     @RequestMapping(path = "/manage/delete", method = RequestMethod.POST)
-    @ApiOperation(value = "Cancels the friend request from the current or to another user or removes user from friends")
-    @ApiImplicitParam(name = "Authorization", value = "Access token", paramType = "header", required = true)
+    @Operation(summary = "Cancels the friend request from the current or to another user or removes user from friends")
+    @Parameter(name = "Authorization", description = "Access token", in = ParameterIn.HEADER, required = true)
     public void removeRequest(@RequestBody RemoveRequestDTO removeRequestDTO) {
         friendsWebService.removeRequest(removeRequestDTO);
     }

@@ -1,8 +1,8 @@
 package ru.drsanches.life_together.app.controller;
 
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,33 +26,33 @@ public class DebtsController {
     private DebtsWebService debtsWebService;
 
     @RequestMapping(path = "/send", method = RequestMethod.POST)
-    @ApiOperation(value = "Sends money to other user(s)")
-    @ApiImplicitParam(name = "Authorization", value = "Access token", paramType = "header", required = true)
+    @Operation(summary = "Sends money to other user(s)")
+    @Parameter(name = "Authorization", description = "Access token", in = ParameterIn.HEADER, required = true)
     @ResponseStatus(HttpStatus.CREATED)
     public void sendMoney(@RequestBody SendMoneyDTO sendMoneyDTO) {
         debtsWebService.sendMoney(sendMoneyDTO);
     }
 
     @RequestMapping(path = "", method = RequestMethod.GET)
-    @ApiOperation(value = "Returns total sent and received amounts")
-    @ApiImplicitParam(name = "Authorization", value = "Access token", paramType = "header", required = true)
+    @Operation(summary = "Returns total sent and received amounts")
+    @Parameter(name = "Authorization", description = "Access token", in = ParameterIn.HEADER, required = true)
     public AmountsDTO getDebts() {
         return debtsWebService.getDebts();
     }
 
     @RequestMapping(path = "/history", method = RequestMethod.GET)
-    @ApiOperation(value = "Returns transactions history")
-    @ApiImplicitParam(name = "Authorization", value = "Access token", paramType = "header", required = true)
-    public List<TransactionDTO> getHistory(@ApiParam("Pagination parameter. From which element to display (inclusive)")
+    @Operation(summary = "Returns transactions history")
+    @Parameter(name = "Authorization", description = "Access token", in = ParameterIn.HEADER, required = true)
+    public List<TransactionDTO> getHistory(@Parameter(description = "Pagination parameter. From which element to display (inclusive)")
                                            @RequestParam(required = false) Integer from,
-                                           @ApiParam("Pagination parameter. By which element to display (not inclusive)")
+                                           @Parameter(description = "Pagination parameter. By which element to display (not inclusive)")
                                            @RequestParam(required = false) Integer to) {
         return debtsWebService.getHistory(from, to);
     }
 
     @RequestMapping(path = "/cancel", method = RequestMethod.POST)
-    @ApiOperation(value = "Cancels all debts from/to other user")
-    @ApiImplicitParam(name = "Authorization", value = "Access token", paramType = "header", required = true)
+    @Operation(summary = "Cancels all debts from/to other user")
+    @Parameter(name = "Authorization", description = "Access token", in = ParameterIn.HEADER, required = true)
     public void cancel(@RequestBody CancelDTO cancelDTO) {
         debtsWebService.cancel(cancelDTO);
     }

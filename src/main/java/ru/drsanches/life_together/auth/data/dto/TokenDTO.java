@@ -1,20 +1,20 @@
 package ru.drsanches.life_together.auth.data.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import ru.drsanches.life_together.common.utils.GregorianCalendarConvertor;
 
 public class TokenDTO {
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     private String accessToken;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     private String refreshToken;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     private String tokenType;
 
-    @ApiModelProperty(notes = GregorianCalendarConvertor.PATTERN, required = true)
+    @Schema(required = true, description = GregorianCalendarConvertor.PATTERN)
     private String expiresAt;
 
     public TokenDTO() {}

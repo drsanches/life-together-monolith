@@ -1,6 +1,6 @@
 package ru.drsanches.life_together.app.data.debts.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.validator.constraints.NotEmpty;
 import ru.drsanches.life_together.app.service.validation.annotation.EnabledId;
 import ru.drsanches.life_together.app.service.validation.annotation.FriendId;
@@ -12,15 +12,15 @@ public class SendTransactionDTO {
     @NotEmpty
     @FriendId
     @EnabledId
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     private String toUserId;
 
     @Min(value = 1, message = "must be positive")
     @NotNull
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     private Integer money;
 
-    @ApiModelProperty
+    @Schema
     private String message;
 
     public String getToUserId() {

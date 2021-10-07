@@ -1,16 +1,16 @@
 package ru.drsanches.life_together.auth.data.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class ChangePasswordDTO {
 
     @NotEmpty
-    @ApiModelProperty(notes = "current user password hash", required = true)
+    @Schema(required = true, description = "current user password hash")
     private String oldPassword;
 
     @NotEmpty
-    @ApiModelProperty(notes = "new password hash", required = true)
+    @Schema(required = true, description = "new password hash")
     private String newPassword;
 
     public String getOldPassword() {

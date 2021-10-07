@@ -1,16 +1,16 @@
 package ru.drsanches.life_together.auth.data.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class UserAuthInfoDTO {
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     private String id;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     private String username;
 
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     private String email;
 
     public UserAuthInfoDTO() {}

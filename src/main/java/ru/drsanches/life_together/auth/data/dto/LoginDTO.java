@@ -1,16 +1,16 @@
 package ru.drsanches.life_together.auth.data.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class LoginDTO {
 
     @NotEmpty
-    @ApiModelProperty(required = true)
+    @Schema(required = true)
     private String username;
 
     @NotEmpty
-    @ApiModelProperty(required = true, notes = "password hash")
+    @Schema(required = true, description = "password hash")
     private String password;
 
     public String getUsername() {
