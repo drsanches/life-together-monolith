@@ -39,11 +39,13 @@ class TestGetHistory extends Specification {
         def message1 = DataGenerator.createValidMessage()
         def message2 = DataGenerator.createValidMessage()
         def message3 = DataGenerator.createValidMessage()
+        def message4 = DataGenerator.createValidMessage()
 
         def money = 100
-        def period1 = RequestUtils.sendMoney(token, [userId, otherId, deletedId] as String[], money * 3, message1)
-        def period2 = RequestUtils.sendMoney(otherToken, [userId, otherId] as String[], money * 2, message2)
-        def period3 = RequestUtils.sendMoney(deletedToken, [userId] as String[], money * 2, message3)
+        def period1 = RequestUtils.sendMoney(token, otherId, money, message1)
+        def period2 = RequestUtils.sendMoney(token, deletedId, money, message2)
+        def period3 = RequestUtils.sendMoney(otherToken, userId, money, message3)
+        def period4 = RequestUtils.sendMoney(deletedToken, userId, money, message4)
 
         RequestUtils.deleteFriendRequest(username, password, otherId)
         RequestUtils.deleteUser(deletedUsername, deletedPassword)
@@ -59,17 +61,17 @@ class TestGetHistory extends Specification {
         def transactions = response.getData() as JSONArray
         assert transactions.size() == 4
         def transaction1 = Utils.findTransaction(transactions, otherId, TransactionDTOType.OUTGOING, money, message1)
-        def transaction2 = Utils.findTransaction(transactions, deletedId, TransactionDTOType.OUTGOING, money, message1)
-        def transaction3 = Utils.findTransaction(transactions, otherId, TransactionDTOType.INCOMING, money, message2)
-        def transaction4 = Utils.findTransaction(transactions, deletedId, TransactionDTOType.INCOMING, money * 2, message3)
+        def transaction2 = Utils.findTransaction(transactions, deletedId, TransactionDTOType.OUTGOING, money, message2)
+        def transaction3 = Utils.findTransaction(transactions, otherId, TransactionDTOType.INCOMING, money, message3)
+        def transaction4 = Utils.findTransaction(transactions, deletedId, TransactionDTOType.INCOMING, money, message4)
         assert transaction1 != null
         assert transaction2 != null
         assert transaction3 != null
         assert transaction4 != null
         assert Utils.checkTimestamp(period1[0], transaction1["timestamp"] as String, period1[1])
-        assert Utils.checkTimestamp(period1[0], transaction2["timestamp"] as String, period1[1])
-        assert Utils.checkTimestamp(period2[0], transaction3["timestamp"] as String, period2[1])
-        assert Utils.checkTimestamp(period3[0], transaction4["timestamp"] as String, period3[1])
+        assert Utils.checkTimestamp(period2[0], transaction2["timestamp"] as String, period2[1])
+        assert Utils.checkTimestamp(period3[0], transaction3["timestamp"] as String, period3[1])
+        assert Utils.checkTimestamp(period4[0], transaction4["timestamp"] as String, period4[1])
     }
 
     // TODO: group with "success history getting with pagination"()
@@ -90,7 +92,7 @@ class TestGetHistory extends Specification {
         def token1 = RequestUtils.getToken(username1, password1)
 
         for (int i = 0; i < 10; i++) {
-            RequestUtils.sendMoney(token1, [userId2] as String[], 100, i as String)
+            RequestUtils.sendMoney(token1, userId2, 100, i as String)
         }
 
         when: "request is sent"
@@ -124,7 +126,7 @@ class TestGetHistory extends Specification {
         def token1 = RequestUtils.getToken(username1, password1)
 
         for (int i = 0; i < NUM; i++) {
-            RequestUtils.sendMoney(token1, [userId2] as String[], 100, i as String)
+            RequestUtils.sendMoney(token1, userId2, 100, i as String)
         }
 
         when: "request is sent"

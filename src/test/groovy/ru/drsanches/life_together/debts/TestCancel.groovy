@@ -31,7 +31,7 @@ class TestCancel extends Specification {
         def token1 = RequestUtils.getToken(username1, password1)
 
         def money = 100
-        RequestUtils.sendMoney(token1, [userId2] as String[], money, null)
+        RequestUtils.sendMoney(token1, userId2, money, null)
 
         def message = DataGenerator.createValidMessage()
 
@@ -85,7 +85,7 @@ class TestCancel extends Specification {
         def token2 = RequestUtils.getToken(username2, password2)
 
         def money = 100
-        RequestUtils.sendMoney(token2, [userId1] as String[], money, null)
+        RequestUtils.sendMoney(token2, userId1, money, null)
 
         def message = DataGenerator.createValidMessage()
 
@@ -139,7 +139,7 @@ class TestCancel extends Specification {
         def token1 = RequestUtils.getToken(username1, password1)
 
         def money = 100
-        RequestUtils.sendMoney(token1, [userId2] as String[], money, null)
+        RequestUtils.sendMoney(token1, userId2, money, null)
         RequestUtils.deleteFriendRequest(username1, password1, userId2)
 
         def message = DataGenerator.createValidMessage()
@@ -194,7 +194,7 @@ class TestCancel extends Specification {
         def token2 = RequestUtils.getToken(username2, password2)
 
         def money = 100
-        RequestUtils.sendMoney(token2, [userId1] as String[], money, null)
+        RequestUtils.sendMoney(token2, userId1, money, null)
         RequestUtils.deleteFriendRequest(username1, password1, userId2)
 
         def message = DataGenerator.createValidMessage()
@@ -248,7 +248,7 @@ class TestCancel extends Specification {
         def token1 = RequestUtils.getToken(username1, password1)
 
         def money = 100
-        RequestUtils.sendMoney(token1, [userId2] as String[], money, null)
+        RequestUtils.sendMoney(token1, userId2, money, null)
         RequestUtils.deleteUser(username2, password2)
 
         def message = DataGenerator.createValidMessage()
@@ -296,7 +296,7 @@ class TestCancel extends Specification {
         def token2 = RequestUtils.getToken(username2, password2)
 
         def money = 100
-        RequestUtils.sendMoney(token2, [userId1] as String[], money, null)
+        RequestUtils.sendMoney(token2, userId1, money, null)
         RequestUtils.deleteUser(username2, password2)
 
         def message = DataGenerator.createValidMessage()
@@ -343,7 +343,7 @@ class TestCancel extends Specification {
         def token1 = RequestUtils.getToken(username1, password1)
 
         def money = 100
-        RequestUtils.sendMoney(token1, [userId2] as String[], money, null)
+        RequestUtils.sendMoney(token1, userId2, money, null)
 
         when: "request is sent"
         def dateBefore = new Date()

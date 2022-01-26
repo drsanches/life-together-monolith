@@ -47,8 +47,12 @@ class TestGetDebts extends Specification {
         RequestUtils.sendFriendRequest(deletedUsername, deletedPassword, userId)
 
         def token = RequestUtils.getToken(username, password)
-        def money = 600
-        RequestUtils.sendMoney(token, [userId, friendId, otherId, incomingId, outgoingId, deletedId] as String[], money, null)
+        def money = 100
+        RequestUtils.sendMoney(token, friendId, money, null)
+        RequestUtils.sendMoney(token, otherId, money, null)
+        RequestUtils.sendMoney(token, incomingId, money, null)
+        RequestUtils.sendMoney(token, outgoingId, money, null)
+        RequestUtils.sendMoney(token, deletedId, money, null)
 
         RequestUtils.deleteFriendRequest(username, password, otherId)
         RequestUtils.deleteFriendRequest(username, password, incomingId)
@@ -69,11 +73,11 @@ class TestGetDebts extends Specification {
         and: "debts are correct"
         assert response.getData()["received"] == new JSONArray()
         assert (response.getData()["sent"] as JSONArray).size() == 5
-        assert Utils.getAmount(response.getData()["sent"] as JSONArray, friendId) == money / 6
-        assert Utils.getAmount(response.getData()["sent"] as JSONArray, otherId) == money / 6
-        assert Utils.getAmount(response.getData()["sent"] as JSONArray, incomingId) == money / 6
-        assert Utils.getAmount(response.getData()["sent"] as JSONArray, outgoingId) == money / 6
-        assert Utils.getAmount(response.getData()["sent"] as JSONArray, deletedId) == money / 6
+        assert Utils.getAmount(response.getData()["sent"] as JSONArray, friendId) == money
+        assert Utils.getAmount(response.getData()["sent"] as JSONArray, otherId) == money
+        assert Utils.getAmount(response.getData()["sent"] as JSONArray, incomingId) == money
+        assert Utils.getAmount(response.getData()["sent"] as JSONArray, outgoingId) == money
+        assert Utils.getAmount(response.getData()["sent"] as JSONArray, deletedId) == money
     }
 
     def "success received debts getting"() {
@@ -116,11 +120,11 @@ class TestGetDebts extends Specification {
         def outgoingToken = RequestUtils.getToken(outgoingUsername, outgoingPassword)
         def deletedToken = RequestUtils.getToken(deletedUsername, deletedPassword)
         def money = 100
-        RequestUtils.sendMoney(friendToken, [userId] as String[], money, null)
-        RequestUtils.sendMoney(otherToken, [userId] as String[], money, null)
-        RequestUtils.sendMoney(incomingToken, [userId] as String[], money, null)
-        RequestUtils.sendMoney(outgoingToken, [userId] as String[], money, null)
-        RequestUtils.sendMoney(deletedToken, [userId] as String[], money, null)
+        RequestUtils.sendMoney(friendToken, userId, money, null)
+        RequestUtils.sendMoney(otherToken, userId, money, null)
+        RequestUtils.sendMoney(incomingToken, userId, money, null)
+        RequestUtils.sendMoney(outgoingToken, userId, money, null)
+        RequestUtils.sendMoney(deletedToken, userId, money, null)
 
         RequestUtils.deleteFriendRequest(username, password, otherId)
         RequestUtils.deleteFriendRequest(username, password, incomingId)
@@ -165,8 +169,8 @@ class TestGetDebts extends Specification {
         def token2 = RequestUtils.getToken(username2, password2)
 
         def money = 100
-        RequestUtils.sendMoney(token1, [userId2] as String[], money, null)
-        RequestUtils.sendMoney(token2, [userId1] as String[], money, null)
+        RequestUtils.sendMoney(token1, userId2, money, null)
+        RequestUtils.sendMoney(token2, userId1, money, null)
 
         when: "request is sent"
         def response = RequestUtils.getRestClient().get(

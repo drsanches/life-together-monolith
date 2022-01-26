@@ -167,14 +167,14 @@ class RequestUtils {
                 requestContentType : ContentType.JSON)
     }
 
-    static Date[] sendMoney(String token, String[] toUserIds, Integer money, String message) {
+    static Date[] sendMoney(String token, String toUserId, Integer money, String message) {
         Date dateBefore = new Date()
         getRestClient().post(
                 path: '/api/v1/debts/send',
                 headers: ["Authorization": "Bearer $token"],
-                body: [toUserIds: toUserIds,
-                       money: money,
-                       message: message],
+                body: [transactions: [[toUserId: toUserId,
+                                       money: money,
+                                       message: message]]],
                 requestContentType: ContentType.JSON)
         Date dateAfter = new Date()
         return [dateBefore, dateAfter]
